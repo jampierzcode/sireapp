@@ -1,0 +1,86 @@
+.container-drag {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 3px dashed #ececec;
+}
+.container-drag.active {
+  border: 5px dashed #ececec;
+}
+.drag-area {
+  height: auto;
+  width: 100%;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  /* background-color: #5256ad; */
+  padding: 20px;
+}
+.list-imagens {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+.list-imagens .image-card {
+  box-shadow: 0px 0px 10px 2px #ececec;
+  width: max-content;
+  position: relative;
+}
+.list-imagens .image-card img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  object-position: center;
+}
+.list-imagens .image-card span {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #f90f0f;
+  color: #fff;
+  width: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.drag-area .icon {
+  font-size: 100px;
+  color: #310ecd;
+}
+.drag-area header {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: #310ecd;
+}
+.drag-area span {
+  font-size: 20px;
+  font-weight: 500;
+  color: #310ecd;
+  margin: 10px 0 15px 0;
+}
+button.drag-btn {
+  padding: 10px 25px;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  outline: none;
+  background: #ececec;
+  color: #5256ad;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.drag-area img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+}

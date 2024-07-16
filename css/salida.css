@@ -1,0 +1,126 @@
+.buttons_venta {
+  width: 100%;
+  padding: 30px 0px;
+  display: flex;
+  justify-content: space-between;
+}
+.buttons_venta a {
+  padding: 10px 15px;
+  background: #ececec;
+  border-radius: 4px;
+  color: #000;
+  font-size: 14px;
+  text-decoration: none;
+}
+.buttons_venta button {
+  padding: 10px 15px;
+  background: #2a27ce;
+  color: #fff;
+  border-radius: 4px;
+  border: none;
+  font-size: 14px;
+}
+
+/* DETALLES DE SERVICIOS O CONSUMOS */
+
+.detalles_servicios {
+  width: 100%;
+  padding: 30px;
+  background: #fff;
+  margin-top: 20px;
+}
+.detalles_servicios .title_servicio {
+  font-size: 16px;
+  margin-bottom: 20px;
+  padding: 5px 10px;
+  background: #ececec;
+}
+.detalles_servicios .table-detail {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.table-detail .header-table {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  padding: 5px 10px;
+  background: #ffcfad;
+}
+.table-detail .header-table .column_tabla {
+  font-size: 16px;
+}
+.table-detail .header-table .column_tabla.danger {
+  color: red;
+}
+.table-detail .body-table {
+  width: 100%;
+}
+.body-table .row_list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 5px 10px;
+}
+.body-table .row_list:nth-child(2n + 1) {
+  border-top: 1px solid #ececec;
+  border-bottom: 1px solid #ececec;
+}
+.body-table .row_list .column_valors {
+  font-size: 16px;
+}
+.body-table .row_list .column_valors.no_pay {
+  background: #fe6262;
+  color: #fff;
+  padding: 5px 10px;
+  font-size: 14px;
+}
+.body-table .row_list .column_valors.pay {
+  background: rgb(36, 182, 133);
+  color: #fff;
+  padding: 5px 10px;
+  font-size: 14px;
+}
+.body-table .row_list .column_valors.danger {
+  color: red;
+}
+.body-table .row_list .column_valors > input {
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #ececec;
+}
+
+/* TOTAL CSS */
+.total_price {
+  margin-top: 10px;
+  width: 100%;
+  padding: 5px 10px;
+  display: grid;
+  grid-template-areas: "n1 n2 n2 n4 n3";
+  justify-content: space-between;
+  grid-template-columns: repeat(5, 1fr);
+}
+.total_price h1 {
+  font-size: 16px;
+  grid-area: n1;
+}
+.total_price h1.danger {
+  color: red;
+}
+.total_price h1.pre-last-title {
+  grid-area: n4 !important;
+}
+.total_price .last-option {
+  width: 100%;
+  grid-area: n3;
+}
+.total_price .last-option.total-pago {
+  padding: 5px;
+  background: #ececec;
+}
+.total_price .last-option.select_pago_modo {
+  color: red;
+}

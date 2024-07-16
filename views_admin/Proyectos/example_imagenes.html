@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Galería de Imágenes</title>
+    <!-- tailwin css -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .image-container {
+        position: relative;
+        margin: 10px;
+        overflow: hidden;
+      }
+
+      .image-container img {
+        width: 200px;
+        height: 150px;
+        object-fit: cover;
+        cursor: pointer;
+      }
+
+      .image-container:hover .overlay {
+        transform: translateY(0);
+      }
+
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.192);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateY(100%);
+        transition: all 0.3s;
+        z-index: 1000;
+      }
+
+      .overlay button {
+        background-color: #ff0000;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      .image-container:hover .overlay {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script>
+      $(document).ready(function () {
+        // Definir un array de imágenes (puedes cambiar las URL según tus necesidades)
+        var images = [
+          {
+            id: 1,
+            src: "https://via.placeholder.com/200x150",
+            alt: "Imagen 1",
+          },
+          {
+            id: 2,
+            src: "https://via.placeholder.com/200x150",
+            alt: "Imagen 2",
+          },
+          {
+            id: 3,
+            src: "https://via.placeholder.com/200x150",
+            alt: "Imagen 3",
+          },
+        ];
+
+        // Función para agregar imágenes al DOM
+        function renderImages() {
+          for (var i = 0; i < images.length; i++) {
+            var image = images[i];
+            var $imageContainer = $('<div class="image-container"></div>');
+            var $overlay = $('<div class="overlay"></div>');
+            var $deleteButton = $(
+              `<button class="rounded px-2 py-2"><ion-icon name="trash"></ion-icon></button>`
+            );
+
+            $deleteButton.click(function () {
+              // Obtener el ID de la imagen asociada al botón de eliminar
+              var imageId = $(this).closest(".image-container").data("id");
+
+              // Eliminar la imagen del array y del DOM
+              images = images.filter(function (img) {
+                return img.id !== imageId;
+              });
+              $(this).closest(".image-container").remove();
+            });
+
+            $overlay.append($deleteButton);
+            $imageContainer.append($overlay);
+
+            $imageContainer.data("id", image.id);
+
+            var $image = $(
+              '<img src="' + image.src + '" alt="' + image.alt + '">'
+            );
+            $imageContainer.append($image);
+            $("body").append($imageContainer);
+          }
+        }
+
+        // Llamar a la función para renderizar las imágenes
+        renderImages();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,146 @@
+.title-section {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+/* Formulario del cliente */
+
+.create-clients {
+  width: 100%;
+  padding: 40px 0px;
+  margin-bottom: 30px;
+}
+.create-clients .form-add {
+  width: 100%;
+}
+.create-clients .form-add .content-form {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.create-clients .form-add .group-date {
+  width: 100%;
+  display: grid;
+  gap: 20px;
+}
+.create-clients .form-add .group-date > span {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+}
+.create-clients .form-add .group-date > input {
+  padding: 7px 20px;
+  border-radius: 4px;
+  border: 0px;
+  font-size: 14px;
+}
+.create-clients.hidden {
+  display: none;
+}
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 20px 0px;
+  border-right: 30px solid transparent;
+  border-left: 30px solid transparent;
+  background: #fff;
+}
+
+.section-search {
+  width: max-content;
+  display: flex;
+  align-items: center;
+  background: #ececec;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 30px;
+  border: 1px solid #ececec;
+}
+.section-search > input {
+  width: 250px;
+  padding: 10px 20px;
+  border: 0px;
+  background: transparent;
+}
+.section-search > ion-icon {
+  width: 50px;
+  padding: 10px;
+  background: #000;
+  color: #fff;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.5s;
+}
+table {
+  width: 100%;
+  border-spacing: 0px;
+  font-size: 14px;
+}
+tr th,
+tr td {
+  text-align: start;
+  padding: 10px 15px;
+  border-bottom: 1px solid #ececec;
+  white-space: nowrap;
+}
+td > ion-icon {
+  width: 30px;
+  border-radius: 4px;
+  padding: 10px 10px;
+  cursor: pointer;
+}
+#edit-client {
+  background: #ececec;
+}
+#remove-client {
+  background: #d24444;
+  color: #fff;
+}
+table tr:nth-child(1) {
+  background: #fff !important;
+}
+#clientes-body-table > .card-product {
+  padding: 10px 0px;
+  width: 100%;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  font-size: 14px;
+}
+#clientes-body-table > .card-product:nth-child(2n + 1) {
+  border-top: 1px solid #ececec;
+  border-bottom: 1px solid #ececec;
+}
+#clientes-body-table > .card-product > .campo_tabla {
+  display: flex;
+  align-items: center;
+  font-size: 13px !important;
+}
+
+#clientes-body-table > .card-product > .actions-button-clientes > button {
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+}
+#clientes-body-table > .card-product > .actions-button-clientes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#clientes-body-table
+  > .card-product
+  > .actions-button-clientes
+  > button
+  > ion-icon,
+#clientes-body-table > .card-product > .actions-button-clientes > button > i {
+  padding: 4px 15px;
+}
+#clientes-body-table
+  > .card-product
+  > .actions-button-clientes
+  > button.btn-remove {
+  background: #d24444;
+  color: #fff;
+}

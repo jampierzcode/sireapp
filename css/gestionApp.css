@@ -1,0 +1,41 @@
+.cards-admin {
+  width: 100%;
+  display: grid;
+  gap: 40px;
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 40px;
+}
+.cards-admin .card-count {
+  width: 100%;
+  padding: 20px 25px;
+  background: #fff;
+}
+.cards-admin .ventas {
+  width: 100%;
+  padding: 20px 25px;
+  background: #310ecd !important;
+  color: #fff;
+}
+.cards-admin .card-count {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cards-admin .card-count h1 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.cards-admin .card-count span {
+  font-size: 18px;
+  font-weight: 400;
+  display: inline-block;
+}
+.cards-admin .card-count ion-icon {
+  font-size: 40px;
+  color: rgb(23, 9, 77);
+}
+.cards-admin .ventas ion-icon {
+  font-size: 40px;
+  color: #fff !important;
+}

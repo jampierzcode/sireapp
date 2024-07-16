@@ -1,0 +1,150 @@
+/* MODAL CSS */
+.modal-create {
+  background: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-create .close-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 10px;
+}
+.modal-create.md-hidden {
+  display: none;
+}
+.form-create {
+  width: 600px;
+  padding: 20px 40px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+}
+.form-create .buttons-modal {
+  gap: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+.form-create .buttons-modal > button {
+  padding: 10px 15px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+.form-create .buttons-modal > .btn-create {
+  background: #160e8f;
+  color: #fff;
+}
+.form-create > h1 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.card-input span {
+  display: block;
+}
+.card-input > span {
+  margin-bottom: 20px;
+}
+.grid2Colum {
+  display: grid;
+  gap: 15px;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.card-input > .input-group {
+  width: 100%;
+  display: flex;
+}
+.card-input > .input-group > input,
+.card-input > .input-group > select {
+  width: 100%;
+  padding: 10px 15px;
+  border: 0px;
+  border: 1px solid #ececec;
+}
+.card-input > .input-group > i,
+.card-input > .input-group > ion-icon {
+  background: #ececec;
+  text-align: center;
+  padding: 10px 15px;
+  font-size: 18px;
+  height: auto;
+}
+
+.list-productos {
+  width: 100%;
+  margin-top: 20px;
+  padding: 30px;
+  background: #fff;
+}
+.productos-header-table,
+.card-product {
+  margin-top: 20px;
+  padding: 10px 0px;
+  width: 100%;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(5, 1fr);
+}
+.productos-header-table .campo_tabla {
+  font-weight: 600;
+  font-size: 14px;
+}
+#productos-body-table > .card-product {
+  padding: 10px 0px;
+  width: 100%;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  font-size: 14px;
+}
+#productos-body-table > .card-product:nth-child(2n + 1) {
+  border-top: 1px solid #ececec;
+  border-bottom: 1px solid #ececec;
+}
+#productos-body-table > .card-product > .campo_tabla {
+  display: flex;
+  align-items: center;
+}
+#productos-body-table > .card-product > .actions-button-products {
+  display: flex;
+  gap: 15px;
+}
+#productos-body-table > .card-product > .actions-button-products > button {
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#productos-body-table
+  > .card-product
+  > .actions-button-products
+  > button
+  > ion-icon,
+#productos-body-table > .card-product > .actions-button-products > button > i {
+  padding: 4px 15px;
+}
+#productos-body-table
+  > .card-product
+  > .actions-button-products
+  > button.btn-remove {
+  background: #d24444;
+  color: #fff;
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dibujar polígonos en Leaflet</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css"
+    />
+    <style>
+      #map {
+        height: 600px;
+      }
+      #othermap {
+        margin-top: 40px;
+        height: 600px;
+      }
+
+      .leaflet-image-layer {
+        max-width: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <div class="containerLotizador">
+      <h1>Lotizador</h1>
+    </div> -->
+    <div id="map"></div>
+    <div id="othermap"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"
+    />
+    <script src="./lotizador.js"></script>
+  </body>
+</html>

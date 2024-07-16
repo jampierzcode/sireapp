@@ -1,0 +1,125 @@
+.carrito_ventas {
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.btn-add-producto {
+  padding: 10px 15px;
+  background: rgb(36, 182, 133);
+  color: #fff;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+}
+.carrito_ventas .card-detail {
+  align-items: end;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.carrito_ventas .card-detail > span {
+  width: 100%;
+  display: block;
+}
+.carrito_ventas .card-detail > input,
+.carrito_ventas .card-detail > select {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 14px;
+  border: none;
+}
+
+/* list productos venta */
+
+.list-productos-add {
+  width: 100%;
+  padding: 30px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.list-productos-add .campo_tabla {
+  background: #ececec;
+  padding: 5px 15px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+.list-productos-add .campo_tabla_list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 5px 15px;
+}
+
+.campo_tabla_list > .card_producto:nth-child(2n + 1) {
+  border-top: 1px solid #ececec;
+  border-bottom: 1px solid #ececec;
+}
+.list-productos-add .campo_tabla_list .card_producto {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  padding: 5px 0px;
+}
+.card_producto > p {
+  width: 100%;
+  display: flex;
+}
+.card_producto > .deleted_product > button {
+  padding: 2px 24px;
+  background: #fe6262;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+}
+.total_price {
+  border-top: 1px solid #ececec;
+  margin-top: 20px;
+  padding: 5px 15px;
+  width: 100%;
+  display: grid;
+  grid-template-areas: "n1 n2 n2 n2 n3";
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  justify-content: space-between;
+}
+.total_price > h1 {
+  grid-area: n1;
+  font-size: 18px;
+}
+.total_price > .last-option {
+  grid-area: n3;
+}
+.total_price > .last-option label {
+  display: block;
+  font-size: 16px;
+}
+.buttons_venta {
+  width: 100%;
+  padding: 30px 0px;
+  display: flex;
+  justify-content: space-between;
+}
+.buttons_venta a {
+  padding: 10px 15px;
+  background: #ececec;
+  border-radius: 4px;
+  color: #000;
+  font-size: 14px;
+  text-decoration: none;
+}
+.buttons_venta button {
+  padding: 10px 15px;
+  background: #2a27ce;
+  color: #fff;
+  border-radius: 4px;
+  border: none;
+  font-size: 14px;
+}

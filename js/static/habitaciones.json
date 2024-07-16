@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "img_url": "individual.jpeg",
+    "categoria": "Habitacion Individual",
+    "slug": "habitacion-individual",
+    "precio": 110,
+    "caracteristicas": [
+      "Desayuno",
+      "Mesa de estudio",
+      "Cama de 2 plazas",
+      "Pisos alfombrados",
+      "Baño privado",
+      "Agua Caliente y Fría con sistema de therma y rapiducha",
+      "Tv LCD Con cable",
+      "Teléfono con discado directo",
+      "Internet WIFI"
+    ]
+  },
+  {
+    "id": 2,
+    "img_url": "doble.jpeg",
+    "categoria": "Habitacion Doble",
+    "slug": "habitacion-doble",
+    "precio": 130,
+    "caracteristicas": [
+      "Desayuno",
+      "Mesa de estudio",
+      "2 Camas de 1 plaza 1/2",
+      "Pisos alfombrados",
+      "Baño privado",
+      "Agua Caliente y Fría con sistema de therma y rapiducha",
+      "Tv LCD Con cable",
+      "Teléfono con discado directo",
+      "Internet WIFI"
+    ]
+  },
+  {
+    "id": 3,
+    "img_url": "matrimonial.jpeg",
+    "categoria": "Habitacion Matrimonial",
+    "slug": "habitacion-matrimonial",
+    "precio": 130,
+    "caracteristicas": [
+      "Desayuno",
+      "Mesa de estudio",
+      "Cama 2 Plazas Con Colchon de Resortes Box Spring",
+      "Pisos alfombrados",
+      "Baño privado",
+      "Agua Caliente y Fría con sistema de therma y rapiducha",
+      "Tv LCD Con cable",
+      "Teléfono con discado directo",
+      "Internet WIFI"
+    ]
+  },
+  {
+    "id": 4,
+    "img_url": "cuadruple.jpg",
+    "categoria": "Habitacion Cuádruple",
+    "slug": "habitacion-cuadruple",
+    "precio": 200,
+    "caracteristicas": [
+      "Desayuno",
+      "Mesa de estudio",
+      "1 Cama Matrimonial + 2 Camas De Plaza y media",
+      "Pisos alfombrados",
+      "Baño privado",
+      "Agua Caliente y Fría con sistema de therma y rapiducha",
+      "Tv LCD Con cable",
+      "Teléfono con discado directo",
+      "Internet WIFI"
+    ]
+  },
+  {
+    "id": 5,
+    "img_url": "triple.png",
+    "categoria": "Habitacion Triple",
+    "slug": "habitacion-triple",
+    "precio": 160,
+    "caracteristicas": [
+      "Desayuno",
+      "Mesa de estudio",
+      "3 Camas 1 Plaza y media",
+      "Pisos alfombrados",
+      "Baño privado",
+      "Agua Caliente y Fría con sistema de therma y rapiducha",
+      "Tv LCD Con cable",
+      "Teléfono con discado directo",
+      "Internet WIFI"
+    ]
+  },
+  {
+    "id": 6,
+    "img_url": "quintuple.jpeg",
+    "categoria": "Habitacion Quintuple",
+    "slug": "habitacion-quintuple",
+    "precio": 160,
+    "caracteristicas": [
+      "Desayuno",
+      "Mesa de estudio",
+      "Cama 2 Plazas y 3 camas individuales",
+      "Pisos alfombrados",
+      "Baño privado",
+      "Agua Caliente y Fría con sistema de therma y rapiducha",
+      "Tv LCD Con cable",
+      "Teléfono con discado directo",
+      "Internet WIFI"
+    ]
+  }
+]

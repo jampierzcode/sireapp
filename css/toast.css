@@ -1,0 +1,51 @@
+.toast-app {
+  position: relative;
+  transition: all 0.5s;
+  animation: showtoast 0.5s forwards;
+}
+.toast-app.warning::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background-color: #e68a00e6;
+  animation: toastDesc 3s forwards;
+}
+.toast-app.success::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background-color: #22c55e;
+  animation: toastDesc 3s forwards;
+}
+.toast-app.error::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background-color: #f42424e6;
+  animation: toastDesc 3s forwards;
+}
+@keyframes toastDesc {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 0%;
+  }
+}
+@keyframes showtoast {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(calc(-100% - 40px));
+  }
+}

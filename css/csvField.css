@@ -1,0 +1,64 @@
+.container-asignedTables.md-hidden {
+  display: none;
+}
+.container-asignedTables {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  border: 1px solid #ececec;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.group-asiggned {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ececec;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.group-asiggned .ofDate {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.group-asiggned .toDate {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.group-asiggned .toDate select {
+  width: 100%;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #fff;
+}
+/* file data file */
+.main-file.md-hidden {
+  display: none;
+}
+.main-file {
+  background-color: #fff;
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.main-file p {
+  text-align: center;
+}
+.main-file .upload-file {
+  max-width: 500px;
+  background-color: #ececec;
+}
+.fieldSelect {
+  width: 100%;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #fff;
+}

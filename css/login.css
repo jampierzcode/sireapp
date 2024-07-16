@@ -1,0 +1,103 @@
+.container-login {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("https://inmobiliare.com/himalaya/wp-content/webp-express/webp-images/uploads/2020/12/Perspectiva-del-Real-Estate-para-los-siguientes-meses-inmobiliare-2.jpg.webp");
+  background-position: center;
+  background-size: cover;
+  position: relative;
+  z-index: 1000;
+}
+
+.container-login::before {
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgb(233, 233, 233);
+  /*background: #f15539;*/
+  opacity: 0.95;
+}
+
+.form-login {
+  width: 500px;
+  padding: 80px 60px;
+  background: #fff;
+  position: relative;
+  z-index: 2000;
+}
+
+.form-login .header-form {
+  width: 100%;
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.form-login .header-form > img {
+  width: 150px;
+}
+
+.form-login .body-form {
+  width: 100%;
+  display: grid;
+  gap: 30px;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.form-login .body-form .group-date {
+  width: 100%;
+  display: flex;
+  border-radius: 20px;
+  background: #ececec;
+  overflow: hidden;
+  padding: 0px 10px;
+  position: relative;
+}
+
+.form-login .body-form .group-date > ion-icon {
+  height: auto;
+  font-size: 20px;
+  padding: 0px 10px;
+  color: #858585;
+}
+
+.form-login .body-form .group-date > input {
+  width: 100%;
+  padding: 10px 15px;
+  border-style: none;
+  background: transparent;
+  color: #000;
+  font-size: 14px;
+}
+.form-login .body-form .group-date .view-password {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  color: #242424;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  font-size: 14px;
+  border: 1px solid #000;
+  background-color: #fff;
+
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.form-login .body-form .btn-submit {
+  padding: 12px 24px;
+  /* background: rgb(48 60 157); */
+  background: rgb(243 41 68);
+  color: #fff;
+  border-style: none;
+  border-radius: 20px;
+  cursor: pointer;
+}

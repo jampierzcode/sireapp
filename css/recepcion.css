@@ -1,0 +1,144 @@
+.search-piso-habs {
+  width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.search-piso-habs > h1 {
+  font-size: 20px;
+  font-weight: 700;
+}
+.search-piso-habs > select {
+  padding: 8px 10px;
+  border: 0px;
+  font-size: 14px;
+}
+
+/* LIST HABITACIONES */
+.list-habitaciones {
+  width: 100%;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+}
+@media screen and (max-width: 1238px) {
+  .list-habitaciones {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media screen and (max-width: 890px) {
+  .list-habitaciones {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media screen and (max-width: 598px) {
+  .list-habitaciones {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+.list-habitaciones .card-habs {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.card-habs .body-card {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.card-habs .body-card > ion-icon {
+  font-size: 40px;
+  color: #fff;
+}
+.card-habs .body-card > h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+.card-habs .body-card > span {
+  font-size: 14px;
+  display: block;
+  font-weight: 700;
+  color: #fff;
+  padding: 10px 0px;
+}
+.card-habs .footer-card {
+  background: rgba(0, 0, 0, 0.2);
+}
+.card-habs.bg-disponible {
+  background: rgb(36, 182, 133);
+}
+.card-habs.bg-ocupado {
+  background: #fe6262;
+}
+.card-habs.bg-limpieza {
+  background: #3d319a;
+}
+.card-habs.bg-salida {
+  background: #f4a942;
+}
+
+.footer-card > a {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+  cursor: pointer;
+
+  padding: 5px 20px;
+}
+.footer-card > p {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+  cursor: no-drop;
+
+  padding: 5px 20px;
+}
+.footer-card > .footer-content {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+
+  padding: 5px 20px;
+}
+.footer-card span {
+  width: 100%;
+  font-size: 16px;
+  font-weight: 400;
+}
+.footer-card .footer-content ion-icon {
+  font-size: 30px;
+  background: #00000065;
+
+  cursor: pointer;
+}
+
+.task-msg {
+  width: max-content;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 20px;
+  background: #fff;
+  color: #10dc60;
+  font-size: 14px;
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(calc(-100% - 100px));
+  transition: all 0.5s;
+}
+.task-msg.show-task {
+  transform: translateX(-50%) translateY(0) !important;
+}

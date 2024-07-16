@@ -1,0 +1,47 @@
+.title-simple-hab{
+    margin-bottom: 30px !important;
+    color: #000954;
+}
+
+.section.container{
+    padding: 120px 0px;
+}
+.swiper.habitacion-select .swiper-slide>img{
+    height: 500px;
+}
+ .swiper.habitacion-point .swiper-slide>img{
+    height: 100px;
+}
+.swiper-slide>img{
+    width: 100%;
+    object-fit: cover;
+}
+.formulario {
+    width: 500px;
+    border-radius: 4px;
+    padding: 20px;
+    background-color: #eff2fd;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .box-input > input, .box-input > select {
+      width: 100%;
+    padding: 12px 20px;
+    border: none;
+  }
+  .btn-submit{
+      background-color: rgb(48 60 157);
+      color: #fff;
+      border-radius: 4px;
+  }
+  .response-email{
+      width: 100%;
+      display: none;
+      padding: 10px 20px;
+  }
+  .response-email.sucess{
+      display: flex;
+      background-color: rgb(10 202 118 / 62%);
+      color: rgb(2, 72, 46);
+  }

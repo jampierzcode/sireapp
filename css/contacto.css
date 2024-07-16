@@ -1,0 +1,52 @@
+.form-contacto {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 0% 20%;
+}
+
+.form-contacto .form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-contacto .form-body .input-list {
+    gap: 20px;
+}
+
+.form-contacto .form-body .item-input {
+    padding: 12px 24px;
+    font-size: 18px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    width: 100%;
+    border: 1px solid #3d3f465e;
+    border-radius: 12px;
+    background-color: #fff;
+}
+
+.form-contacto .footer-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-contacto .footer-form .btn-form {
+    border: none;
+    padding: 12px 24px;
+    border-radius: 13px;
+    background-color: rgb(48 60 157);
+    color: #fff;
+    font-size: 18px;
+}
+
+.btn-porta {
+    background-color: rgb(27 155 55) !important;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px !important;
+}

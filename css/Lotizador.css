@@ -1,0 +1,230 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: Poppins;
+}
+button {
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#map1,
+#map2 {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+}
+.containerLotizador {
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ececec;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  z-index: 10000;
+}
+.containerLotizador .btnOptions {
+  cursor: pointer;
+  background-color: #000;
+  color: #fff;
+}
+.contentCreated {
+  position: relative;
+}
+.contentCreated .createdZone {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: calc(100% + 20px + 30px);
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ececec;
+  width: 300px;
+  max-width: 400px;
+  box-shadow: 0px 6px 14px -8px #5b5b5b;
+}
+.carrito {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.carrito #listCarrito {
+  height: 200px;
+  overflow-y: auto;
+}
+.contentCreated .createdZone.active {
+  display: flex;
+  flex-direction: column;
+}
+.formCreated {
+  width: 100%;
+  position: relative;
+}
+.closeForm {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: max-content;
+}
+.closeForm button {
+  display: inline-block;
+}
+.formCreated .bodyForm {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.formCreated .cardGroup {
+  width: 100%;
+  font-size: 14px;
+}
+.formCreated .cardGroup input {
+  width: 100%;
+  padding: 10px;
+}
+/* controladores */
+.leaflet-bar {
+  border: none !important;
+  overflow: hidden !important;
+}
+.leaflet-control-zoom-in {
+  background: #310ecd !important;
+  border: none !important;
+  border-style: none !important;
+  color: #fff !important;
+}
+/* .leaflet-draw-edit-edit {
+  background: #f5cf00 !important;
+  border: none !important;
+  border-style: none !important;
+  color: #393737 !important;
+} */
+
+/* LOTES LISTA */
+.containerLotes {
+  z-index: 10000;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ececec;
+  width: 250px;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+.container-loteActual {
+  z-index: 10000;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ececec;
+  width: 300px;
+  position: fixed;
+  top: 40px;
+  right: 20px;
+  max-height: max-content;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+.status {
+  display: inline-block;
+  padding: 10px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 10px;
+}
+.status.sinpublicar {
+  background-color: #575757;
+}
+.status.disponible {
+  background-color: #71bf44;
+}
+.status.separado {
+  background-color: #e8db49;
+  color: #000 !important;
+}
+.status.ocupado {
+  background-color: #ff0000;
+}
+.container-loteActual .listDetail {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+.containerLotes h3 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+.containerLotes .listLotes {
+  height: 500px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.listLotes .dragSquare {
+  border: 2px dashed #ececec;
+  background-color: transparent;
+  display: inline-flex;
+  height: max-content;
+  color: #575757 !important;
+}
+.listLotes .dragSquare:hover {
+  border-color: #575757;
+  cursor: pointer;
+  transition: ease-in 0.5s;
+}
+.listLotes .dragSquare.active {
+  border-color: #575757;
+  cursor: pointer;
+  transition: ease-in 0.5s;
+}
+.footerForm {
+  margin-top: 30px;
+}
+.showCarrito.active {
+  background-color: #de6800 !important;
+  animation: blink 1s infinite;
+}
+.container-estado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.container-edit-status {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+.container-edit-status.md-hidden {
+  display: none;
+}
+.container-edit-status select {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  box-shadow: 0px 0px 10px 0px #ececec;
+}
+@keyframes blink {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

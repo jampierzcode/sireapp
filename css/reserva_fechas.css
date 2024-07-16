@@ -1,0 +1,66 @@
+.container_fechas {
+  width: 100%;
+  padding: 20px 200px;
+  margin-top: -100px;
+  position: relative;
+  z-index: 4000;
+}
+.block-reservas {
+  width: 100%;
+  padding: 40px 40px;
+  background: #fff;
+  display: grid;
+
+  align-items: flex-end;
+  grid-template-columns: repeat(5, 1fr);
+  column-gap: 20px;
+  box-shadow: 4px -1px 17px -10px #000;
+}
+.date-row {
+  width: 100%;
+}
+.date-row > span {
+  display: block;
+  margin-bottom: 20px;
+  color: #5b5b5b;
+  font-size: 16px;
+  font-weight: 700;
+}
+.date-row > .input_date {
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+
+.date-row > .input_date > ion-icon {
+  display: block;
+  height: auto;
+  background: #ececec;
+  color: #5b5b5b;
+  padding: 10px 15px;
+  font-size: 20px;
+}
+.date-row > .input_date > input {
+  width: 100%;
+  border: 1px solid #ececec;
+  background: transparent;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-family: "Lato", sans-serif;
+}
+.date-row > .input_date > button {
+  width: 100%;
+  background: #c99c07;
+  color: #fff;
+  padding: 15px 20px;
+  border-style: none;
+  height: auto;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  border-radius: 25px;
+}
+button > ion-icon {
+  margin-right: 10px;
+}

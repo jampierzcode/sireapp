@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lotizador</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css"
+    />
+    <link rel="stylesheet" href="../../css/Lotizador.css" />
+  </head>
+  <body>
+    <div id="map1"></div>
+    <!-- <div id="map2"></div> -->
+    <div class="containerLotizador">
+      <div class="contentCreated">
+        <button id="creaCotizacion" class="btnLotizador">
+          Crear Poligono +
+        </button>
+        <div class="createdZone">
+          <h3>Crear poligono</h3>
+          <p style="font-size: 10px">El (.) es la separacion decimal</p>
+          <div class="formCreated">
+            <div class="bodyForm">
+              <div class="cardGroup">
+                <label for="">Ancho</label>
+                <input id="loteAncho" type="number" placeholder="0" />
+              </div>
+              <div class="cardGroup">
+                <label for="">Largo</label>
+                <input id="loteLargo" type="number" placeholder="0" />
+              </div>
+              <div class="cardGroup">
+                <label for="">Area</label>
+                <input id="loteArea" type="number" placeholder="0" />
+              </div>
+              <div class="cardGroup">
+                <label for="">Mz</label>
+                <input id="loteMz" type="text" placeholder="0" />
+              </div>
+              <div class="cardGroup">
+                <label for="">N Lote</label>
+                <input id="loteNumero" type="number" placeholder="0" />
+              </div>
+              <div class="cardGroup">
+                <label for="">Precio</label>
+                <input id="lotePrecio" type="number" placeholder="0" />
+              </div>
+            </div>
+            <div class="footerForm">
+              <button id="crearLote" class="btnLotizador">
+                Crear poligono
+              </button>
+            </div>
+          </div>
+          <div class="closeForm">
+            <button id="closeCreated" class="btnLotizador">X</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btnLotizador" onclick="agregarPoligonos()">
+        Guardar poligono
+      </button>
+      <button class="btnLotizador" onclick="copiarPoligono()">
+        Copiar Polígono
+      </button>
+    </div>
+    <div class="containerLotes">
+      <h3>Mis lotes</h3>
+      <div class="listLotes"></div>
+    </div>
+    <script src="../../js/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"
+    />
+    <script src="./lotizador.js"></script>
+  </body>
+</html>

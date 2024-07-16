@@ -1,0 +1,17 @@
+.select2-selection {
+  height: auto !important;
+  border: 0 !important;
+  background: #e5e7eb !important;
+}
+.select2-selection__rendered {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem !important;
+}
+.select2-selection__arrow {
+  bottom: 0 !important;
+}

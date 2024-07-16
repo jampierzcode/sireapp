@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tailwind CSS Sticky</title>
+
+    <!-- tailwin css -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Agrega el enlace al archivo CSS de Tailwind (asegúrate de tener la ruta correcta) -->
+    <link href="path/to/tailwind.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="container mx-auto">
+      <div class="p-4">
+        <h1 class="text-3xl font-bold mb-4">Ejemplo de posición sticky</h1>
+        <div class="sticky top-0 bg-white p-4 shadow">
+          <!-- Contenido del elemento sticky -->
+          <p>Este es un elemento con posición sticky.</p>
+          <p>
+            Se quedará pegado en la parte superior de la pantalla mientras se
+            hace scroll.
+          </p>
+        </div>
+        <!-- Contenido adicional que generará scroll -->
+        <div class="h-64 overflow-y-auto border mt-4 p-4">
+          <p>Contenido adicional que generará scroll.</p>
+          <!-- ... Contenido adicional ... -->
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

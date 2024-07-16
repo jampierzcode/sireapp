@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- tailwin css -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <title>Amenidades</title>
+    <style>
+      /* Agregamos estilos personalizados aquí */
+      .selected-icon {
+        border: 1px solid #38a169;
+        color: #38a169;
+      }
+
+      .eliminar-btn {
+        color: #e53e3e;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body class="p-4">
+    <!-- Botón para agregar amenidad -->
+    <button
+      id="btnAgregarAmenidad"
+      class="bg-blue-500 text-white px-4 py-2 rounded"
+    >
+      Agregar Amenidad
+    </button>
+
+    <!-- Modal para seleccionar icono -->
+    <div
+      id="modalIconos"
+      class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50"
+    >
+      <div class="bg-white max-w-[400px] mx-auto p-4 rounded shadow-lg">
+        <h2 class="text-xl mb-4">Selecciona un ícono</h2>
+        <div class="grid grid-cols-5 gap-4">
+          <!-- Se generan manualmente 4 botones con iconos de Ionicons -->
+          <button class="p-2 border rounded icono" data-icon="agua">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/agua.png"
+              alt="agua"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="luz">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/luz.png"
+              alt="luz"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="desague">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/desague.png"
+              alt="desague"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="carreteras">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/carreteras.png"
+              alt="carreteras"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="portico">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/portico.png"
+              alt="portico"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="pistas-afirmadas">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/pistas-afirmadas.png"
+              alt="pistas-afirmadas"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="parrilla">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/parrilla.png"
+              alt="parrilla"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="pistas">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/pistas.png"
+              alt="pistas"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="parques">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/parques.png"
+              alt="parques"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="jardin">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/jardin.png"
+              alt="jardin"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="areas-comunes">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/areas-comunes.png"
+              alt="areas-comunes"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="biodigestor">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/biodigestor.png"
+              alt="biodigestor"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="colegio">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/colegio.png"
+              alt="colegio"
+            />
+          </button>
+        </div>
+        <button
+          id="btnContinuarIconos"
+          class="mt-4 bg-green-500 text-white px-4 py-2 rounded"
+        >
+          Continuar
+        </button>
+      </div>
+    </div>
+    <!-- Nuevo modal para editar icono -->
+    <div
+      id="modalEditarIcono"
+      class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50"
+    >
+      <div class="bg-white p-4 max-w-[400px] mx-auto rounded shadow-lg">
+        <h2 class="text-xl mb-4">Selecciona un nuevo ícono</h2>
+        <div class="grid grid-cols-5 gap-4">
+          <!-- Se generan manualmente 4 botones con iconos de Ionicons -->
+          <button class="p-2 border rounded icono" data-icon="agua">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/agua.png"
+              alt="agua"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="luz">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/luz.png"
+              alt="luz"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="desague">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/desague.png"
+              alt="desague"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="carreteras">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/carreteras.png"
+              alt="carreteras"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="portico">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/portico.png"
+              alt="portico"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="pistas-afirmadas">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/pistas-afirmadas.png"
+              alt="pistas-afirmadas"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="parrilla">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/parrilla.png"
+              alt="parrilla"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="pistas">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/pistas.png"
+              alt="pistas"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="parques">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/parques.png"
+              alt="parques"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="jardin">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/jardin.png"
+              alt="jardin"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="areas-comunes">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/areas-comunes.png"
+              alt="areas-comunes"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="biodigestor">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/biodigestor.png"
+              alt="biodigestor"
+            />
+          </button>
+          <button class="p-2 border rounded icono" data-icon="colegio">
+            <img
+              class="w-full"
+              src="../../imagenes/amenidades/colegio.png"
+              alt="colegio"
+            />
+          </button>
+        </div>
+        <button
+          id="btnGuardarIconoEditado"
+          class="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Guardar Cambios
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal para ingresar nombre de amenidad -->
+    <div
+      id="modalNombreAmenidad"
+      class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50"
+    >
+      <div class="bg-white p-4 max-w-[400px] mx-auto rounded shadow-lg">
+        <h2 class="text-xl mb-4">Ingresa el nombre de la amenidad</h2>
+        <input
+          type="text"
+          id="inputNombreAmenidad"
+          class="border p-2 mb-4 w-full"
+        />
+        <button
+          id="btnGuardarAmenidad"
+          class="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Guardar Amenidad
+        </button>
+      </div>
+    </div>
+
+    <!-- Contenedor para mostrar amenidades -->
+    <div id="amenidadesContainer" class="mt-8">
+      <h2 class="text-2xl mb-4">Amenidades</h2>
+      <ul id="amenidadesList"></ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>

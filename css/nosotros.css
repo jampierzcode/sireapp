@@ -1,0 +1,62 @@
+.listing-detail{
+    width: 100%;
+    margin-top: -105px !important;
+    height: 105px;
+    padding: 0px 65px;
+    position: relative;
+    z-index: 1000;
+    background-color: #fff;
+}
+.row_qh{
+    max-width: 1110px;
+    padding: 40px;
+    margin: auto;
+}
+.container-listing{
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+.container-listing .item{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.item > img{
+    width: 30px;
+}
+.item .description-item{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 15px;
+}
+.item .description-item > p{
+    font-size: 14px !important;
+}
+/* new title index section */
+.section-name-index{
+    max-width: 600px;
+}
+.separator-title-section{
+    width: 35px;
+    background-color: rgb(48 60 157);
+    height: 3px;
+    border-radius: 25px;
+    display: block;
+}
+.btn-brochure{
+    margin-top: 30px;
+}
+.btn-info-qhawana{
+    width: max-content;
+    display: inline-block;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    border-radius: 30px;
+    background: rgb(48 60 157);
+    text-decoration: none !important;
+    color: #fff;
+    padding: 12px 24px;
+}
