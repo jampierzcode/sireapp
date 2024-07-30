@@ -74,9 +74,9 @@ $(document).ready(function () {
         render: function (data, type, row) {
           return `
                   <div class="flex-actions">
-                  <button target="_blank" keyClient="${data?.id}" id="restaurarClient" class="bg-green-600 text-white p-2 rounded-md flex items-center gap-2"><ion-icon name="arrow-back"></ion-icon> Restaurar</button>
-                  <button target="_blank" keyClient="${data?.id}" id="removeClient" class="btnJsvm danger"><ion-icon name="trash"></ion-icon></button>
-                  <button target="_blank" keyClient="${data?.id}" id="historialCliente" class="btnJsvm normal">Historial</button>
+                  <button target="_blank" keyClient="${data?.id_cliente}" id="restaurarClient" class="bg-green-600 text-white p-2 rounded-md flex items-center gap-2"><ion-icon name="arrow-back"></ion-icon> Restaurar</button>
+                  <button target="_blank" keyClient="${data?.id_cliente}" id="removeClient" class="btnJsvm danger"><ion-icon name="trash"></ion-icon></button>
+                  <button target="_blank" keyClient="${data?.id_cliente}" id="historialCliente" class="btnJsvm normal">Historial</button>
                   
                   
                   </div>
@@ -232,6 +232,7 @@ $(document).ready(function () {
       "../../controlador/UsuarioController.php",
       { funcion, cliente },
       (response) => {
+        console.log(cliente);
         console.log(response);
         if (response.trim() === "no-data") {
           alert("no hay registro alguno, porfavor cree uno");

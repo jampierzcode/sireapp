@@ -94,7 +94,19 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                             </div>
                             <div class="mb-6">
                                 <label for="origen" class="block mb-2 text-sm font-medium text-gray-900">Medio Contactado</label>
-                                <input type="text" id="origen-lead" placeholder="ejm: Facebook, Instagram, Capacitaciones, etc." class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:text-white" />
+
+                                <select class="bg-white border border-gray-300 text-gray-900 text-[12px] rounded-lg  block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:border-blue-500" name="" id="origen-lead">
+                                    <option value="0">Seleccionar Origen</option>
+                                    <option value="Facebook Ads">Facebook Ads</option>
+                                    <option value="Marketplace">Marketplace</option>
+                                    <option value="WhatsApp">WhatsApp</option>
+                                    <option value="Messenger">Messenger</option>
+                                    <option value="Tiktok">Tiktok</option>
+                                    <option value="Instagram">Instagram</option>
+                                    <option value="Llamada">Llamada</option>
+                                    <option value="Prospección">Prospección</option>
+                                    <option value="otro">otro</option>
+                                </select>
                             </div>
                             <div class="mb-6">
                                 <label for="campania" class="block mb-2 text-sm font-medium text-gray-900">Campaña</label>

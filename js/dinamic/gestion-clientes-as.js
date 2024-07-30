@@ -1114,6 +1114,7 @@ $(document).ready(async function () {
       await buscar_clientes();
       await encontrar_ventas();
       animarProgress();
+      showSeguimientoCliente(cliente, status);
     }
   });
   $(document).on("click", "#asistenciaNot", async function () {
@@ -1128,6 +1129,7 @@ $(document).ready(async function () {
       await completarTask(task);
       await register_visita_agenda(task, cliente, status);
       await encontrar_ventas();
+      showSeguimientoCliente(cliente, status);
     }
   });
   async function completarTask(id_task) {
@@ -1162,10 +1164,13 @@ $(document).ready(async function () {
   }
 
   $(document).on("click", "#completarTask", function () {
+    let id_cliente = $(this).attr("keyClient");
+    let status = $(this).attr("statusClient");
     let id_task = $(this).attr("keyTask");
     let confirmado = confirm("Esta seguro de completar actividad");
     if (confirmado) {
       completarTask(id_task);
+      showSeguimientoCliente(id_cliente, status);
     }
   });
   encontrar_ventas();
@@ -2295,7 +2300,7 @@ $(document).ready(async function () {
     $("#crear-event").removeClass("md-hidden");
     setTimeout(function () {
       $("#crear-event .form-create").addClass("modal-show");
-    }, 10);
+    }, 300);
   }
 
   $(document).on("click", "#registerSeguimiento", function () {
@@ -2313,7 +2318,7 @@ $(document).ready(async function () {
     $("#crear-event").removeClass("md-hidden");
     setTimeout(function () {
       $("#crear-event .form-create").addClass("modal-show");
-    }, 10);
+    }, 300);
 
     // seguimiento_cliente(observacion, id_cliente, status);
   });

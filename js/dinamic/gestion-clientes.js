@@ -216,10 +216,25 @@ $(document).ready(async function () {
         render: function (data, type, row) {
           return `
           <div class="flex-actions">
-          <button target="_blank" keyTask="${data.id_task}" keyTaskStatus="${data.task_status}" keySede="${data.sede_id}" keyClient="${data?.id_cliente}" id="asignedClient" class="btnJsvm default"><ion-icon name="add-circle-sharp"></ion-icon></button>
-          <button target="_blank" keyClient="${data?.id_cliente}" id="editClient" class="btnJsvm normal"><ion-icon name="create-sharp"></ion-icon></button>
-           
-          <button target="_blank" keyClient="${data?.id_cliente}" id="historialCliente" class="btnJsvm normal">Historial</button>
+          <button target="_blank" keyTask="${data.id_task}" keyTaskStatus="${
+            data.task_status
+          }" keySede="${data.sede_id}" keyClient="${
+            data?.id_cliente
+          }" id="asignedClient" class="btnJsvm default"><ion-icon name="add-circle-sharp"></ion-icon></button>
+          <button target="_blank" keyClient="${
+            data?.id_cliente
+          }" id="editClient" class="btnJsvm normal"><ion-icon name="create-sharp"></ion-icon></button>
+           <button target="_blank" ${
+             data.asignado_usuario === "No asignado" ? "" : "disabled"
+           } keyClient="${data?.id_cliente}" id="removeClient" keyAsignado="${
+            data.asignado_usuario === "No asignado"
+              ? "no"
+              : data.asignado_usuario
+          }" class="btnJsvm danger"><ion-icon name="trash"></ion-icon></button>
+             
+          <button target="_blank" keyClient="${
+            data?.id_cliente
+          }" id="historialCliente" class="btnJsvm normal">Historial</button>
            
           </div>
 
@@ -310,7 +325,38 @@ $(document).ready(async function () {
     await buscar_clientes();
     filtrarProyectos();
   });
+  $(document).on("click", "#removeClient", function () {
+    let asignado = $(this).attr("keyAsignado");
+    if (asignado !== "no") {
+      add_toast(
+        "warning",
+        "El asesor debe liberar a este cliente, para poder archivarlo"
+      );
+    } else {
+      let id_cliente = $(this).attr("keyClient");
+      idCliente = id_cliente;
+      let funcion = "archived_cliente_asesor";
+      const confirmed = confirm("Estas seguro de archivar al cliente?");
+      if (confirmed) {
+        $.post(
+          "../../controlador/UsuarioController.php",
+          { funcion, id_cliente },
+          async (response) => {
+            if (response.trim() === "archived-user-cliente") {
+              alert("Se archivo correctamente");
+              await buscar_clientes();
+              filtrarProyectos();
+              animarProgress();
+            } else {
+              alert("Ocurrio un error, contacta al administrador");
+            }
+          }
+        );
+      }
+    }
 
+    // seguimiento_cliente(observacion, id_cliente, status);
+  });
   $("#status-evento").on("change", function (e) {
     let tipo = e.target.value;
     if (
@@ -562,7 +608,9 @@ $(document).ready(async function () {
     });
   }
   function compareDatesDesc(a, b) {
-    return dayjs(b.created_cliente).diff(dayjs(a.created_cliente));
+    return dayjs(b.fecha_creation + " " + b.hora_creation).diff(
+      dayjs(a.fecha_creation + " " + a.hora_creation)
+    );
   }
   // BUSCAR CLIENTES
   function imprimirStatus(status) {
@@ -677,9 +725,12 @@ $(document).ready(async function () {
     // console.log(e);
     // console.log("hola");
     let template = "";
+    let sede_id = $("#sede-lead").val();
+    let proyectos = proyectosList.filter((p) => p.sede_id === sede_id);
+    console.log(proyectos);
     template += `<option value="0">Seleccione un proyecto</option>`;
-    proyectosList.forEach((proyecto) => {
-      template += `<option value="${proyecto.id}">${proyecto.nombreProyecto}</option>`;
+    proyectos.forEach((proyecto) => {
+      template += `<option value="${proyecto.id}">${proyecto.nombre_proyecto}</option>`;
     });
     $("#editar-lead #proyecto-lead").html(template);
     $("#editar-lead").removeClass("md-hidden");
@@ -743,7 +794,7 @@ $(document).ready(async function () {
       $.post(
         "../../controlador/UsuarioController.php",
         { funcion, result, proyecto_id, cliente: idCliente },
-        (response) => {
+        async (response) => {
           console.log(response);
           const data = JSON.parse(response);
           console.log(data);
@@ -757,7 +808,8 @@ $(document).ready(async function () {
               $("#editar-lead .form-create").removeClass("modal-show");
             }, 1000);
             $("#editar-lead").addClass("md-hidden");
-            buscar_clientes();
+            await buscar_clientes();
+            filtrarProyectos();
 
             $("#editar-lead #nombre-lead").val("");
             $("#editar-lead #apellido-lead").val("");
