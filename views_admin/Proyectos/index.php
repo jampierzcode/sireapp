@@ -209,6 +209,36 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                         <button class="p-2 border-[1px] rounded icono" data-icon="colegio">
                             <img class="w-full" src="../../imagenes/amenidades/colegio.png" alt="colegio" />
                         </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="sunarp">
+                            <img class="w-full" src="../../imagenes/amenidades/sunarp.png" alt="sunarp" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="1">
+                            <img class="w-full" src="../../imagenes/amenidades/1.png" alt="1" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="2">
+                            <img class="w-full" src="../../imagenes/amenidades/2.png" alt="2" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="3">
+                            <img class="w-full" src="../../imagenes/amenidades/3.png" alt="3" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="4">
+                            <img class="w-full" src="../../imagenes/amenidades/4.png" alt="4" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="5">
+                            <img class="w-full" src="../../imagenes/amenidades/5.png" alt="5" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="6">
+                            <img class="w-full" src="../../imagenes/amenidades/6.png" alt="6" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="7">
+                            <img class="w-full" src="../../imagenes/amenidades/7.png" alt="7" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="8">
+                            <img class="w-full" src="../../imagenes/amenidades/8.png" alt="8" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="9">
+                            <img class="w-full" src="../../imagenes/amenidades/9.png" alt="9" />
+                        </button>
                     </div>
                     <div class="flex gap-3">
                         <button id="btnContinuarIconos" class="mt-4 bg-green-500 text-white px-4 py-2 rounded">
@@ -283,6 +313,36 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                         </button>
                         <button class="p-2 border-[1px] rounded icono-editar" data-icon="colegio">
                             <img class="w-full" src="../../imagenes/amenidades/colegio.png" alt="colegio" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono-editar" data-icon="sunarp">
+                            <img class="w-full" src="../../imagenes/amenidades/sunarp.png" alt="sunarp" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="1">
+                            <img class="w-full" src="../../imagenes/amenidades/1.png" alt="1" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="2">
+                            <img class="w-full" src="../../imagenes/amenidades/2.png" alt="2" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="3">
+                            <img class="w-full" src="../../imagenes/amenidades/3.png" alt="3" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="4">
+                            <img class="w-full" src="../../imagenes/amenidades/4.png" alt="4" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="5">
+                            <img class="w-full" src="../../imagenes/amenidades/5.png" alt="5" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="6">
+                            <img class="w-full" src="../../imagenes/amenidades/6.png" alt="6" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="7">
+                            <img class="w-full" src="../../imagenes/amenidades/7.png" alt="7" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="8">
+                            <img class="w-full" src="../../imagenes/amenidades/8.png" alt="8" />
+                        </button>
+                        <button class="p-2 border-[1px] rounded icono" data-icon="9">
+                            <img class="w-full" src="../../imagenes/amenidades/9.png" alt="9" />
                         </button>
                     </div>
                     <div class="flex gap-4">
@@ -360,6 +420,17 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                                 </div>
                             </div>
 
+                            <span class="text-sm block font-bold my-4">
+                                Link Google Maps
+                            </span>
+                            <div class="my-3 w-full">
+                                <input class="w-full bg-gray-200 rounded p-2" placeholder="Ingresa la url de la direccion de GoogleMaps" type="text" id="mapsUrlProyecto">
+
+                                <div id="viewbuttonsmaps" class="w-full hidden items-center flex gap-4">
+                                    <button class="bg-gray-100 text-gray-900 text-sm rounded p-3 border cursor-pointer" id="cancelarmaps">Cancelar</button>
+                                    <button class="bg-green-500 text-white text-sm rounded p-3 border cursor-pointer" id="savemaps">Guardar cambios</button>
+                                </div>
+                            </div>
                             <span class="text-sm block font-bold my-4">
                                 Video URL
                             </span>

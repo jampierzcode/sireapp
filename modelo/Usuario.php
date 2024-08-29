@@ -229,7 +229,8 @@ class Usuario
             $query->execute(array(":cliente" => $cliente, ":servicio" => $servicio));
             $permiso_id = $this->conexion->lastInsertId();
             $response[] = [
-                "msg" => "add-permiso", "permiso_id" => $permiso_id
+                "msg" => "add-permiso",
+                "permiso_id" => $permiso_id
             ];
         } catch (\Throwable $error) {
             $response[] = [
@@ -309,7 +310,8 @@ class Usuario
             return $this->mensaje;
         } catch (\Throwable $error) {
             $response[] = [
-                "msg" => "error", "error" => $error
+                "msg" => "error",
+                "error" => $error
             ];
             $this->mensaje = $response;
             return $this->mensaje;
@@ -1122,7 +1124,7 @@ class Usuario
     {
         // $sql = "SELECT PRO.id, PRO.nombreProyecto as nombre_proyecto, PRO.logo, PRO.description, PRO.video_url, PRO.imgUrl as img_url, PRO.proyectStatus as proyect_status, USER.nombre as cliente_nombre, USER.apellido as cliente_apellido FROM user_proyect as USPRO inner join proyectos as PRO on USPRO.proyecto_id=PRO.id inner join usuario as USER on USPRO.user_id=USER.id_usuario WHERE USPRO.user_id=:id";
         //  actualizacion aqui
-        $sql = "SELECT PRO.id, PRO.nombreProyecto as nombre_proyecto, PRO.logo, PRO.description, PRO.video_url, PRO.imgUrl as img_url, PRO.proyectStatus as proyect_status, USSED.sede_id, s.direccion, s.ciudad, s.name_reference FROM proyectos PRO inner join proyecto_sede PROSED on PRO.id=PROSED.proyecto_id inner join user_sede USSED on PROSED.sede_id=USSED.sede_id inner join sede s on USSED.sede_id=s.id WHERE USSED.user_id=:id";
+        $sql = "SELECT PRO.id, PRO.nombreProyecto as nombre_proyecto, PRO.maps_url, PRO.logo, PRO.description, PRO.video_url, PRO.imgUrl as img_url, PRO.proyectStatus as proyect_status, USSED.sede_id, s.direccion, s.ciudad, s.name_reference FROM proyectos PRO inner join proyecto_sede PROSED on PRO.id=PROSED.proyecto_id inner join user_sede USSED on PROSED.sede_id=USSED.sede_id inner join sede s on USSED.sede_id=s.id WHERE USSED.user_id=:id";
         $query = $this->conexion->prepare($sql);
         $query->execute(array(":id" => $user));
         $this->datos = $query->fetchAll(); // retorna objetos o no
@@ -1403,7 +1405,8 @@ class Usuario
                     $proyect_id,
                     $cliente->fecha,
                     $cliente->hora,
-                    "NO CONTACTADO", $sede_id
+                    "NO CONTACTADO",
+                    $sede_id
                 );
 
                 if (!$stmt->execute($values)) {
@@ -1575,13 +1578,22 @@ class Usuario
                 $sql = "INSERT INTO usuario(nombre, apellido, dni, correo, phone_number, user, password, usuarioRol, createdBy, usuarioStatus) VALUES(:nombre, :apellido, :dni, :correo, :phone_number, :username, :password, :usuarioRol, :createdBy, :usuarioStatus)";
                 $query = $this->conexion->prepare($sql);
                 $query->execute(array(
-                    ":nombre" => $nombres, ':apellido' => $apellidos, ':dni' => $documento, ':correo' => $correo, ":phone_number" => $phone, ":username" => $username, ":password" => $password,
-                    ":usuarioRol" => $rol_id, ":createdBy" => $user, ":usuarioStatus" => 1
+                    ":nombre" => $nombres,
+                    ':apellido' => $apellidos,
+                    ':dni' => $documento,
+                    ':correo' => $correo,
+                    ":phone_number" => $phone,
+                    ":username" => $username,
+                    ":password" => $password,
+                    ":usuarioRol" => $rol_id,
+                    ":createdBy" => $user,
+                    ":usuarioStatus" => 1
                 ));
 
                 $usuarioId = $this->conexion->lastInsertId(); // Obtener el ID del usuario insertado
                 $response[] = [
-                    "msg" => "add-user", "usuario_id" => $usuarioId
+                    "msg" => "add-user",
+                    "usuario_id" => $usuarioId
                 ];
                 $this->conexion->commit(); // Confirmar la transacción
 
@@ -1589,7 +1601,8 @@ class Usuario
                 return $this->mensaje;
             } catch (\Throwable $error) {
                 $response[] = [
-                    "msg" => "error", "error" => $error
+                    "msg" => "error",
+                    "error" => $error
                 ];
                 $this->mensaje = $response;
                 return $this->mensaje;
@@ -1611,8 +1624,16 @@ class Usuario
                 $sql = "INSERT INTO usuario(nombre, apellido, dni, correo, phone_number, user, password, usuarioRol, createdBy, usuarioStatus) VALUES(:nombre, :apellido, :dni, :correo, :phone_number, :username, :password, :usuarioRol, :createdBy, :usuarioStatus)";
                 $query = $this->conexion->prepare($sql);
                 $query->execute(array(
-                    ":nombre" => $nombres, ':apellido' => $apellidos, ':dni' => $documento, ':correo' => $correo, ':phone_number' => $phone, ":username" => $username, ":password" => $password,
-                    ":usuarioRol" => 3, ":createdBy" => $user, ":usuarioStatus" => true
+                    ":nombre" => $nombres,
+                    ':apellido' => $apellidos,
+                    ':dni' => $documento,
+                    ':correo' => $correo,
+                    ':phone_number' => $phone,
+                    ":username" => $username,
+                    ":password" => $password,
+                    ":usuarioRol" => 3,
+                    ":createdBy" => $user,
+                    ":usuarioStatus" => true
                 )); // Confirmar la transacción
 
                 $this->mensaje = "add-user-asesor";
@@ -1698,7 +1719,8 @@ class Usuario
             return $this->mensaje;
         } catch (\Throwable $error) {
             $response[] = [
-                "msg" => "error", "error" => $error
+                "msg" => "error",
+                "error" => $error
             ];
             $this->mensaje = $response;
             return $this->mensaje;
@@ -1719,7 +1741,8 @@ class Usuario
             return $this->mensaje;
         } catch (\Throwable $error) {
             $response[] = [
-                "msg" => "error", "error" => $error
+                "msg" => "error",
+                "error" => $error
             ];
             $this->mensaje = $response;
             return $this->mensaje;
@@ -1779,6 +1802,28 @@ class Usuario
             return $this->mensaje;
         } catch (\Throwable $error) {
             $this->mensaje = "no-asigned-clientes" . $error;
+            return $this->mensaje;
+        }
+    }
+    function archived_multiple_clientes($data)
+    {
+        try {
+            # code...
+            $sql = "UPDATE cliente SET archived=1 WHERE id_cliente=?";
+            $query = $this->conexion->prepare($sql);
+            foreach ($data as $cliente) {
+                $values = array(
+                    $cliente->id,
+                );
+
+                if (!$query->execute($values)) {
+                    throw new Exception("Error al archivar cliente: " . implode(", ", $query->errorInfo()));
+                }
+            }
+            $this->mensaje = "archived-clientes";
+            return $this->mensaje;
+        } catch (\Throwable $error) {
+            $this->mensaje = "no-archived-clientes" . $error;
             return $this->mensaje;
         }
     }
@@ -2409,6 +2454,21 @@ class Usuario
             $sql = "UPDATE  proyectos SET description=:description WHERE id=:id";
             $query = $this->conexion->prepare($sql);
             $query->execute(array(":id" => $id, ":description" => $description));
+
+            $this->mensaje = "update-sucess";
+            return $this->mensaje;
+        } catch (\Throwable $error) {
+            $this->mensaje = "fatal_error " + $error;
+            return $this->mensaje;
+            //throw $th;
+        }
+    }
+    function subir_maps_proyect($id, $maps_url)
+    {
+        try {
+            $sql = "UPDATE  proyectos SET maps_url=:maps_url WHERE id=:id";
+            $query = $this->conexion->prepare($sql);
+            $query->execute(array(":id" => $id, ":maps_url" => $maps_url));
 
             $this->mensaje = "update-sucess";
             return $this->mensaje;

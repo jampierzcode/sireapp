@@ -25,8 +25,10 @@ $(document).ready(async function () {
   $(document).on("click", "#list-proyectos li", function (e) {
     let idProyecto = $(this).attr("key_proyecto");
     console.log(idProyecto);
+    console.log(proyectosList);
     if (idProyecto !== "Todos") {
-      let data = proyectosList.find((p) => p.id === idProyecto);
+      let data = proyectosList.find((p) => Number(p.id) === Number(idProyecto));
+      console.log(data)
       $("#span-proyecto").text(data.nombre_proyecto);
       $("#span-proyecto").attr("key_proyecto", idProyecto);
     } else {
@@ -439,6 +441,8 @@ $(document).ready(async function () {
       total_gastos -
       total_gastos_sede -
       total_comisiones;
+      let saldo_in_gast = total_ingresos - total_gastos
+    $("#saldo_in_gast").html(`S/${((saldo_in_gast * 100) / 100).toFixed(2)}`);
     $("#datosBusiness").html(template_business);
     $("#rendirTotal").html(`S/${((total_rendir * 100) / 100).toFixed(2)}`);
     $("#rendirTotalEfectivo").html(
@@ -836,12 +840,14 @@ $(document).ready(async function () {
   }
   $("#filter-sede").on("change", function (e) {
     let sede_id = e.target.value;
+    console.log(sede_id)
     llenar_proyectos_sede(sede_id);
     // filtrarProyectos();
   });
   function llenar_proyectos_sede(sede_id) {
     console.log(proyectosList);
-    let proyectos = proyectosList.filter((p) => p.sede_id === sede_id);
+    let proyectos = proyectosList.filter((p) => Number(p.sede_id) === Number(sede_id));
+    console.log(proyectos);
 
     let template = "";
     template += `

@@ -163,6 +163,7 @@ $(document).ready(async function () {
             console.log(proyecto);
             let nameProyecto = proyecto[0].nombreproyecto;
             let descriptionProyecto = proyecto[0].description;
+            let maps = proyecto[0].maps_url;
             let logo = proyecto[0].logo;
             let video = proyecto[0].video_url;
             // video url
@@ -174,6 +175,7 @@ $(document).ready(async function () {
             }
             $("#photo_proyect").attr("src", "../" + logo);
             $("#nameProyecto").text(nameProyecto);
+            $("#urlMaps").attr("href", maps);
             $("#descriptionProyecto").text(
               descriptionProyecto !== null && descriptionProyecto !== "null"
                 ? descriptionProyecto

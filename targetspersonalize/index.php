@@ -101,6 +101,11 @@
                                 <div class="gallery grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <!-- <h1 class="text-lg font-bold">Galeria</h1> -->
                                 </div>
+                                <p class="text-xl font-bold my-4 text-center w-full">Google Maps</p>
+                                <div class="flex justify-center flex-col items-center w-full">
+                                    <!-- <img src="../img/plano.png" alt="" class="w-[100px]"> -->
+                                    <a id="urlMaps" href="" target="_blank" class="px-4 py-4 text-white bg-[#310ecd] font-medium rounded">Ver en mapa</a>
+                                </div>
                                 <p class="text-xl font-bold my-4 text-center w-full">Lotización del proyecto</p>
                                 <div class="flex justify-center flex-col items-center w-full">
                                     <!-- <img src="../img/plano.png" alt="" class="w-[100px]"> -->

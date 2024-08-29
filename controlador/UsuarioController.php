@@ -185,6 +185,12 @@ if ($_POST["funcion"] == "add_user_cliente_asesor") {
     $usuario->add_user_cliente($data, $asesor, $fecha, $hora);
     echo $usuario->mensaje;
 }
+if ($_POST["funcion"] == "archived_multiple_clientes") {
+
+    $data = json_decode($_POST["ids_clientes"]);
+    $usuario->archived_multiple_clientes($data);
+    echo $usuario->mensaje;
+}
 // fin de seccion usuarios
 
 // SECTION DE RESERVAS
@@ -1441,6 +1447,13 @@ if ($_POST["funcion"] == "buscar_amenidades") {
         $jsonstring = json_encode($usuario->datos);
         echo $jsonstring;
     }
+}
+if ($_POST["funcion"] == "subir_maps_proyect") {
+    $id = $_POST["id"];
+    $maps_url = $_POST["maps_url"];
+    $usuario->subir_maps_proyect($id, $maps_url);
+
+    echo $usuario->mensaje;
 }
 if ($_POST["funcion"] == "subir_description_proyect") {
     $id = $_POST["id"];

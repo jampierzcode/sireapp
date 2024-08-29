@@ -1234,6 +1234,13 @@ $(document).ready(async function () {
       $("#asigned_usuarios_actions").removeClass("text-gray-700");
       $("#asigned_usuarios_actions").addClass("text-gray-200");
       $("#asigned_usuarios_actions").addClass("hover:bg-slate-100");
+      // boton archivar
+      $("#modal-lead-group-archived").attr("active", "false");
+      $("#modal-lead-group-archived").removeClass("cursor-pointer");
+      $("#modal-lead-group-archived").removeClass("hover:bg-slate-200");
+      $("#modal-lead-group-archived").removeClass("text-gray-700");
+      $("#modal-lead-group-archived").addClass("text-gray-200");
+      $("#modal-lead-group-archived").addClass("hover:bg-slate-100");
     } else {
       $("#asigned_usuarios_actions").attr("active", "true");
       $("#asigned_usuarios_actions").addClass("cursor-pointer");
@@ -1241,6 +1248,13 @@ $(document).ready(async function () {
       $("#asigned_usuarios_actions").addClass("text-gray-700");
       $("#asigned_usuarios_actions").removeClass("text-gray-200");
       $("#asigned_usuarios_actions").removeClass("hover:bg-slate-100");
+      // boton archivar
+      $("#modal-lead-group-archived").attr("active", "true");
+      $("#modal-lead-group-archived").addClass("cursor-pointer");
+      $("#modal-lead-group-archived").addClass("hover:bg-slate-200");
+      $("#modal-lead-group-archived").addClass("text-gray-700");
+      $("#modal-lead-group-archived").removeClass("text-gray-200");
+      $("#modal-lead-group-archived").removeClass("hover:bg-slate-100");
     }
 
     if (!expanded) {
@@ -1293,6 +1307,66 @@ $(document).ready(async function () {
             "modal-show"
           );
         }, 10);
+      } else {
+        add_toast("warning", "aun no ha seleccionado ningun cliente");
+      }
+    } else {
+      add_toast(
+        "warning",
+        "Algunos clientes cuentan con asignacion, revisar selecciones"
+      );
+    }
+  });
+  async function archived_multiple_clientes(clientes) {
+    let funcion = "archived_multiple_clientes";
+    return new Promise((resolve, reject) => {
+      $.post(
+        "../../controlador/UsuarioController.php",
+        {
+          funcion,
+          ids_clientes: JSON.stringify(clientes),
+        },
+        (response) => {
+          console.log(response);
+          resolve(response);
+        }
+      );
+    });
+  }
+  // archivas varios clientes sin asesor
+  $("#modal-lead-group-archived").click(async function () {
+    let active = $(this).attr("active");
+
+    console.log(active);
+    if (active === "true") {
+      var rows_selected = dataTable.column(0).checkboxes.selected();
+      if (rows_selected.length > 0) {
+        let confirmar = confirm("Esta seguro de archivas estos clientes?");
+
+        if (confirmar) {
+          let arrayClientes = [];
+          $.each(rows_selected, function (key, clienteId) {
+            const cliente = clientesList.find(
+              (e) => e.id_cliente === clienteId
+            );
+            arrayClientes.push({ id: cliente.id_cliente });
+            if (cliente.asignado_usuario !== "No asignado") {
+              bolCount = bolCount + 1;
+            }
+          });
+          console.log(arrayClientes);
+          const response = await archived_multiple_clientes(arrayClientes);
+          if (response.trim() === "archived-clientes") {
+            add_toast("success", "Se archivo correctamente a los clientes");
+            await buscar_clientes();
+            filtrarProyectos();
+          } else {
+            add_toast("error", "Ocurrio un error al archivar los clientes");
+            console.log(response);
+          }
+        }else{
+          add_toast("warning", "Operacion Cancelada")
+        }
       } else {
         add_toast("warning", "aun no ha seleccionado ningun cliente");
       }

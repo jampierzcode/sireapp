@@ -105,7 +105,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2) {
                                 </tr>
                             </tfoot>
                         </table>
-                        <h1 class="font-bold">GASTOS SEDE</h1>
+                        <h1 class="font-bold">GASTOS ADMIN</h1>
                         <table class="table-auto w-full mb-4">
                             <thead>
                                 <tr>
@@ -166,6 +166,8 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2) {
                                 </tr>
                             </tfoot>
                         </table>
+                        <h1 class="font-bold">Saldo de caja <span id="saldo_in_gast"></span></h1>
+
                         <p class="font-bold">Ganancias: <span class="inline-block text-lg" id="rendirTotal"></span></p>
                         <p class="font-normal">(Ingresos/Transacciones - Gastos - Comisiones)</p>
                         <p class="font-bold">Ganancias en efectivo: <span class="inline-block" id="rendirTotalEfectivo"></span></p>

@@ -8,6 +8,8 @@ $(document).ready(async function () {
   // url video variables
   var videoProyecto;
   var changevideoProyecto;
+  var mapsProyecto;
+  var changemapsProyecto;
   var proyectosList = [];
   var logoFile;
   var funcion = "";
@@ -440,6 +442,15 @@ $(document).ready(async function () {
       proyecto.video_url !== null && proyecto.video_url !== ""
         ? proyecto.video_url
         : "";
+    // maps module agregado recientemente
+    mapsProyecto =
+      proyecto.maps_url !== null && proyecto.maps_url !== ""
+        ? proyecto.maps_url
+        : "";
+    changemapsProyecto =
+      proyecto.maps_url !== null && proyecto.maps_url !== ""
+        ? proyecto.maps_url
+        : "";
     if (changevideoProyecto !== "") {
       let codigovideo = obtenerCodigoVideo(changevideoProyecto);
       let videosrc = construirURLDeEmbed(codigovideo);
@@ -451,6 +462,7 @@ $(document).ready(async function () {
     }
     $("#description-proyect").val(proyecto.description);
     $("#videoUrlProyecto").val(proyecto.video_url);
+    $("#mapsUrlProyecto").val(proyecto.maps_url);
     let resultado = fetchMultimediaProyecto(id);
     resultado
       .then((response) => {
@@ -504,6 +516,44 @@ $(document).ready(async function () {
           descriptionProyecto = valor;
           changedescriptionProyecto = valor;
           $("#viewbuttonsdescription").addClass("hidden");
+        } else {
+          console.log(response);
+        }
+      }
+    );
+  });
+  // cambios para maps del proyecto
+  $("#mapsUrlProyecto").on("change, keyup", function (e) {
+    let valor = e.target.value;
+    changemapsProyecto = valor;
+
+    if (mapsProyecto !== changemapsProyecto) {
+      $("#viewbuttonsmaps").removeClass("hidden");
+    } else {
+      $("#viewbuttonsmaps").addClass("hidden");
+    }
+  });
+  $("#cancelarmaps").click(function () {
+    $("#mapsUrlProyecto").val(mapsProyecto);
+    changemapsProyecto == mapsProyecto;
+
+    $("#viewbuttonsmaps").addClass("hidden");
+  });
+  $("#savemaps").click(function () {
+    let valor = $("#mapsUrlProyecto").val();
+    let funcion = "subir_maps_proyect";
+    $.post(
+      "../../controlador/UsuarioController.php",
+      { funcion, id: idProyecto, maps_url: valor },
+      (response) => {
+        if (response.trim() === "update-sucess") {
+          add_toast(
+            "success",
+            "Se actualizo correctamente el link de Google maps del proyecto"
+          );
+          mapsProyecto = valor;
+          changemapsProyecto = valor;
+          $("#viewbuttonsmaps").addClass("hidden");
         } else {
           console.log(response);
         }
