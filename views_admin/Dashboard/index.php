@@ -237,6 +237,45 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                 <div class="overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
                     <div class="w-full p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
                         <div class="flex items-center justify-between mb-4">
+                            <h5 class="text-lg font-bold leading-none text-gray-900 dark:text-white">Reporte</h5>
+
+                        </div>
+                        <div class="w-full max-w-[500px]">
+                            <div class="flex gap-4 flex-start mb-4">
+                                <p>Proyecto</p>
+                                <div class="p-2 bg-[#310ecd] text-white font-bold text-sm rounded-full">Buenos aires</div>
+                            </div>
+                            <div class="flex flex-col items-center justify-center mb-4">
+
+                                <img class="rounded-full" src="../../img/avatar_default.jpg" alt="">
+                                <p>Nombre del asesor</p>
+                            </div>
+                            <div id="fechas" class=" flex gap-2 justify-center">
+                                Del
+                                <div class="flex">
+                                    <b>10 Junio del 2024</b>
+                                </div>
+                                al
+                                <div class="flex">
+                                    <b>10 Junio del 2024</b>
+                                </div>
+                            </div>
+                            <div class="h-[2px] bg-gray-100"></div>
+                            <!-- Contenedor del gráfico -->
+                            <div id="containerTotalLeads" class="w-full">
+                            </div>
+                            <div id="leadGrafico" style="height:400px;"></div>
+                            <div id="resultadosLeads"></div>
+
+                            <div class="h-[2px] bg-gray-100"></div>
+                        </div>
+                        <div class="flex gap-4 overflow-x-auto w-full mb-4" id="allAsesoresResumesn"></div>
+
+                    </div>
+                </div>
+                <div class="overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
+                    <div class="w-full p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+                        <div class="flex items-center justify-between mb-4">
 
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mb-4" id="allAsesoresResumen">

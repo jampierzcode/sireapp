@@ -1122,4 +1122,174 @@ $(document).ready(async function () {
       $("#listAsesores").html(template);
     }
   });
+  function crear_grafico(data2) {
+    // Tu array de objetos
+    const data = [
+      { categoria: "Facebook Ads", cantidad: 5 },
+      { categoria: "WhatsApp", cantidad: 8 },
+      { categoria: "Marketplace", cantidad: 12 },
+      { categoria: "Messenger", cantidad: 3 },
+      { categoria: "Tiktok", cantidad: 7 },
+      { categoria: "Instagram", cantidad: 6 },
+      { categoria: "Llamada", cantidad: 4 },
+      { categoria: "Otro", cantidad: 2 },
+    ];
+
+    // Extraer categorías y cantidades
+    const categorias = data.map((item) => item.categoria);
+    const cantidades = data.map((item) => item.cantidad);
+
+    // Inicializar el gráfico en el contenedor
+    var myChart = echarts.init(document.getElementById("leadGrafico"));
+
+    // Configuración del gráfico
+    var option = {
+      title: {
+        text: "Leads Captados por Tipo Origen",
+      },
+      tooltip: {},
+      xAxis: {
+        type: "category",
+        data: categorias,
+        axisLabel: {
+          interval: 0, // Mostrar todas las etiquetas
+          rotate: 30, // Rotar etiquetas para evitar solapamientos
+        },
+      },
+      yAxis: {
+        type: "value",
+      },
+      series: [
+        {
+          name: "Leads",
+          type: "bar",
+          data: cantidades,
+          itemStyle: {
+            color: "#310ecd",
+          },
+        },
+      ],
+    };
+
+    // Mostrar el gráfico
+    myChart.setOption(option);
+  }
+  function crear_grafico_totales() {
+    // Simulación de datos obtenidos de la base de datos
+    const data = [
+      {
+        categoria: "Facebook Ads",
+        cantidad: 10,
+        visitas: 7,
+        separaciones: 3,
+        ventas: 1,
+      },
+      {
+        categoria: "WhatsApp",
+        cantidad: 15,
+        visitas: 10,
+        separaciones: 5,
+        ventas: 3,
+      },
+      {
+        categoria: "Marketplace",
+        cantidad: 8,
+        visitas: 5,
+        separaciones: 2,
+        ventas: 2,
+      },
+      {
+        categoria: "Messenger",
+        cantidad: 7,
+        visitas: 4,
+        separaciones: 1,
+        ventas: 0,
+      },
+      {
+        categoria: "Tiktok",
+        cantidad: 12,
+        visitas: 8,
+        separaciones: 3,
+        ventas: 2,
+      },
+      {
+        categoria: "Instagram",
+        cantidad: 9,
+        visitas: 6,
+        separaciones: 2,
+        ventas: 1,
+      },
+      {
+        categoria: "Llamada",
+        cantidad: 6,
+        visitas: 4,
+        separaciones: 1,
+        ventas: 1,
+      },
+      {
+        categoria: "Otro",
+        cantidad: 3,
+        visitas: 2,
+        separaciones: 0,
+        ventas: 0,
+      },
+    ];
+
+    // Calcular el total de leads
+    const totalLeads = data.reduce((sum, item) => sum + item.cantidad, 0);
+
+    // Calcular el total de visitas, separaciones y ventas
+    const totalVisitas = data.reduce((sum, item) => sum + item.visitas, 0);
+    const totalSeparaciones = data.reduce(
+      (sum, item) => sum + item.separaciones,
+      0
+    );
+    const totalVentas = data.reduce((sum, item) => sum + item.ventas, 0);
+
+    // Calcular los porcentajes
+    const porcentajeVisitas = ((totalVisitas / totalLeads) * 100).toFixed(0);
+    const porcentajeSeparaciones = (
+      (totalSeparaciones / totalLeads) *
+      100
+    ).toFixed(0);
+    const porcentajeVentas = ((totalVentas / totalLeads) * 100).toFixed(0);
+
+    // Datos para el gráfico
+    const categorias = ["Visitas", "Separacion", "Ventas"];
+    const porcentajes = [
+      porcentajeVisitas,
+      porcentajeSeparaciones,
+      porcentajeVentas,
+    ];
+    const resultados = [totalVisitas, totalSeparaciones, totalVentas];
+
+    // Referencia al contenedor del gráfico
+    const chartContainer = document.getElementById("resultadosLeads");
+    console.log(chartContainer);
+    $("#containerTotalLeads").html(
+      ` <p class="p-2 bg-gray-200">Leads Captados: <span><b>${totalLeads} leads</b></span></p>`
+    );
+
+    // Crear y agregar elementos del gráfico
+    categorias.forEach((categoria, index) => {
+      const barContainer = document.createElement("div");
+      barContainer.className = "mb-4";
+
+      const label = document.createElement("div");
+      label.className = "text-gray-700 mb-2 text-sm font-bold";
+      label.textContent = `${categoria}: ${resultados[index]} leads`;
+
+      const bar = document.createElement("div");
+      bar.className = "bg-[#5e3def] h-8 rounded text-white flex justify-center";
+      bar.style.width = `${porcentajes[index]}%`;
+      const textBar = document.createElement("p");
+      textBar.textContent = `${porcentajes[index]}%`;
+      barContainer.appendChild(label);
+      bar.appendChild(textBar);
+      barContainer.appendChild(bar);
+      chartContainer.appendChild(barContainer);
+    });
+  }
+  crear_grafico("hola");
+  crear_grafico_totales();
 });
