@@ -1990,6 +1990,21 @@ class Usuario
             //throw $th;
         }
     }
+    function buscar_leads_subidos_by_asesores($user)
+    {
+        try {
+            $sql = "SELECT c.* FROM cliente c JOIN usuario u ON c.createdBy = u.id_usuario JOIN user_business ub ON u.id_usuario = ub.user_id JOIN business b ON ub.business_id = b.id WHERE ub.business_id IN ( SELECT ub.business_id FROM user_business ub WHERE ub.user_id = :id_usuario ) AND c.fecha_creation BETWEEN '2024-01-01' AND '2024-09-30' AND c.createdBy!=:id_usuario AND u.usuarioRol=3;";
+            $query = $this->conexion->prepare($sql);
+            $query->execute(array(":id_usuario" => $user));
+            $this->datos = $query->fetchAll(); // retorna objetos o no
+
+            return $this->datos;
+        } catch (\Throwable $error) {
+            $this->mensaje = "fatal_error";
+            return $this->mensaje;
+            //throw $th;
+        }
+    }
     function buscar_clientes_validar($user)
     {
         try {

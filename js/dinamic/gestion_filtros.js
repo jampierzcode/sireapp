@@ -1122,7 +1122,22 @@ $(document).ready(async function () {
       $("#listAsesores").html(template);
     }
   });
-  function crear_grafico(data2) {
+  async function buscar_leads_subidos_by_asesores() {
+    return new Promise((resolve, reject) => {
+      let funcion = "buscar_leads_subidos_by_asesores";
+      $.post(
+        "../../controlador/UsuarioController.php",
+        { funcion },
+        (response) => {
+          let data = JSON.parse(response);
+          resolve(data);
+        }
+      );
+    });
+  }
+  async function crear_grafico() {
+    const data_leads = await buscar_leads_subidos_by_asesores();
+    console.log(data_leads);
     // Tu array de objetos
     const data = [
       { categoria: "Facebook Ads", cantidad: 5 },
@@ -1290,6 +1305,6 @@ $(document).ready(async function () {
       chartContainer.appendChild(barContainer);
     });
   }
-  crear_grafico("hola");
+  await crear_grafico();
   crear_grafico_totales();
 });

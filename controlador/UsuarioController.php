@@ -1233,6 +1233,14 @@ if ($_POST["funcion"] == "buscar_clientes") {
         echo $jsonstring;
     }
 }
+// buscar_leads_subidos_by_asesores
+
+if ($_POST["funcion"] == "buscar_leads_subidos_by_asesores") {
+    $user = $_SESSION["id_usuario"]; //ID ADMIN
+    $usuario->buscar_leads_subidos_by_asesores($user);
+    $jsonstring = json_encode($usuario->datos);
+    echo $jsonstring;
+}
 if ($_POST["funcion"] == "buscar_clientes_validar") {
     $json = array();
     $user = $_SESSION["id_usuario"];

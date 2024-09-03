@@ -73,6 +73,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
             <!-- <span class="route mt-6">
                 Trabajo de asesores
             </span> -->
+
             <div class="grid gap-4 w-full">
 
                 <div class="md:z-[1000] top-0 md:sticky md:top-[-40px] bg-[#f5f7fb]">
@@ -176,8 +177,11 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                         </div>
                     </div>
                 </div>
+                <span class="text-xl font-bold text-gray-800 mt-6">
+                    Estadisticas CRM
+                </span>
 
-                <div class="overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
+                <!-- <div class="overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
                     <div class="w-full p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
                         <div class="flex items-center justify-between mb-4">
                             <h5 class="text-lg font-bold leading-none text-gray-900 dark:text-white">Cuadro de Eficiencia</h5>
@@ -233,12 +237,11 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                             </ul>
                         </div>
                     </div>
-                </div>
-                <div class="overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
+                </div> -->
+                <!-- <div class="overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
                     <div class="w-full p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
                         <div class="flex items-center justify-between mb-4">
                             <h5 class="text-lg font-bold leading-none text-gray-900 dark:text-white">Reporte</h5>
-
                         </div>
                         <div class="w-full max-w-[500px]">
                             <div class="flex gap-4 flex-start mb-4">
@@ -261,16 +264,238 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                                 </div>
                             </div>
                             <div class="h-[2px] bg-gray-100"></div>
-                            <!-- Contenedor del gráfico -->
-                            <div id="containerTotalLeads" class="w-full">
+                            <h1 class="text-lg font-bold my-4 w-full text-center bg-gray-800 text-white">Analisis por leads subidos</h1>
+                            <div id="containerTotalLeads" class="w-full my-4">
                             </div>
                             <div id="leadGrafico" style="height:400px;"></div>
                             <div id="resultadosLeads"></div>
 
                             <div class="h-[2px] bg-gray-100"></div>
+                            <h1 class="text-lg font-bold my-4 w-full text-center bg-gray-800 text-white">Analisis de eventos totales</h1>
+
+                            <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                CONTACTAR
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                NO RESPONDIO
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                NO INTERESADO
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                VISITAS NO CONCRETADAS
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                SEPARACIONES
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                VENTAS
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                         <div class="flex gap-4 overflow-x-auto w-full mb-4" id="allAsesoresResumesn"></div>
 
+                    </div>
+                </div> -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+                    <div class="col-span-2 overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
+                        <div class="w-full p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+
+                            <div class="w-full">
+
+                                <div class="h-[2px] bg-gray-100"></div>
+                                <!-- Contenedor del gráfico -->
+                                <h1 class="text-lg font-bold my-4 w-full text-center bg-gray-800 text-white">Analisis por leads subidos</h1>
+                                <div class="flex gap-5 my-4">
+
+                                    <div class="flex flex-col items-center justify-center mb-4">
+
+                                        <img class="rounded-full w-16 h-16 object-cover" src="../../img/avatar_default.jpg" alt="">
+                                        <p class="text-sm font-bold text-gray-800">Nombre del asesor</p>
+                                    </div>
+                                    <div class="flex flex-col items-center justify-center mb-4">
+
+                                        <img class="rounded-full w-16 h-16 object-cover" src="../../img/avatar_default.jpg" alt="">
+                                        <p class="text-sm font-bold text-gray-800">Nombre del asesor</p>
+                                    </div>
+                                </div>
+                                <div id="containerTotalLeads" class="w-full my-4">
+                                </div>
+                                <div id="leadGrafico" style="height:400px;"></div>
+                                <div id="resultadosLeads"></div>
+
+                                <div class="h-[2px] bg-gray-100"></div>
+
+                            </div>
+                            <div class="flex gap-4 overflow-x-auto w-full mb-4" id="allAsesoresResumesn"></div>
+
+                        </div>
+                    </div>
+                    <div class="overflow-hidden flex flex-wrap md:flex-nowrap gap-4 h-max">
+                        <div class="w-full p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+                            <h1 class="text-lg font-bold my-4 w-full text-center bg-gray-800 text-white">Analisis de eventos totales</h1>
+                            <div class="flex gap-5 my-4">
+
+                                <div class="flex flex-col items-center justify-center mb-4">
+
+                                    <img class="rounded-full w-16 h-16 object-cover" src="../../img/avatar_default.jpg" alt="">
+                                    <p class="text-sm font-bold text-gray-800">Nombre del asesor</p>
+                                </div>
+                                <div class="flex flex-col items-center justify-center mb-4">
+
+                                    <img class="rounded-full w-16 h-16 object-cover" src="../../img/avatar_default.jpg" alt="">
+                                    <p class="text-sm font-bold text-gray-800">Nombre del asesor</p>
+                                </div>
+                            </div>
+                            <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-black text-white inline-block w-max">
+                                                CONTACTAR
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-yellow-400 text-white inline-block w-max">
+                                                NO RESPONDIO
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-orange-600 text-white inline-block w-max">
+                                                NO INTERESADO
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-green-600 text-white inline-block w-max">
+                                                VISITAS NO CONCRETADAS
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-green-800 text-white inline-block w-max">
+                                                SEPARACIONES
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-[#310ecd] text-white inline-block w-max">
+                                                VENTAS
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-span-2 overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
+
+                        <div class="w-full p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+                            <h1 class="text-lg font-bold my-4 w-full text-center bg-gray-800 text-white">Total leads Asignados</h1>
+                            <div class="flex items-center justify-between mb-4">
+
+                            </div>
+
+                            <div class="w-full p-3 border-gray-200 border-2">
+                                <h5 class="mb-8 text-lg font-bold leading-none text-gray-900 dark:text-white">Leads Asignados</h5>
+
+                                <div id="leads-no-subidos" class="w-full border-gray-200 rounded border-1" style="height:400px;"></div>
+                            </div>
+
+
+                        </div>
                     </div>
                 </div>
                 <div class="overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
@@ -294,13 +519,14 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                     </div>
                 </div>
 
+
                 <!-- <div class="w-full md:w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
 
 
                 </div> -->
 
-                <span class="route mt-6">
-                    Visitas de trafico al lotizador
+                <span class="text-xl font-bold text-gray-800 mt-6">
+                    Estadisticas Lotizador
                 </span>
                 <div class="flex gap-4">
                     <div class="w-full md:w-1/3 max-w-md p-1 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
