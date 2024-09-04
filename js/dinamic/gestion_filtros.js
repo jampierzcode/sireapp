@@ -24,7 +24,26 @@ $(document).ready(async function () {
   }
   function pintar_asesores(sede_id) {
     let asesores = asesoresArray.filter((a) => a.sede_id === sede_id);
+    $("#asesor-search").attr("keyasesor", "Todos");
+    $("#asesor-search span").text("Comparar Todos");
     let template = "";
+    template += `
+          <li id="selectAsesor" keyAsesor= "Todos" class="py-3 px-4 sm:py-4 cursor-pointer hover:bg-gray-100">
+            <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0">
+                    <img class="w-8 h-8 rounded-full" src="https://t3.ftcdn.net/jpg/02/99/06/22/360_F_299062215_VpZk4Ng8h5JpPWsBblyiVEWfAFwESfon.jpg" alt="Neil image">
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                        Comparar
+                        </p>
+                        <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                        Todos
+                    </p>
+                </div>
+            </div>
+        </li>
+    `;
     asesores.forEach((asesor) => {
       template += `
       <li id="selectAsesor" keyAsesor= "${asesor.id_usuario}" class="py-3 px-4 sm:py-4 cursor-pointer hover:bg-gray-100">
@@ -89,7 +108,6 @@ $(document).ready(async function () {
     // filtrarProyectos();
   });
   function llenar_proyectos_sede(sede_id) {
-    console.log(proyectosList);
     let proyectos = proyectosList.filter((p) => p.sede_id === sede_id);
 
     let template = "";
@@ -113,7 +131,7 @@ $(document).ready(async function () {
   var proyectos = await buscar_proyectos();
   var sedes = await buscar_sedes_by_usuario();
   var asesores = await buscar_asesores();
-  console.log(asesores);
+
   pintar_sedes(sedes);
   semanaGrafico();
   // pintar_asesores();
@@ -155,22 +173,21 @@ $(document).ready(async function () {
     });
   }
   $("#refresh_date_visitas").click(function () {
+    $("#asesor-search").attr("keyAsesor", "Todos");
+    $("#asesor-search span").html("Comparar Todos");
     semanaGrafico();
-    $("#asesor-search").removeAttr("keyAsesor");
-    $("#asesor-search span").html("Seleccione un asesor");
   });
   function pintar_grafico(fecha_inicio, fecha_fin) {
     let sede_id = $("#filter-sede").val();
-    console.log(sede_id);
+
     let usuario = $("#asesor-search").attr("keyAsesor");
     let proyecto = $("#span-proyecto").attr("key_proyecto");
-    console.log(usuario);
+
     if (usuario === "Todos") {
       // let funcion = "buscar_resumen_eficiencia_group_asesor";
       let funcion = "buscar_clientes_rendimiento_group_asesor";
       let asesores = asesoresArray.filter((a) => a.sede_id === sede_id);
 
-      console.log(asesores);
       $.post(
         "../../controlador/UsuarioController.php",
         {
@@ -706,13 +723,11 @@ $(document).ready(async function () {
   }
 
   function getStartOfWeek(date) {
-    console.log(dayjs(date).startOf("week"));
     return dayjs(date).startOf("week").add(1, "day").format("YYYY-MM-DD");
   }
 
   // Función para obtener la fecha de fin (domingo) de la semana actual
   function getEndOfWeek(date) {
-    console.log(dayjs(date).endOf("week"));
     return dayjs(date).endOf("week").add(1, "day").format("YYYY-MM-DD");
   }
   function semanaGrafico() {
@@ -729,12 +744,6 @@ $(document).ready(async function () {
     pintar_grafico(fechaInicioSemana, fechaFinSemana);
     leads_subidos(fechaInicioSemana, fechaFinSemana);
     leads_asignados(fechaInicioSemana, fechaFinSemana);
-
-    console.log(
-      "Fecha de inicio de la semana actual (lunes):",
-      fechaInicioSemana
-    );
-    console.log("Fecha de fin de la semana actual (domingo):", fechaFinSemana);
   }
   $(".icon-filter").on("click", function () {
     $(".icon-filter").toggleClass("rotate-180");
@@ -750,11 +759,12 @@ $(document).ready(async function () {
     let idProyecto = $(this).attr("key_proyecto");
     console.log(idProyecto);
     if (idProyecto !== "Todos") {
-      let data = proyectosList.find((p) => p.id === idProyecto);
-      $("#span-proyecto").text(data.nombreProyecto);
+      let data = proyectosList.find((p) => Number(p.id) === Number(idProyecto));
+      console.log(data);
+      $("#span-proyecto").text(data.nombre_proyecto);
       $("#span-proyecto").attr("key_proyecto", idProyecto);
     } else {
-      $("#span-proyecto").text("Todos");
+      $("#span-proyecto").text("Todos los proyectos");
       $("#span-proyecto").attr("key_proyecto", "Todos");
     }
     $("#list-proyectos").addClass("invisible");
@@ -787,7 +797,16 @@ $(document).ready(async function () {
     // let usuario = $("#asesor-search").attr("keyAsesor");
     // console.log(usuario);
     let sede_id = $("#filter-sede").val();
-    let asesores = asesoresArray.filter((a) => a.sede_id === sede_id);
+
+    let usuario = $("#asesor-search").attr("keyAsesor");
+    let proyecto = $("#span-proyecto").attr("key_proyecto");
+
+    let asesores;
+    if (usuario === "Todos") {
+      asesores = asesoresArray.filter((a) => a.sede_id === sede_id);
+    } else {
+      asesores = asesoresArray.filter((a) => a.id_usuario === usuario);
+    }
 
     let funcion = "buscar_group_clientes_fecha";
     $.post(
@@ -817,6 +836,7 @@ $(document).ready(async function () {
           "#F3A43B",
         ];
         let data = [];
+        let clientes;
         if (response.trim() === "no-register-clientes") {
           asesores.forEach((asesor) => {
             let newData = {
@@ -825,13 +845,14 @@ $(document).ready(async function () {
             };
             data.push(newData);
           });
+          clientes = [];
         } else {
-          var clientes = JSON.parse(response);
+          clientes = JSON.parse(response);
+
           asesores.forEach((asesor) => {
             const dataclientes = clientes.filter(
-              (c) => c.usuario_id === asesor.id_usuario
+              (c) => c.createdby === asesor.id_usuario
             );
-            console.log(dataclientes);
             let newData = {
               nombre: asesor.nombre + " " + asesor.apellido,
               valor: dataclientes.length,
@@ -839,6 +860,18 @@ $(document).ready(async function () {
             data.push(newData);
           });
         }
+        var totalLeadsCaptados = clientes.length;
+        $("#containerTotalLeads").html(
+          ` <p class="p-2 bg-gray-200">Total Leads Captados: <span><b>${totalLeadsCaptados} leads</b></span></p>`
+        );
+        crear_grafico(clientes);
+        var top1 = data.reduce((max, d) => {
+          return d.valor > max.valor ? d : max;
+        }, data[0]);
+        $("#top1leadssubidos").html(
+          `<p class="text-sm my-4 font-bold">Top 1: ${top1.nombre} : ${top1.valor} leads </p>`
+        );
+        // leads totales
 
         // Configura los datos para el gráfico de barras
         var nombresAsesores = data.map(function (item) {
@@ -851,46 +884,45 @@ $(document).ready(async function () {
         // Opciones del gráfico
         option = {
           tooltip: {
-            trigger: "axis",
-            axisPointer: {
-              type: "shadow",
-            },
+            trigger: "item",
           },
           legend: {
-            data: nombresAsesores,
+            top: "5%",
+            left: "center",
           },
-          grid: {
-            left: "3%",
-            right: "4%",
-            bottom: "3%",
-            containLabel: true,
-          },
-          xAxis: {
-            type: "category",
-            // Deja el eje X vacío porque no necesitamos etiquetas en este caso
-            data: [],
-          },
-          yAxis: {
-            type: "value",
-          },
-          series: data.map(function (asesor, index) {
-            return {
-              name: asesor.nombre,
-              type: "bar",
-              data: [{ value: asesor.valor, name: asesor.nombre }],
+          series: [
+            {
+              name: "Leads Subidos",
+              type: "pie",
+              radius: ["30%", "50%"],
+              avoidLabelOverlap: false,
               itemStyle: {
-                // Configura colores para cada serie
-                color: coloresSeries[index],
+                borderRadius: 10,
+                borderColor: "#fff",
+                borderWidth: 2,
               },
               label: {
                 show: true,
-                position: "top",
-                formatter: function (params) {
-                  return params.value + " leads";
+                position: "center",
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  fontSize: 12,
+                  fontWeight: "bold",
                 },
               },
-            };
-          }),
+              labelLine: {
+                show: true,
+              },
+              data: data.map(function (asesor, index) {
+                return {
+                  value: asesor.valor,
+                  name: `${asesor.nombre}`,
+                };
+              }),
+            },
+          ],
         };
 
         option && myChartSubidos.setOption(option);
@@ -1046,6 +1078,8 @@ $(document).ready(async function () {
   });
   $("#search-asesor-input").on("keyup search", function () {
     let name = $(this).val().toLowerCase();
+    let sede_id = $("#filter-sede").val();
+    let asesoresfilter = asesoresArray.filter((a) => a.sede_id === sede_id);
     let template = "";
     template += `
           <li id="selectAsesor" keyAsesor= "Todos" class="py-3 px-4 sm:py-4 cursor-pointer hover:bg-gray-100">
@@ -1064,7 +1098,7 @@ $(document).ready(async function () {
             </div>
         </li>`;
     if (name === "") {
-      asesoresArray.forEach((asesor) => {
+      asesoresfilter.forEach((asesor) => {
         template += `
               <li id="selectAsesor" keyAsesor= "${asesor.id_usuario}" class="py-3 px-4 sm:py-4 cursor-pointer hover:bg-gray-100">
               <div class="flex items-center space-x-4">
@@ -1085,8 +1119,7 @@ $(document).ready(async function () {
 
       $("#listAsesores").html(template);
     } else {
-      console.log(asesoresArray);
-      let asesores = asesoresArray.filter((persona) => {
+      let asesores = asesoresfilter.filter((persona) => {
         const nombreCompleto = `${persona.nombre} ${persona.apellido}`;
         // console.log(nombreCompleto.toLowerCase().includes(name));
         return nombreCompleto.toLowerCase().includes(name);
@@ -1135,20 +1168,20 @@ $(document).ready(async function () {
       );
     });
   }
-  async function crear_grafico() {
-    const data_leads = await buscar_leads_subidos_by_asesores();
-    console.log(data_leads);
+  async function crear_grafico(clientes) {
+    // const data_leads = await buscar_leads_subidos_by_asesores();
+    // console.log(data_leads);
+    const conteoOrígenes = clientes.reduce((acc, cliente) => {
+      const origen = cliente.origen;
+      acc[origen] = (acc[origen] || 0) + 1;
+      return acc;
+    }, {});
+
+    const data = Object.keys(conteoOrígenes).map((origen) => {
+      return { categoria: origen, cantidad: conteoOrígenes[origen] };
+    });
+    console.log(data);
     // Tu array de objetos
-    const data = [
-      { categoria: "Facebook Ads", cantidad: 5 },
-      { categoria: "WhatsApp", cantidad: 8 },
-      { categoria: "Marketplace", cantidad: 12 },
-      { categoria: "Messenger", cantidad: 3 },
-      { categoria: "Tiktok", cantidad: 7 },
-      { categoria: "Instagram", cantidad: 6 },
-      { categoria: "Llamada", cantidad: 4 },
-      { categoria: "Otro", cantidad: 2 },
-    ];
 
     // Extraer categorías y cantidades
     const categorias = data.map((item) => item.categoria);
@@ -1160,7 +1193,7 @@ $(document).ready(async function () {
     // Configuración del gráfico
     var option = {
       title: {
-        text: "Leads Captados por Tipo Origen",
+        text: "Leads Captados por Origen",
       },
       tooltip: {},
       xAxis: {
@@ -1187,6 +1220,7 @@ $(document).ready(async function () {
     };
 
     // Mostrar el gráfico
+
     myChart.setOption(option);
   }
   function crear_grafico_totales() {
@@ -1281,9 +1315,6 @@ $(document).ready(async function () {
     // Referencia al contenedor del gráfico
     const chartContainer = document.getElementById("resultadosLeads");
     console.log(chartContainer);
-    $("#containerTotalLeads").html(
-      ` <p class="p-2 bg-gray-200">Leads Captados: <span><b>${totalLeads} leads</b></span></p>`
-    );
 
     // Crear y agregar elementos del gráfico
     categorias.forEach((categoria, index) => {
@@ -1305,6 +1336,5 @@ $(document).ready(async function () {
       chartContainer.appendChild(barContainer);
     });
   }
-  await crear_grafico();
   crear_grafico_totales();
 });

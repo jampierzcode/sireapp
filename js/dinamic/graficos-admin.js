@@ -1,6 +1,5 @@
 $(document).ready(function () {
   buscar_visitas();
-  console.log("cargo");
   var rangoMaximo = "#03a9f3";
   var rangoMinimo = "#310ecd";
   function generarColorHexadecimal() {
@@ -48,7 +47,6 @@ $(document).ready(function () {
           // $("#mychart").html(template);
         } else {
           const usuarios = JSON.parse(response);
-          console.log(usuarios);
           let labels = [];
           let datosValid = [];
           let suma = 0;
@@ -108,7 +106,6 @@ $(document).ready(function () {
           for (let i = 0; i < datos.labels.length; i++) {
             color = generarColorHexadecimal();
             arrayColores.push(color);
-            console.log(arrayColores);
           }
         }
         var config2 = {
@@ -137,7 +134,6 @@ $(document).ready(function () {
             },
           },
         };
-        console.log(config2);
         var ctx2 = document.getElementById("circleVisitas").getContext("2d");
         var myChart2 = new Chart(ctx2, config2);
       }

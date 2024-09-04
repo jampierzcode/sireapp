@@ -362,7 +362,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                                 <div class="h-[2px] bg-gray-100"></div>
                                 <!-- Contenedor del gráfico -->
                                 <h1 class="text-lg font-bold my-4 w-full text-center bg-gray-800 text-white">Analisis por leads subidos</h1>
-                                <div class="flex gap-5 my-4">
+                                <!-- <div class="flex gap-5 my-4">
 
                                     <div class="flex flex-col items-center justify-center mb-4">
 
@@ -374,7 +374,10 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                                         <img class="rounded-full w-16 h-16 object-cover" src="../../img/avatar_default.jpg" alt="">
                                         <p class="text-sm font-bold text-gray-800">Nombre del asesor</p>
                                     </div>
-                                </div>
+                                </div> -->
+                                <div id="leads-subidos" class="w-full bg-gray-100 border-gray-200 rounded border-1" style="height:400px;"></div>
+                                <div id="top1leadssubidos"></div>
+
                                 <div id="containerTotalLeads" class="w-full my-4">
                                 </div>
                                 <div id="leadGrafico" style="height:400px;"></div>
@@ -487,7 +490,6 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                             <div class="flex items-center justify-between mb-4">
 
                             </div>
-
                             <div class="w-full p-3 border-gray-200 border-2">
                                 <h5 class="mb-8 text-lg font-bold leading-none text-gray-900 dark:text-white">Leads Asignados</h5>
 
@@ -498,7 +500,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                         </div>
                     </div>
                 </div>
-                <div class="overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
+                <!-- <div class="overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
                     <div class="w-full p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
                         <div class="flex items-center justify-between mb-4">
 
@@ -517,7 +519,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                         </div>
 
                     </div>
-                </div>
+                </div> -->
 
 
                 <!-- <div class="w-full md:w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">

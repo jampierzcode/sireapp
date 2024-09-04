@@ -2052,7 +2052,7 @@ class Usuario
             $idUsuarios = array_map(function ($asesor) {
                 return $asesor->id_usuario;
             }, $asesores);
-            $sql = "SELECT c.nombres, c.apellidos, c.createdBy as usuario_id, c.proyet_id FROM cliente c WHERE 
+            $sql = "SELECT c.* FROM cliente c WHERE 
             c.createdBy IN (" . implode(',', $idUsuarios) . ")
             AND c.fecha_creation BETWEEN :fecha_inicio AND :fecha_fin;";
             $query = $this->conexion->prepare($sql);
