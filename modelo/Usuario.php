@@ -2005,6 +2005,35 @@ class Usuario
             //throw $th;
         }
     }
+    function buscar_eventos_by_asesores($fecha_inicio, $fecha_fin, $user)
+    {
+        try {
+            $sql = "SELECT rc.*, c.proyet_id
+                    FROM registro_contact rc
+                    inner join cliente c on rc.cliente_id=c.id_cliente
+                    JOIN usuario u ON rc.user_id = u.id_usuario
+                    JOIN user_business ub ON u.id_usuario = ub.user_id
+                    JOIN business b ON ub.business_id = b.id
+                    WHERE ub.business_id IN (
+                        SELECT ub.business_id 
+                        FROM user_business ub 
+                        WHERE ub.user_id = :id_usuario
+                    )
+                    AND u.usuarioRol = 3
+                    AND STR_TO_DATE(rc.fecha_register, '%d/%m/%Y') BETWEEN :fecha_inicio AND :fecha_fin;
+
+                    ";
+            $query = $this->conexion->prepare($sql);
+            $query->execute(array(":id_usuario" => $user, ":fecha_inicio" => $fecha_inicio, ":fecha_fin" => $fecha_fin));
+            $this->datos = $query->fetchAll(); // retorna objetos o no
+
+            return $this->datos;
+        } catch (\Throwable $error) {
+            $this->mensaje = "fatal_error";
+            return $this->mensaje;
+            //throw $th;
+        }
+    }
     function buscar_clientes_validar($user)
     {
         try {

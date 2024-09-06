@@ -177,12 +177,163 @@ $(document).ready(async function () {
     $("#asesor-search span").html("Comparar Todos");
     semanaGrafico();
   });
-  function pintar_grafico(fecha_inicio, fecha_fin) {
+  function buscar_eventos_asesores(fecha_inicio, fecha_fin) {
+    return new Promise((resolve, reject) => {
+      let funcion = "buscar_eventos_by_asesores";
+      $.post(
+        "../../controlador/UsuarioController.php",
+        { funcion, fecha_inicio, fecha_fin },
+        (response) => {
+          let data = JSON.parse(response);
+          resolve(data);
+        }
+      );
+    });
+  }
+  async function pintar_grafico(fecha_inicio, fecha_fin) {
     let sede_id = $("#filter-sede").val();
 
     let usuario = $("#asesor-search").attr("keyAsesor");
     let proyecto = $("#span-proyecto").attr("key_proyecto");
 
+    const eventos_asesores = await buscar_eventos_asesores(
+      fecha_inicio,
+      fecha_fin
+    );
+    let asesores;
+    let proyectosfilter;
+    // filter para usuarios all or one
+    if (usuario === "Todos") {
+      asesores = asesoresArray.filter((a) => a.sede_id === sede_id);
+    } else {
+      asesores = asesoresArray.filter((a) => a.id_usuario === usuario);
+    }
+    // filter para proyectos all or one
+    if (proyecto === "Todos") {
+      proyectosfilter = proyectosList.filter((p) => p.sede_id === sede_id);
+    } else {
+      proyectosfilter = proyectosList.filter(
+        (p) => p.id === proyecto && p.sede_id === sede_id
+      );
+    }
+    // Obtener un array con solo los id_usuario
+    const idsPermitidos = asesores.map((usuario) => usuario.id_usuario);
+    const proyectosIdsPermitidos = proyectosfilter.map((p) => p.id);
+    let filterData = eventos_asesores.filter((e) =>
+      idsPermitidos.includes(e.user_id)
+    );
+    let filterproyectData = filterData.filter((f) =>
+      proyectosIdsPermitidos.includes(f.proyet_id)
+    );
+
+    // status de registro
+    let contactado = filterproyectData.filter(
+      (f) => f.status === "CONTACTADO"
+    ).length;
+    let no_repondio = filterproyectData.filter(
+      (f) => f.status === "NO RESPONDIO"
+    ).length;
+    let no_interesado = filterproyectData.filter(
+      (f) => f.status === "NO INTERESADO"
+    ).length;
+    let visitas_concretadas = filterproyectData.filter(
+      (f) => f.status === "ASISTIO"
+    ).length;
+    let visitas_no_concretadas = filterproyectData.filter(
+      (f) => f.status === "NO ASISTIO"
+    ).length;
+    let template = "";
+    template += `
+    
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-black text-white inline-block w-max">
+                                                CONTACTAR
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${contactado}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-yellow-400 text-white inline-block w-max">
+                                                NO RESPONDIO
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${no_repondio}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-orange-600 text-white inline-block w-max">
+                                                NO INTERESADO
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${no_interesado}
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-green-600 text-white inline-block w-max">
+                                                VISITAS CONCRETADAS
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${visitas_concretadas}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-red-300 text-white inline-block w-max">
+                                                VISITAS NO CONCRETADAS
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${visitas_no_concretadas}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-green-800 text-white inline-block w-max">
+                                                SEPARACIONES
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-[#310ecd] text-white inline-block w-max">
+                                                VENTAS
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            ${0}
+                                        </div>
+                                    </div>
+                                </li>
+    `;
+    $("#listTotalesEventos").html(template);
+
+    return;
     if (usuario === "Todos") {
       // let funcion = "buscar_resumen_eficiencia_group_asesor";
       let funcion = "buscar_clientes_rendimiento_group_asesor";
@@ -802,11 +953,22 @@ $(document).ready(async function () {
     let proyecto = $("#span-proyecto").attr("key_proyecto");
 
     let asesores;
+    let proyectosfilter;
     if (usuario === "Todos") {
       asesores = asesoresArray.filter((a) => a.sede_id === sede_id);
     } else {
       asesores = asesoresArray.filter((a) => a.id_usuario === usuario);
     }
+    // filter para proyectos all or one
+    if (proyecto === "Todos") {
+      proyectosfilter = proyectosList.filter((p) => p.sede_id === sede_id);
+    } else {
+      proyectosfilter = proyectosList.filter(
+        (p) => p.id === proyecto && p.sede_id === sede_id
+      );
+    }
+    // Obtener un array con solo los id_usuario
+    const proyectosIdsPermitidos = proyectosfilter.map((p) => p.id);
 
     let funcion = "buscar_group_clientes_fecha";
     $.post(
@@ -849,18 +1011,23 @@ $(document).ready(async function () {
         } else {
           clientes = JSON.parse(response);
 
+          var totalLeadsCaptados = 0;
           asesores.forEach((asesor) => {
             const dataclientes = clientes.filter(
               (c) => c.createdby === asesor.id_usuario
             );
+            let filterproyectData = dataclientes.filter((f) =>
+              proyectosIdsPermitidos.includes(f.proyet_id)
+            );
+            totalLeadsCaptados += filterproyectData.length;
             let newData = {
               nombre: asesor.nombre + " " + asesor.apellido,
-              valor: dataclientes.length,
+              valor: filterproyectData.length,
             };
             data.push(newData);
           });
         }
-        var totalLeadsCaptados = clientes.length;
+
         $("#containerTotalLeads").html(
           ` <p class="p-2 bg-gray-200">Total Leads Captados: <span><b>${totalLeadsCaptados} leads</b></span></p>`
         );
@@ -871,16 +1038,6 @@ $(document).ready(async function () {
         $("#top1leadssubidos").html(
           `<p class="text-sm my-4 font-bold">Top 1: ${top1.nombre} : ${top1.valor} leads </p>`
         );
-        // leads totales
-
-        // Configura los datos para el gráfico de barras
-        var nombresAsesores = data.map(function (item) {
-          return item.nombre;
-        });
-        // var valoresAsesores = data.map(function (item) {
-        //   return item.valor;
-        // });
-
         // Opciones del gráfico
         option = {
           tooltip: {

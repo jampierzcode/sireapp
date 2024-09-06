@@ -1241,6 +1241,14 @@ if ($_POST["funcion"] == "buscar_leads_subidos_by_asesores") {
     $jsonstring = json_encode($usuario->datos);
     echo $jsonstring;
 }
+if ($_POST["funcion"] == "buscar_eventos_by_asesores") {
+    $user = $_SESSION["id_usuario"]; //ID ADMIN
+    $fecha_inicio = $_POST["fecha_inicio"]; //ID ADMIN
+    $fecha_fin = $_POST["fecha_fin"]; //ID ADMIN
+    $usuario->buscar_eventos_by_asesores($fecha_inicio, $fecha_fin, $user);
+    $jsonstring = json_encode($usuario->datos);
+    echo $jsonstring;
+}
 if ($_POST["funcion"] == "buscar_clientes_validar") {
     $json = array();
     $user = $_SESSION["id_usuario"];

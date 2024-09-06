@@ -86,17 +86,18 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                         </div> -->
                         <div id="menu-filtros-box" class="ease-in duration-300 w-full top-[105%] left-0 right-0 bg-white shadow-md p-4">
                             <div class="grid grid-cols-1 md:grid-cols-3  lg:grid-cols-6 gap-4">
-                                <div class="w-full">
-                                    <label class="text-sm" for="Sedes">Sedes</label>
-                                    <select id="filter-sede" class="block w-full p-2.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-blue-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                    </select>
-                                </div>
+
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-3  lg:grid-cols-6 gap-4">
-                                <div class="mb-4 h-max relative ">
+                                <div class="w-full h-max">
+                                    <label class="text-lg font-bold" for="Sedes">Sedes</label>
+                                    <select id="filter-sede" class="block w-full p-3 text-sm font-bold border border-gray-300 rounded-full bg-[#e9e4ff] text-[#5208dd]">
+                                    </select>
+                                </div>
+                                <div class="h-max relative ">
 
-                                    <label class="text-sm" for="Proyectos">Proyectos</label>
-                                    <div id="proyecto-active" class="flex items-center cursor-pointer shadow-md max-w-max px-4 py-3 bg-[#e9e4ff] rounded-full">
+                                    <label class="text-lg font-bold" for="Proyectos">Proyectos</label>
+                                    <div id="proyecto-active" class="w-full flex items-center justify-between cursor-pointer shadow-md px-4 py-3 bg-[#e9e4ff] rounded-full">
                                         <img src="" alt="">
                                         <p id="span-proyecto" key_proyecto="Todos" class="text-sm font-bold text-[#5208dd] whitespace-nowrap overflow-hidden overflow-ellipsis">Todos Los proyectos</p>
                                         <div class="icon-proyecto-down duration-300 flex items-center px-3 cursor-pointer text-[#5208dd]"><ion-icon name="chevron-down-outline"></ion-icon></div>
@@ -105,27 +106,33 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
 
                                     </ul>
                                 </div>
-                                <div class="h-auto flex items-center">
-                                    <select id="filter_static" class="block w-full p-2.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-blue-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                        <option class="py-3 px-2" value="0">Seleccione un filtro</option>
-                                        <option class="py-3 px-2" value="last-month">Ultimos 30 dias</option>
-                                        <option class="py-3 px-2" value="last-week">Hace 7 dias</option>
-                                    </select>
-                                </div>
-                                <div class="h-auto">
-                                    <label class="text-sm" for="Fecha Inicio">Fecha Inicio</label>
+
+                                <div class="h-max">
+                                    <label class="text-lg font-bold" for="Fecha Inicio">Fecha Inicio</label>
+
+
                                     <input type="date" id="fecha-inicio-search" class="block w-full p-2.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Buscar por nombre del asesor">
                                 </div>
-                                <div class="h-auto">
-                                    <label class="text-sm" for="Fecha Inicio">Fecha Termino</label>
-                                    <input type="date" id="fecha-fin-search" class="block w-full p-2.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Buscar por nombre del asesor">
+                                <div class="h-max">
+                                    <label class="text-lg font-bold" for="Fecha Inicio">Fecha Termino</label>
+                                    <div class="flex gap-2">
+                                        <input type="date" id="fecha-fin-search" class="block w-full p-2.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Buscar por nombre del asesor">
+                                        <div class="h-auto flex items-center">
+                                            <select id="filter_static" class="block w-full p-2 text-xs font-bold border border-gray-300 rounded-lg bg-[#e9e4ff] text-[#5208dd] ">
+                                                <option class="py-3 px-2" value="0"></option>
+                                                <!-- <option class="py-3 px-2" value="is-week">Esta semana</option> -->
+                                                <option class="py-3 px-2" value="last-month">Ultimos 30 dias</option>
+                                                <option class="py-3 px-2" value="last-week">Hace 7 dias</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="h-auto">
+                                <div class="h-max">
 
-                                    <label class="text-sm" for="Fecha Inicio">Asesor</label>
+                                    <label class="text-lg font-bold" for="Fecha Inicio">Asesor</label>
 
 
-                                    <div class="relative mb-6">
+                                    <div class="relative">
                                         <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                                             <ion-icon id="icon-drop-asesor" name="chevron-down"></ion-icon>
 
@@ -167,13 +174,13 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
 
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-end gap-2">
                                     <button id="search_date_visitas" type="button" class="text-white bg-[#310ecd] focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none">Buscar</button>
                                     <button id="refresh_date_visitas" type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Reset</button>
 
                                 </div>
                             </div>
-                            <span class="text-xs">El filtro funciona de acuerdo a un rango de fechas (con/sin) asesor</span>
+                            <!-- <span class="text-xs">El filtro funciona de acuerdo a un rango de fechas (con/sin) asesor</span> -->
                         </div>
                     </div>
                 </div>
@@ -406,80 +413,8 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                                     <p class="text-sm font-bold text-gray-800">Nombre del asesor</p>
                                 </div>
                             </div>
-                            <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-black text-white inline-block w-max">
-                                                CONTACTAR
-                                            </p>
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                            ${0}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-yellow-400 text-white inline-block w-max">
-                                                NO RESPONDIO
-                                            </p>
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                            ${0}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-orange-600 text-white inline-block w-max">
-                                                NO INTERESADO
-                                            </p>
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                            ${0}
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-green-600 text-white inline-block w-max">
-                                                VISITAS NO CONCRETADAS
-                                            </p>
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                            ${0}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-green-800 text-white inline-block w-max">
-                                                SEPARACIONES
-                                            </p>
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                            ${0}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white p-2 rounded-full bg-[#310ecd] text-white inline-block w-max">
-                                                VENTAS
-                                            </p>
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                            ${0}
-                                        </div>
-                                    </div>
-                                </li>
+                            <ul id="listTotalesEventos" role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                cargando...
                             </ul>
                         </div>
                     </div>
