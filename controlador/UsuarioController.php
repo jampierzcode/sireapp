@@ -1151,8 +1151,11 @@ if ($_POST["funcion"] == "add_visita_cliente") {
 if ($_POST["funcion"] == "register_venta") {
     $fecha = $_POST["fecha"];
     $cliente = $_POST["cliente"];
+    $status = $_POST["status"];
+    $lote_id = $_POST["lote_id"];
+    $precio_final = $_POST["precio_final"];
     $user = $id_usuario;
-    $usuario->register_venta($fecha, $cliente, $user);
+    $usuario->register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final);
     echo $usuario->mensaje;
 }
 if ($_POST["funcion"] == "add_cliente") {
@@ -1246,6 +1249,14 @@ if ($_POST["funcion"] == "buscar_eventos_by_asesores") {
     $fecha_inicio = $_POST["fecha_inicio"]; //ID ADMIN
     $fecha_fin = $_POST["fecha_fin"]; //ID ADMIN
     $usuario->buscar_eventos_by_asesores($fecha_inicio, $fecha_fin, $user);
+    $jsonstring = json_encode($usuario->datos);
+    echo $jsonstring;
+}
+if ($_POST["funcion"] == "buscar_ventas_by_asesores") {
+    $user = $_SESSION["id_usuario"]; //ID ADMIN
+    $fecha_inicio = $_POST["fecha_inicio"]; //ID ADMIN
+    $fecha_fin = $_POST["fecha_fin"]; //ID ADMIN
+    $usuario->buscar_ventas_by_asesores($fecha_inicio, $fecha_fin, $user);
     $jsonstring = json_encode($usuario->datos);
     echo $jsonstring;
 }

@@ -2302,8 +2302,27 @@ $(document).ready(async function () {
       $("#crear-event .form-create").addClass("modal-show");
     }, 300);
   }
-
-  $(document).on("click", "#registerSeguimiento", function () {
+  async function buscar_lotes_by_proyecto(id) {
+    return new Promise((resolve, reject) => {
+      let funcion = "buscar_lotes_by_proyecto";
+      $.post(
+        "../../controlador/UsuarioController.php",
+        { funcion, id_proyecto: id },
+        (response) => {
+          const data = response === false ? false : JSON.parse(response);
+          resolve(data);
+        }
+      );
+    });
+  }
+  var lotesListClientes = [];
+  // change loteslist del cliente
+  $("#lisLotesCliente").on("change", function (e) {
+    const lote_id = e.target.value;
+    const lote_encontrado = lotesListClientes.find((l) => l.id === lote_id);
+    $("#precio_final_lote_cliente").val(lote_encontrado.precio);
+  });
+  $(document).on("click", "#registerSeguimiento", async function () {
     let id_cliente = $(this).attr("keyClient");
     idCliente = id_cliente;
     let status = $(this).attr("statusClient");
@@ -2311,6 +2330,29 @@ $(document).ready(async function () {
     const result = clientesList.filter(
       (elemento) => elemento.id === id_cliente
     );
+    const lotes = await buscar_lotes_by_proyecto(result[0].proyecto_id);
+    console.log(lotes);
+    if (lotes !== false) {
+      lotesListClientes = lotes;
+      let template_lotes = "";
+      template_lotes += `
+    <option value="0" disabled selected>Seleccione un lote</option>
+    `;
+      lotes.forEach((l) => {
+        if (l.estado !== "DISPONIBLE" && l.estado !== "SIN PUBLICAR") {
+          template_lotes += `
+        <option disabled value="${l.id}">${l.estado} Lote ${l.numero} Mz:${l.mz_zona} Area: ${l.area}m2 Precio: ${l.precio}</option>
+        `;
+        } else {
+          template_lotes += `
+        <option value="${l.id}">${l.estado} Lote ${l.numero} Mz:${l.mz_zona} Area: ${l.area}m2 Precio: ${l.precio}</option>
+        `;
+        }
+      });
+      $("#lisLotesCliente").html(template_lotes);
+    } else {
+      lotesListClientes = [];
+    }
     $("#img-now-status").attr("src", "../../img/avatar_default.jpg");
     $("#name-now-status").html(result[0].nombres + " " + result[0].apellidos);
     $("#contact-now-status").html(result[0].celular);
@@ -2358,6 +2400,11 @@ $(document).ready(async function () {
       $("#addcalendar").addClass("hidden");
       $("#fecha_visita").addClass("hidden");
     }
+    if (tipo === "SEPARACION" || tipo === "VENTA") {
+      $("#sectionlotes").removeClass("hidden");
+    } else {
+      $("#sectionlotes").addClass("hidden");
+    }
   });
 
   async function verificarAuthorizeCalendar() {
@@ -2388,12 +2435,12 @@ $(document).ready(async function () {
       );
     });
   }
-  function register_venta(fecha, cliente) {
+  function register_venta(fecha, cliente, status, lote_id, precio_final) {
     return new Promise((resolve, reject) => {
       let funcion = "register_venta";
       $.post(
         "../../controlador/UsuarioController.php",
-        { funcion, fecha, cliente },
+        { funcion, fecha, cliente, status, lote_id, precio_final },
         (response) => {
           if (response.trim() === "add-register-venta") {
             add_toast("success", "Se registro correctamente la venta");
@@ -2417,8 +2464,7 @@ $(document).ready(async function () {
       if (
         status === "VISITA" ||
         status === "REPROGRAMACION CONTACTO" ||
-        status === "REPROGRAMACION VISITA" ||
-        status === "SEPARACION"
+        status === "REPROGRAMACION VISITA"
       ) {
         let pendiente = "PENDIENTE";
         let fecha = $("#date-visita").val();
@@ -2454,9 +2500,15 @@ $(document).ready(async function () {
             return;
           }
         }
-      } else if (status === "VENTA") {
-        let fecha = dayjs().format("YYYY-MM-DD");
-        await register_venta(fecha, idCliente);
+      } else if (status === "VENTA" || status === "SEPARACION") {
+        let lote_id = $("#lisLotesCliente").val();
+        let precio_final = $("#precio_final_lote_cliente").val();
+        if (Number(lote_id) !== 0) {
+          let fecha = dayjs().format("YYYY-MM-DD");
+          await register_venta(fecha, idCliente, status, lote_id, precio_final);
+        } else {
+          add_toast("warning", `Debes seleccionar un lote para la ${status}`);
+        }
       }
 
       await seguimiento_cliente(observaciones, idCliente, status);

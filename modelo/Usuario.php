@@ -1478,13 +1478,13 @@ class Usuario
             return $this->mensaje;
         }
     }
-    function register_venta($fecha, $cliente, $user)
+    function register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final)
     {
         try {
             # code...
-            $sql = "INSERT INTO ventas(cliente_id, user_id, fecha_venta, status) VALUES(:cliente, :usuario, :fecha, :status)";
+            $sql = "INSERT INTO ventas(cliente_id, user_id, fecha_venta, tipo, lote_id, precio, status) VALUES(:cliente, :usuario, :fecha, :tipo, :lote_id, :precio, :status)";
             $query = $this->conexion->prepare($sql);
-            $query->execute(array(":cliente" => $cliente, ":usuario" => $user, ":fecha" => $fecha, ":status" => "SEND_VALIDAR"));
+            $query->execute(array(":cliente" => $cliente, ":usuario" => $user, ":fecha" => $fecha, ":tipo" => $status, ":lote_id" => $lote_id, ":precio" => $precio_final, ":status" => "SEND_VALIDAR"));
 
             $this->mensaje = "add-register-venta";
             return $this->mensaje;
@@ -2021,6 +2021,35 @@ class Usuario
                     )
                     AND u.usuarioRol = 3
                     AND STR_TO_DATE(rc.fecha_register, '%d/%m/%Y') BETWEEN :fecha_inicio AND :fecha_fin;
+
+                    ";
+            $query = $this->conexion->prepare($sql);
+            $query->execute(array(":id_usuario" => $user, ":fecha_inicio" => $fecha_inicio, ":fecha_fin" => $fecha_fin));
+            $this->datos = $query->fetchAll(); // retorna objetos o no
+
+            return $this->datos;
+        } catch (\Throwable $error) {
+            $this->mensaje = "fatal_error";
+            return $this->mensaje;
+            //throw $th;
+        }
+    }
+    function buscar_ventas_by_asesores($fecha_inicio, $fecha_fin, $user)
+    {
+        try {
+            $sql = "SELECT v.*, c.proyet_id
+                    FROM ventas v
+                    inner join cliente c on v.cliente_id=c.id_cliente
+                    JOIN usuario u ON v.user_id = u.id_usuario
+                    JOIN user_business ub ON u.id_usuario = ub.user_id
+                    JOIN business b ON ub.business_id = b.id
+                    WHERE ub.business_id IN (
+                        SELECT ub.business_id 
+                        FROM user_business ub 
+                        WHERE ub.user_id = :id_usuario
+                    )
+                    AND u.usuarioRol = 3
+                    AND v.fecha_venta BETWEEN :fecha_inicio AND :fecha_fin;
 
                     ";
             $query = $this->conexion->prepare($sql);

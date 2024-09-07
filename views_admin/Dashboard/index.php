@@ -178,13 +178,15 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                                     <button id="search_date_visitas" type="button" class="text-white bg-[#310ecd] focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none">Buscar</button>
                                     <button id="refresh_date_visitas" type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Reset</button>
 
+
                                 </div>
                             </div>
                             <!-- <span class="text-xs">El filtro funciona de acuerdo a un rango de fechas (con/sin) asesor</span> -->
                         </div>
                     </div>
                 </div>
-                <span class="text-xl font-bold text-gray-800 mt-6">
+                <button id="report_resume" type="button" class="flex gap-3 items-center text-white bg-[#310ecd] focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none w-max"><ion-icon name="document-text-outline"></ion-icon> Exportar</button>
+                <span class="text-xl font-bold text-gray-800">
                     Estadisticas CRM
                 </span>
 
@@ -418,7 +420,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                             </ul>
                         </div>
                     </div>
-                    <div class="col-span-2 overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
+                    <!-- <div class="col-span-2 overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
 
                         <div class="w-full p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
                             <h1 class="text-lg font-bold my-4 w-full text-center bg-gray-800 text-white">Total leads Asignados</h1>
@@ -433,7 +435,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
 
 
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <!-- <div class="overflow-hidden flex flex-wrap md:flex-nowrap gap-4">
                     <div class="w-full p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">

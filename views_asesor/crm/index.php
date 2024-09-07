@@ -758,6 +758,20 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 3) {
 
                             </div>
                         </div>
+                        <div id="sectionlotes" class="grid gap-4 grid-cols-2 hidden">
+
+                            <div class="mb-6">
+                                <label for="email" class="block mb-2 text-[12px] font-medium text-gray-900">Lote</label>
+                                <select name="" id="lisLotesCliente" class="block p-2 w-full text-[12px] text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+
+                                </select>
+                            </div>
+                            <div class="mb-6">
+                                <label for="email" class="block mb-2 text-[12px] font-medium text-gray-900 ">Precio Final</label>
+                                <input type="number" step="0.01" id="precio_final_lote_cliente" rows="4" class="block p-2 w-full text-[12px] text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0"></input>
+
+                            </div>
+                        </div>
                         <div id="addcalendar" class="hidden">
                             <div class="flex items-center mb-4">
                                 <input id="registercalendar" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">

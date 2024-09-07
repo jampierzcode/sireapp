@@ -1,6 +1,7 @@
 $(document).ready(async function () {
   var asesoresArray;
   var proyectosList;
+  var listClientesSubidos;
   var listSedes;
 
   async function buscar_asesores() {
@@ -135,7 +136,7 @@ $(document).ready(async function () {
   pintar_sedes(sedes);
   semanaGrafico();
   // pintar_asesores();
-  $("#search_date_visitas").click(function () {
+  $("#search_date_visitas").click(async function () {
     let fecha_inicio = dayjs(
       $("#fecha-inicio-search").val(),
       "DD/MM/YYYY"
@@ -145,9 +146,9 @@ $(document).ready(async function () {
     );
     console.log(fecha_inicio, fecha_fin);
     if (fecha_inicio && fecha_fin) {
-      pintar_grafico(fecha_inicio, fecha_fin);
-      leads_subidos(fecha_inicio, fecha_fin);
-      leads_asignados(fecha_inicio, fecha_fin);
+      await leads_subidos(fecha_inicio, fecha_fin);
+      await pintar_grafico(fecha_inicio, fecha_fin);
+      // leads_asignados(fecha_inicio, fecha_fin);
     }
   });
   async function buscar_proyectos() {
@@ -190,60 +191,163 @@ $(document).ready(async function () {
       );
     });
   }
+  function buscar_ventas_asesores(fecha_inicio, fecha_fin) {
+    return new Promise((resolve, reject) => {
+      let funcion = "buscar_ventas_by_asesores";
+      $.post(
+        "../../controlador/UsuarioController.php",
+        { funcion, fecha_inicio, fecha_fin },
+        (response) => {
+          let data = JSON.parse(response);
+          resolve(data);
+        }
+      );
+    });
+  }
+  function pintar_leads_subidos_rendimiento(eventos, ventas) {
+    console.log(listClientesSubidos);
+    console.log(eventos);
+    const eventosFiltrados = eventos.filter((evento) =>
+      listClientesSubidos.some(
+        (cliente) => cliente.id_cliente === evento.cliente_id
+      )
+    );
+    const ventasFiltrados = ventas.filter((evento) =>
+      listClientesSubidos.some(
+        (cliente) => cliente.id_cliente === evento.cliente_id
+      )
+    );
+    let visitas_concretadas = eventosFiltrados.filter(
+      (e) => e.status === "ASISTIO"
+    ).length;
+    console.log(visitas_concretadas);
+    let visitas_no_concretadas = eventosFiltrados.filter(
+      (e) => e.status === "NO ASISTIO"
+    ).length;
+    let ventas_a = ventasFiltrados.filter((v) => v.tipo === "VENTA").length;
+    let separaciones = ventasFiltrados.filter(
+      (v) => v.tipo === "SEPARACION"
+    ).length;
+    let totalLeadsSubidos = listClientesSubidos.length;
+
+    console.log(totalLeadsSubidos);
+    // Calcular los porcentajes
+    const porcentajeVisitas = (
+      (visitas_concretadas / totalLeadsSubidos) *
+      100
+    ).toFixed(2);
+    console.log(porcentajeVisitas);
+    const porcentajeSeparaciones = (
+      (separaciones / totalLeadsSubidos) *
+      100
+    ).toFixed(2);
+    const porcentajeVentas = ((ventas_a / totalLeadsSubidos) * 100).toFixed(2);
+
+    // Datos para el gráfico
+    const categorias = ["Visitas", "Separacion", "Ventas"];
+    const porcentajes = [
+      porcentajeVisitas,
+      porcentajeSeparaciones,
+      porcentajeVentas,
+    ];
+    const resultados = [visitas_concretadas, separaciones, ventas_a];
+
+    // Referencia al contenedor del gráfico
+    const chartContainer = document.getElementById("resultadosLeads");
+    chartContainer.innerHTML = "";
+    // Crear y agregar elementos del gráfico
+    categorias.forEach((categoria, index) => {
+      const barContainer = document.createElement("div");
+      barContainer.className = "mb-4";
+
+      const label = document.createElement("div");
+      label.className = "text-gray-700 mb-2 text-sm font-bold";
+      label.textContent = `${categoria}: ${resultados[index]} leads`;
+
+      const bar = document.createElement("div");
+      bar.className = "bg-[#5e3def] h-8 rounded text-white flex justify-center";
+      bar.style.width = `${porcentajes[index]}%`;
+      const textBar = document.createElement("p");
+      textBar.textContent = `${porcentajes[index]}%`;
+      barContainer.appendChild(label);
+      bar.appendChild(textBar);
+      barContainer.appendChild(bar);
+      chartContainer.appendChild(barContainer);
+    });
+  }
   async function pintar_grafico(fecha_inicio, fecha_fin) {
     let sede_id = $("#filter-sede").val();
 
     let usuario = $("#asesor-search").attr("keyAsesor");
     let proyecto = $("#span-proyecto").attr("key_proyecto");
-
-    const eventos_asesores = await buscar_eventos_asesores(
-      fecha_inicio,
-      fecha_fin
-    );
-    let asesores;
-    let proyectosfilter;
-    // filter para usuarios all or one
-    if (usuario === "Todos") {
-      asesores = asesoresArray.filter((a) => a.sede_id === sede_id);
-    } else {
-      asesores = asesoresArray.filter((a) => a.id_usuario === usuario);
-    }
-    // filter para proyectos all or one
-    if (proyecto === "Todos") {
-      proyectosfilter = proyectosList.filter((p) => p.sede_id === sede_id);
-    } else {
-      proyectosfilter = proyectosList.filter(
-        (p) => p.id === proyecto && p.sede_id === sede_id
+    return new Promise(async (resolve, reject) => {
+      const eventos_asesores = await buscar_eventos_asesores(
+        fecha_inicio,
+        fecha_fin
       );
-    }
-    // Obtener un array con solo los id_usuario
-    const idsPermitidos = asesores.map((usuario) => usuario.id_usuario);
-    const proyectosIdsPermitidos = proyectosfilter.map((p) => p.id);
-    let filterData = eventos_asesores.filter((e) =>
-      idsPermitidos.includes(e.user_id)
-    );
-    let filterproyectData = filterData.filter((f) =>
-      proyectosIdsPermitidos.includes(f.proyet_id)
-    );
+      const ventas_asesores = await buscar_ventas_asesores(
+        fecha_inicio,
+        fecha_fin
+      );
+      let asesores;
+      let proyectosfilter;
+      // filter para usuarios all or one
+      if (usuario === "Todos") {
+        asesores = asesoresArray.filter((a) => a.sede_id === sede_id);
+      } else {
+        asesores = asesoresArray.filter((a) => a.id_usuario === usuario);
+      }
+      // filter para proyectos all or one
+      if (proyecto === "Todos") {
+        proyectosfilter = proyectosList.filter((p) => p.sede_id === sede_id);
+      } else {
+        proyectosfilter = proyectosList.filter(
+          (p) => p.id === proyecto && p.sede_id === sede_id
+        );
+      }
+      // Obtener un array con solo los id_usuario
+      const idsPermitidos = asesores.map((usuario) => usuario.id_usuario);
+      const proyectosIdsPermitidos = proyectosfilter.map((p) => p.id);
+      let filterData = eventos_asesores.filter((e) =>
+        idsPermitidos.includes(e.user_id)
+      );
+      let filterproyectData = filterData.filter((f) =>
+        proyectosIdsPermitidos.includes(f.proyet_id)
+      );
+      // filter data ventas
+      let filterDataVentas = ventas_asesores.filter((e) =>
+        idsPermitidos.includes(e.user_id)
+      );
+      let filterproyectDataVentas = filterDataVentas.filter((f) =>
+        proyectosIdsPermitidos.includes(f.proyet_id)
+      );
+      // console.log(filterproyectDataVentas);
+      // console.log(filterproyectData);
 
-    // status de registro
-    let contactado = filterproyectData.filter(
-      (f) => f.status === "CONTACTADO"
-    ).length;
-    let no_repondio = filterproyectData.filter(
-      (f) => f.status === "NO RESPONDIO"
-    ).length;
-    let no_interesado = filterproyectData.filter(
-      (f) => f.status === "NO INTERESADO"
-    ).length;
-    let visitas_concretadas = filterproyectData.filter(
-      (f) => f.status === "ASISTIO"
-    ).length;
-    let visitas_no_concretadas = filterproyectData.filter(
-      (f) => f.status === "NO ASISTIO"
-    ).length;
-    let template = "";
-    template += `
+      // status de registro
+      let contactado = filterproyectData.filter(
+        (f) => f.status === "CONTACTADO"
+      ).length;
+      let no_repondio = filterproyectData.filter(
+        (f) => f.status === "NO RESPONDIO"
+      ).length;
+      let no_interesado = filterproyectData.filter(
+        (f) => f.status === "NO INTERESADO"
+      ).length;
+      let visitas_concretadas = filterproyectData.filter(
+        (f) => f.status === "ASISTIO"
+      ).length;
+      let visitas_no_concretadas = filterproyectData.filter(
+        (f) => f.status === "NO ASISTIO"
+      ).length;
+      let ventas = filterproyectDataVentas.filter(
+        (f) => f.tipo === "VENTA"
+      ).length;
+      let separaciones = filterproyectDataVentas.filter(
+        (f) => f.tipo === "SEPARACION"
+      ).length;
+      let template = "";
+      template += `
     
                                 <li class="py-3 sm:py-4">
                                     <div class="flex items-center space-x-4">
@@ -314,7 +418,7 @@ $(document).ready(async function () {
                                             </p>
                                         </div>
                                         <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                            ${0}
+                                            ${separaciones}
                                         </div>
                                     </div>
                                 </li>
@@ -326,528 +430,19 @@ $(document).ready(async function () {
                                             </p>
                                         </div>
                                         <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                            ${0}
+                                            ${ventas}
                                         </div>
                                     </div>
                                 </li>
     `;
-    $("#listTotalesEventos").html(template);
-
-    return;
-    if (usuario === "Todos") {
-      // let funcion = "buscar_resumen_eficiencia_group_asesor";
-      let funcion = "buscar_clientes_rendimiento_group_asesor";
-      let asesores = asesoresArray.filter((a) => a.sede_id === sede_id);
-
-      $.post(
-        "../../controlador/UsuarioController.php",
-        {
-          funcion,
-          asesores: JSON.stringify({ asesores: asesores }),
-          fecha_inicio,
-          fecha_fin,
-        },
-        (response) => {
-          let template = "";
-          if (response.trim() === "no-register") {
-            asesores.forEach((usuario) => {
-              template += `
-              <div class="w-full max-w-[250px] p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-                        <div class="mb-4">
-                            <h5 class="text-lg font-bold leading-none text-gray-900 dark:text-white">${
-                              usuario?.nombre
-                            }</h5>
-                            <p>${usuario?.apellido}</p>
-                        </div>
-                        <div class="flow-root">
-                            <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                VISITAS CONCRETADAS
-                                            </p>
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                        ${0}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                VISITAS NO CONCRETADAS
-                                            </p>
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                        ${0}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                SEPARACIONES
-                                            </p>
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                        ${0}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                VENTAS
-                                            </p>
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                            ${0}
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                    </div>
-              `;
-            });
-          } else {
-            const usuarios = JSON.parse(response);
-            console.log(usuarios);
-            // let visitas_concretadas;
-            // let visitas_no_concretadas;
-            // let separaciones;
-            // let ventas;
-            if (proyecto === "Todos") {
-              asesores.forEach((usuario) => {
-                let visitas_concretadas = usuarios.filter(
-                  (u) =>
-                    u.user_id === usuario.id_usuario &&
-                    u.asistencia === "ASISTIO" &&
-                    u.status === "VALIDADO"
-                );
-                let visitas_no_concretadas = usuarios.filter(
-                  (u) =>
-                    u.user_id === usuario.id_usuario &&
-                    u.asistencia === "NO ASISTIO"
-                );
-                let separaciones = usuarios.filter(
-                  (u) =>
-                    u.user_id === usuario.id_usuario &&
-                    u.tipo === "SEPARACION" &&
-                    u.status === "VALIDADO"
-                );
-                let ventas = usuarios.filter(
-                  (u) =>
-                    u.user_id === usuario.id_usuario &&
-                    u.tipo === "VENTA" &&
-                    u.status === "VALIDADO"
-                );
-                template += `
-              <div class="w-full max-w-[250px] p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-                        <div class="mb-4">
-                            <h5 class="text-lg font-bold leading-none text-gray-900 dark:text-white">${usuario?.nombre}</h5>
-                            <p>${usuario?.apellido}</p>
-
-                        </div>
-                        <div class="flow-root">
-                            <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                VISITAS CONCRETADAS
-                                            </p>
-
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                        ${visitas_concretadas.length}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                VISITAS NO CONCRETADAS
-                                            </p>
-
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                        ${visitas_no_concretadas.length}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                SEPARACIONES
-                                            </p>
-
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                        ${separaciones.length}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                VENTAS
-                                            </p>
-
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                            ${ventas.length}
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                    </div>
-              `;
-              });
-            } else {
-              asesores.forEach((usuario) => {
-                let visitas_concretadas = usuarios.filter(
-                  (u) =>
-                    u.user_id === usuario.id_usuario &&
-                    u.asistencia === "ASISTIO" &&
-                    u.proyet_id === proyecto &&
-                    u.status === "VALIDADO"
-                );
-                let visitas_no_concretadas = usuarios.filter(
-                  (u) =>
-                    u.user_id === usuario.id_usuario &&
-                    u.asistencia === "NO ASISTIO" &&
-                    u.proyet_id === proyecto
-                );
-                let separaciones = usuarios.filter(
-                  (u) =>
-                    u.user_id === usuario.id_usuario &&
-                    u.tipo === "SEPARACION" &&
-                    u.proyet_id === proyecto &&
-                    u.status === "VALIDADO"
-                );
-                let ventas = usuarios.filter(
-                  (u) =>
-                    u.user_id === usuario.id_usuario &&
-                    u.tipo === "VENTA" &&
-                    u.proyet_id === proyecto &&
-                    u.status === "VALIDADO"
-                );
-                template += `
-              <div class="w-full max-w-[250px] p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-                        <div class="mb-4">
-                            <h5 class="text-lg font-bold leading-none text-gray-900 dark:text-white">${usuario?.nombre}</h5>
-                            <p>${usuario?.apellido}</p>
-
-                        </div>
-                        <div class="flow-root">
-                            <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                VISITAS CONCRETADAS
-                                            </p>
-
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                        ${visitas_concretadas.length}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                VISITAS NO CONCRETADAS
-                                            </p>
-
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                        ${visitas_no_concretadas.length}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                SEPARACIONES
-                                            </p>
-
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                        ${separaciones.length}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="py-3 sm:py-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                VENTAS
-                                            </p>
-
-                                        </div>
-                                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                            ${ventas.length}
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                    </div>
-              `;
-              });
-            }
-          }
-          $("#allAsesoresResumen").html(template);
-          $("#estadistics-box").addClass("hidden");
-        }
+      $("#listTotalesEventos").html(template);
+      pintar_leads_subidos_rendimiento(
+        filterproyectData,
+        filterproyectDataVentas
       );
-    } else {
-      let funcion = "buscar_clientes_rendimiento_by_asesor";
-      $.post(
-        "../../controlador/UsuarioController.php",
-        { funcion, fecha_inicio, fecha_fin, usuario },
-        (response) => {
-          let template = "";
-          let datos = asesoresArray.find((a) => a.id_usuario === usuario);
 
-          if (response.trim() === "no-register") {
-            console.log("no -register");
-            template += `
-            <div class="w-full max-w-[250px] p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-                      <div class="mb-4">
-                          <h5 class="text-lg font-bold leading-none text-gray-900 dark:text-white">${
-                            datos?.nombre
-                          }</h5>
-                          <p>${datos?.apellido}</p>
-                      </div>
-                      <div class="flow-root">
-                          <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-                              <li class="py-3 sm:py-4">
-                                  <div class="flex items-center space-x-4">
-                                      <div class="flex-1 min-w-0">
-                                          <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                              VISITAS CONCRETADAS
-                                          </p>
-                                      </div>
-                                      <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                      ${0}
-                                      </div>
-                                  </div>
-                              </li>
-                              <li class="py-3 sm:py-4">
-                                  <div class="flex items-center space-x-4">
-                                      <div class="flex-1 min-w-0">
-                                          <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                              VISITAS NO CONCRETADAS
-                                          </p>
-                                      </div>
-                                      <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                      ${0}
-                                      </div>
-                                  </div>
-                              </li>
-                              <li class="py-3 sm:py-4">
-                                  <div class="flex items-center space-x-4">
-                                      <div class="flex-1 min-w-0">
-                                          <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                              SEPARACIONES
-                                          </p>
-                                      </div>
-                                      <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                      ${0}
-                                      </div>
-                                  </div>
-                              </li>
-                              <li class="py-3 sm:py-4">
-                                  <div class="flex items-center space-x-4">
-                                      <div class="flex-1 min-w-0">
-                                          <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                              VENTAS
-                                          </p>
-                                      </div>
-                                      <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                          ${0}
-                                      </div>
-                                  </div>
-                              </li>
-                          </ul>
-                      </div>
-
-                  </div>
-            `;
-          } else {
-            const usuarios = JSON.parse(response);
-            console.log(usuarios);
-            if (proyecto !== "Todos") {
-              let visitas_concretadas = usuarios.filter(
-                (u) => u.asistencia === "ASISTIO" && u.proyet_id === proyecto
-              );
-              let visitas_no_concretadas = usuarios.filter(
-                (u) => u.asistencia === "NO ASISTIO" && u.proyet_id === proyecto
-              );
-              let separaciones = usuarios.filter(
-                (u) => u.tipo === "SEPARACION" && u.proyet_id === proyecto
-              );
-              let ventas = usuarios.filter(
-                (u) => u.tipo === "VENTA" && u.proyet_id === proyecto
-              );
-              template += `
-                <div class="w-full max-w-[250px] p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-                          <div class="mb-4">
-                              <h5 class="text-lg font-bold leading-none text-gray-900 dark:text-white">${datos?.nombre}</h5>
-                              <p>${datos?.apellido}</p>
-                          </div>
-                          <div class="flow-root">
-                              <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-                                  <li class="py-3 sm:py-4">
-                                      <div class="flex items-center space-x-4">
-                                          <div class="flex-1 min-w-0">
-                                              <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                  VISITAS CONCRETADAS
-                                              </p>
-                                          </div>
-                                          <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                          ${visitas_concretadas.length}
-                                          </div>
-                                      </div>
-                                  </li>
-                                  <li class="py-3 sm:py-4">
-                                      <div class="flex items-center space-x-4">
-                                          <div class="flex-1 min-w-0">
-                                              <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                  VISITAS NO CONCRETADAS
-                                              </p>
-                                          </div>
-                                          <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                          ${visitas_no_concretadas.length}
-                                          </div>
-                                      </div>
-                                  </li>
-                                  <li class="py-3 sm:py-4">
-                                      <div class="flex items-center space-x-4">
-                                          <div class="flex-1 min-w-0">
-                                              <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                  SEPARACIONES
-                                              </p>
-                                          </div>
-                                          <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                          ${separaciones.length}
-                                          </div>
-                                      </div>
-                                  </li>
-                                  <li class="py-3 sm:py-4">
-                                      <div class="flex items-center space-x-4">
-                                          <div class="flex-1 min-w-0">
-                                              <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                  VENTAS
-                                              </p>
-                                          </div>
-                                          <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                              ${ventas.length}
-                                          </div>
-                                      </div>
-                                  </li>
-                              </ul>
-                          </div>
-    
-                      </div>
-                `;
-            } else {
-              let visitas_concretadas = usuarios.filter(
-                (u) => u.asistencia === "ASISTIO"
-              );
-              let visitas_no_concretadas = usuarios.filter(
-                (u) => u.asistencia === "NO ASISTIO"
-              );
-              let separaciones = usuarios.filter(
-                (u) => u.tipo === "SEPARACION"
-              );
-              let ventas = usuarios.filter((u) => u.tipo === "VENTA");
-              template += `
-                <div class="w-full max-w-[250px] p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-                          <div class="mb-4">
-                              <h5 class="text-lg font-bold leading-none text-gray-900 dark:text-white">${datos?.nombre}</h5>
-                              <p>${datos?.apellido}</p>
-                          </div>
-                          <div class="flow-root">
-                              <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-                                  <li class="py-3 sm:py-4">
-                                      <div class="flex items-center space-x-4">
-                                          <div class="flex-1 min-w-0">
-                                              <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                  VISITAS CONCRETADAS
-                                              </p>
-                                          </div>
-                                          <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                          ${visitas_concretadas.length}
-                                          </div>
-                                      </div>
-                                  </li>
-                                  <li class="py-3 sm:py-4">
-                                      <div class="flex items-center space-x-4">
-                                          <div class="flex-1 min-w-0">
-                                              <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                  VISITAS NO CONCRETADAS
-                                              </p>
-                                          </div>
-                                          <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                          ${visitas_no_concretadas.length}
-                                          </div>
-                                      </div>
-                                  </li>
-                                  <li class="py-3 sm:py-4">
-                                      <div class="flex items-center space-x-4">
-                                          <div class="flex-1 min-w-0">
-                                              <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                  SEPARACIONES
-                                              </p>
-                                          </div>
-                                          <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                          ${separaciones.length}
-                                          </div>
-                                      </div>
-                                  </li>
-                                  <li class="py-3 sm:py-4">
-                                      <div class="flex items-center space-x-4">
-                                          <div class="flex-1 min-w-0">
-                                              <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                  VENTAS
-                                              </p>
-                                          </div>
-                                          <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                              ${ventas.length}
-                                          </div>
-                                      </div>
-                                  </li>
-                              </ul>
-                          </div>
-    
-                      </div>
-                `;
-            }
-          }
-          $("#allAsesoresResumen").html(template);
-
-          $("#estadistics-box").addClass("hidden");
-        }
-      );
-    }
-    // }
+      resolve("resuelto");
+    });
   }
   function getTimeLabel(startDate, endDate) {
     console.log(startDate, endDate);
@@ -881,7 +476,7 @@ $(document).ready(async function () {
   function getEndOfWeek(date) {
     return dayjs(date).endOf("week").add(1, "day").format("YYYY-MM-DD");
   }
-  function semanaGrafico() {
+  async function semanaGrafico() {
     var fechaActual = dayjs().format("YYYY-MM-DD");
 
     // Obtener la fecha de inicio (lunes) de la semana actual
@@ -892,9 +487,9 @@ $(document).ready(async function () {
     $("#fecha-inicio-search").val(fechaInicioSemana);
     $("#fecha-fin-search").val(fechaFinSemana);
 
-    pintar_grafico(fechaInicioSemana, fechaFinSemana);
-    leads_subidos(fechaInicioSemana, fechaFinSemana);
-    leads_asignados(fechaInicioSemana, fechaFinSemana);
+    await leads_subidos(fechaInicioSemana, fechaFinSemana);
+    // await leads_asignados(fechaInicioSemana, fechaFinSemana);
+    await pintar_grafico(fechaInicioSemana, fechaFinSemana);
   }
   $(".icon-filter").on("click", function () {
     $(".icon-filter").toggleClass("rotate-180");
@@ -944,7 +539,7 @@ $(document).ready(async function () {
         break;
     }
   });
-  function leads_subidos(fecha_inicio, fecha_fin) {
+  async function leads_subidos(fecha_inicio, fecha_fin) {
     // let usuario = $("#asesor-search").attr("keyAsesor");
     // console.log(usuario);
     let sede_id = $("#filter-sede").val();
@@ -971,122 +566,116 @@ $(document).ready(async function () {
     const proyectosIdsPermitidos = proyectosfilter.map((p) => p.id);
 
     let funcion = "buscar_group_clientes_fecha";
-    $.post(
-      "../../controlador/UsuarioController.php",
-      {
-        funcion,
-        fecha_inicio,
-        fecha_fin,
-        asesores: JSON.stringify({ asesores: asesores }),
-      },
-      (response) => {
-        var lead_subidos = document.getElementById("leads-subidos");
-        var myChartSubidos = echarts.init(lead_subidos);
-        var option;
+    return new Promise((resolve, reject) => {
+      $.post(
+        "../../controlador/UsuarioController.php",
+        {
+          funcion,
+          fecha_inicio,
+          fecha_fin,
+          asesores: JSON.stringify({ asesores: asesores }),
+        },
+        (response) => {
+          var lead_subidos = document.getElementById("leads-subidos");
+          var myChartSubidos = echarts.init(lead_subidos);
+          var option;
+          let data = [];
+          let clientes;
+          if (response.trim() === "no-register-clientes") {
+            asesores.forEach((asesor) => {
+              let newData = {
+                nombre: asesor.nombre + " " + asesor.apellido,
+                valor: 0,
+              };
+              data.push(newData);
+            });
+            clientes = [];
+            listClientesSubidos = [];
+          } else {
+            clientes = JSON.parse(response);
 
-        // Configura colores para las series
-        var coloresSeries = [
-          "#5470C6",
-          "#91CC75",
-          "#EE6666",
-          "#EE9966",
-          "#73C0DE",
-          "#3BA272",
-          "#FC8452",
-          "#9A60B4",
-          "#FAD860",
-          "#F3A43B",
-        ];
-        let data = [];
-        let clientes;
-        if (response.trim() === "no-register-clientes") {
-          asesores.forEach((asesor) => {
-            let newData = {
-              nombre: asesor.nombre + " " + asesor.apellido,
-              valor: 0,
-            };
-            data.push(newData);
-          });
-          clientes = [];
-        } else {
-          clientes = JSON.parse(response);
+            var totalLeadsCaptados = 0;
 
-          var totalLeadsCaptados = 0;
-          asesores.forEach((asesor) => {
-            const dataclientes = clientes.filter(
-              (c) => c.createdby === asesor.id_usuario
-            );
-            let filterproyectData = dataclientes.filter((f) =>
+            listClientesSubidos = clientes.filter((f) =>
               proyectosIdsPermitidos.includes(f.proyet_id)
             );
-            totalLeadsCaptados += filterproyectData.length;
-            let newData = {
-              nombre: asesor.nombre + " " + asesor.apellido,
-              valor: filterproyectData.length,
-            };
-            data.push(newData);
-          });
-        }
+            asesores.forEach((asesor) => {
+              const dataclientes = clientes.filter(
+                (c) => c.createdby === asesor.id_usuario
+              );
+              let filterproyectData = dataclientes.filter((f) =>
+                proyectosIdsPermitidos.includes(f.proyet_id)
+              );
+              totalLeadsCaptados += filterproyectData.length;
+              let newData = {
+                nombre: asesor.nombre + " " + asesor.apellido,
+                valor: filterproyectData.length,
+              };
+              data.push(newData);
+            });
+          }
 
-        $("#containerTotalLeads").html(
-          ` <p class="p-2 bg-gray-200">Total Leads Captados: <span><b>${totalLeadsCaptados} leads</b></span></p>`
-        );
-        crear_grafico(clientes);
-        var top1 = data.reduce((max, d) => {
-          return d.valor > max.valor ? d : max;
-        }, data[0]);
-        $("#top1leadssubidos").html(
-          `<p class="text-sm my-4 font-bold">Top 1: ${top1.nombre} : ${top1.valor} leads </p>`
-        );
-        // Opciones del gráfico
-        option = {
-          tooltip: {
-            trigger: "item",
-          },
-          legend: {
-            top: "5%",
-            left: "center",
-          },
-          series: [
-            {
-              name: "Leads Subidos",
-              type: "pie",
-              radius: ["30%", "50%"],
-              avoidLabelOverlap: false,
-              itemStyle: {
-                borderRadius: 10,
-                borderColor: "#fff",
-                borderWidth: 2,
-              },
-              label: {
-                show: true,
-                position: "center",
-              },
-              emphasis: {
+          $("#containerTotalLeads").html(
+            ` <p class="p-2 bg-gray-200">Total Leads Captados: <span><b>${totalLeadsCaptados} leads</b></span></p>`
+          );
+          crear_grafico(clientes);
+          var top1 = data.reduce((max, d) => {
+            return d.valor > max.valor ? d : max;
+          }, data[0]);
+          $("#top1leadssubidos").html(
+            `<p class="text-sm my-4 font-bold">Top 1: ${top1.nombre} : ${top1.valor} leads </p>`
+          );
+          // Opciones del gráfico
+          option = {
+            tooltip: {
+              trigger: "item",
+            },
+            legend: {
+              top: "5%",
+              left: "center",
+            },
+            series: [
+              {
+                name: "Leads Subidos",
+                type: "pie",
+                radius: ["30%", "50%"],
+                avoidLabelOverlap: false,
+                itemStyle: {
+                  borderRadius: 10,
+                  borderColor: "#fff",
+                  borderWidth: 2,
+                },
                 label: {
                   show: true,
-                  fontSize: 12,
-                  fontWeight: "bold",
+                  position: "center",
                 },
+                emphasis: {
+                  label: {
+                    show: true,
+                    fontSize: 12,
+                    fontWeight: "bold",
+                  },
+                },
+                labelLine: {
+                  show: true,
+                },
+                data: data.map(function (asesor, index) {
+                  return {
+                    value: asesor.valor,
+                    name: `${asesor.nombre}`,
+                  };
+                }),
               },
-              labelLine: {
-                show: true,
-              },
-              data: data.map(function (asesor, index) {
-                return {
-                  value: asesor.valor,
-                  name: `${asesor.nombre}`,
-                };
-              }),
-            },
-          ],
-        };
+            ],
+          };
 
-        option && myChartSubidos.setOption(option);
-      }
-    );
+          option && myChartSubidos.setOption(option);
+          resolve("resuelto");
+        }
+      );
+    });
   }
-  function leads_asignados(fecha_inicio, fecha_fin) {
+  async function leads_asignados(fecha_inicio, fecha_fin) {
     // let usuario = $("#asesor-search").attr("keyAsesor");
     // console.log(usuario);
 
@@ -1493,5 +1082,5 @@ $(document).ready(async function () {
       chartContainer.appendChild(barContainer);
     });
   }
-  crear_grafico_totales();
+  // crear_grafico_totales();
 });
