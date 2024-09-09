@@ -188,7 +188,6 @@ $(document).ready(async function () {
       "../../controlador/UsuarioController.php",
       { funcion },
       (response) => {
-        console.log(response);
         if (response.trim() === "no-register") {
           return;
         } else {
@@ -424,12 +423,12 @@ $(document).ready(async function () {
         "../../controlador/UsuarioController.php",
         { funcion },
         (response) => {
-          console.log(response);
           let template = "";
           if (response.trim() == "no-register-clientes") {
             resolve([]);
           } else {
             const clientes = JSON.parse(response);
+            console.log(clientes);
             clientesList = clientes;
             clientes.sort(compareDatesDesc);
             resolve(clientes);
