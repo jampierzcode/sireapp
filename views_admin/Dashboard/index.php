@@ -185,6 +185,128 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                         </div>
                     </div>
                 </div>
+                <!-- Modal print historial-->
+                <div id="modalPrintHistorial" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden z-[50000]">
+                    <div class="bg-white p-8 rounded shadow-lg overflow-y-auto h-[500px] w-[850px]">
+                        <h2 class="text-lg font-bold mb-4">Reporte</h2>
+                        <button id="pdf-report" type="button" class="flex gap-3 items-center text-white bg-[#310ecd] focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none w-max"><ion-icon name="document-text-outline"></ion-icon> Descargar pdf</button>
+                        <div id="boletaContent" class="mb-4">
+                            <div class="w-full bg-white rounded-lg shadow  dark:bg-gray-800 dark:border-gray-700">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h5 class="text-lg font-bold leading-none text-gray-900 dark:text-white">Reporte</h5>
+                                </div>
+                                <div class="w-full">
+                                    <div class="flex gap-4 flex-start mb-4">
+                                        <p>Proyecto</p>
+                                        <div class="p-2 bg-[#310ecd] text-white font-bold text-sm rounded-full">Buenos aires</div>
+                                    </div>
+                                    <div class="flex flex-col items-center justify-center mb-4">
+
+                                        <img class="rounded-full" src="../../img/avatar_default.jpg" alt="">
+                                        <p>Nombre del asesor</p>
+                                    </div>
+                                    <div id="fechas" class=" flex gap-2 justify-center">
+                                        Del
+                                        <div class="flex">
+                                            <b>10 Junio del 2024</b>
+                                        </div>
+                                        al
+                                        <div class="flex">
+                                            <b>10 Junio del 2024</b>
+                                        </div>
+                                    </div>
+                                    <div class="h-[2px] bg-gray-100"></div>
+                                    <h1 class="text-lg font-bold my-4 w-full text-center bg-gray-800 text-white">Analisis por leads subidos</h1>
+                                    <div id="containerTotalLeads" class="w-full my-4">
+                                    </div>
+                                    <!-- <div id="leadGrafico" style="height:400px;"></div>
+                                    <div id="resultadosLeads"></div> -->
+
+                                    <div class="h-[2px] bg-gray-100"></div>
+                                    <h1 class="text-lg font-bold my-4 w-full text-center bg-gray-800 text-white">Analisis de eventos totales</h1>
+
+                                    <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                        <li class="py-3 sm:py-4">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                        CONTACTAR
+                                                    </p>
+                                                </div>
+                                                <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                                    ${0}
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="py-3 sm:py-4">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                        NO RESPONDIO
+                                                    </p>
+                                                </div>
+                                                <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                                    ${0}
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="py-3 sm:py-4">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                        NO INTERESADO
+                                                    </p>
+                                                </div>
+                                                <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                                    ${0}
+                                                </div>
+                                            </div>
+                                        </li>
+
+                                        <li class="py-3 sm:py-4">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                        VISITAS NO CONCRETADAS
+                                                    </p>
+                                                </div>
+                                                <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                                    ${0}
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="py-3 sm:py-4">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                        SEPARACIONES
+                                                    </p>
+                                                </div>
+                                                <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                                    ${0}
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="py-3 sm:py-4">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                        VENTAS
+                                                    </p>
+                                                </div>
+                                                <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                                    ${0}
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div id="pdfoutput" class="h-[500px]"></div>
+                    </div>
+                </div>
                 <button id="report_resume" type="button" class="flex gap-3 items-center text-white bg-[#310ecd] focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none w-max"><ion-icon name="document-text-outline"></ion-icon> Exportar</button>
                 <span class="text-xl font-bold text-gray-800">
                     Estadisticas CRM
@@ -402,7 +524,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                     <div class="overflow-hidden flex flex-wrap md:flex-nowrap gap-4 h-max">
                         <div class="w-full p-2 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
                             <h1 class="text-lg font-bold my-4 w-full text-center bg-gray-800 text-white">Analisis de eventos totales</h1>
-                            <div class="flex gap-5 my-4">
+                            <!-- <div class="flex gap-5 my-4">
 
                                 <div class="flex flex-col items-center justify-center mb-4">
 
@@ -414,7 +536,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                                     <img class="rounded-full w-16 h-16 object-cover" src="../../img/avatar_default.jpg" alt="">
                                     <p class="text-sm font-bold text-gray-800">Nombre del asesor</p>
                                 </div>
-                            </div>
+                            </div> -->
                             <ul id="listTotalesEventos" role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
                                 cargando...
                             </ul>
@@ -503,6 +625,11 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
     <script src="../../js/jquery.min.js"></script>
     <script src="../../components/sidebar.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js" integrity="sha512-Wt1bJGtlnMtGP0dqNFH1xlkLBNpEodaiQ8ZN5JLA5wpc1sUlk/O5uuOMNgvzddzkpvZ9GLyYNa8w2s7rqiTk5Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- pdf generate -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+
     <!-- <script src="../../js/dinamic/gestion_contabilidad.js"></script> -->
     <script src="../../js/dinamic/graficos-admin.js"></script>
 

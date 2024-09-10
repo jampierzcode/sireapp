@@ -2,6 +2,8 @@ $(document).ready(async function () {
   var asesoresArray;
   var proyectosList;
   var listClientesSubidos;
+  var eventosList;
+  var ventasList;
   var listSedes;
 
   async function buscar_asesores() {
@@ -205,8 +207,6 @@ $(document).ready(async function () {
     });
   }
   function pintar_leads_subidos_rendimiento(eventos, ventas) {
-    console.log(listClientesSubidos);
-    console.log(eventos);
     const eventosFiltrados = eventos.filter((evento) =>
       listClientesSubidos.some(
         (cliente) => cliente.id_cliente === evento.cliente_id
@@ -274,6 +274,54 @@ $(document).ready(async function () {
       barContainer.appendChild(bar);
       chartContainer.appendChild(barContainer);
     });
+  }
+  function pintar_leads_subidos_rendimiento_pdf(eventos, ventas) {
+    const eventosFiltrados = eventos.filter((evento) =>
+      listClientesSubidos.some(
+        (cliente) => cliente.id_cliente === evento.cliente_id
+      )
+    );
+    const ventasFiltrados = ventas.filter((evento) =>
+      listClientesSubidos.some(
+        (cliente) => cliente.id_cliente === evento.cliente_id
+      )
+    );
+    let visitas_concretadas = eventosFiltrados.filter(
+      (e) => e.status === "ASISTIO"
+    ).length;
+    console.log(visitas_concretadas);
+    let visitas_no_concretadas = eventosFiltrados.filter(
+      (e) => e.status === "NO ASISTIO"
+    ).length;
+    let ventas_a = ventasFiltrados.filter((v) => v.tipo === "VENTA").length;
+    let separaciones = ventasFiltrados.filter(
+      (v) => v.tipo === "SEPARACION"
+    ).length;
+    let totalLeadsSubidos = listClientesSubidos.length;
+
+    console.log(totalLeadsSubidos);
+    // Calcular los porcentajes
+    const porcentajeVisitas = (
+      (visitas_concretadas / totalLeadsSubidos) *
+      100
+    ).toFixed(2);
+    console.log(porcentajeVisitas);
+    const porcentajeSeparaciones = (
+      (separaciones / totalLeadsSubidos) *
+      100
+    ).toFixed(2);
+    const porcentajeVentas = ((ventas_a / totalLeadsSubidos) * 100).toFixed(2);
+
+    // Datos para el gráfico
+    const categorias = ["Visitas", "Separacion", "Ventas"];
+    const porcentajes = [
+      porcentajeVisitas,
+      porcentajeSeparaciones,
+      porcentajeVentas,
+    ];
+    const resultados = [visitas_concretadas, separaciones, ventas_a];
+
+    return { categorias, porcentajes, resultados };
   }
   async function pintar_grafico(fecha_inicio, fecha_fin) {
     let sede_id = $("#filter-sede").val();
@@ -435,6 +483,8 @@ $(document).ready(async function () {
                                     </div>
                                 </li>
     `;
+      eventosList = filterproyectData;
+      ventasList = filterproyectDataVentas;
       $("#listTotalesEventos").html(template);
       pintar_leads_subidos_rendimiento(
         filterproyectData,
@@ -1083,4 +1133,151 @@ $(document).ready(async function () {
     });
   }
   // crear_grafico_totales();
+
+  // imprimir contenido de reportes dashboard
+  $("#report_resume").on("click", function () {
+    $("#modalPrintHistorial").removeClass("hidden");
+    $("#boletaContent").removeClass("hidden");
+    let template = "";
+    let usuario = $("#asesor-search").attr("keyAsesor");
+    let sede_id = $("#filter-sede").val();
+    let asesores;
+    if (usuario === "Todos") {
+      asesores = asesoresArray.filter((a) => a.sede_id === sede_id);
+    } else {
+      asesores = asesoresArray.filter((a) => a.id_usuario === usuario);
+    }
+    console.log(listClientesSubidos);
+    template += `
+    
+      <h1 class="text-lg font-bold mb-4">REPORTE DE EFICIENCIA - ASESORES</h1>
+    `;
+    asesores.forEach((a, index) => {
+      let totalLeads = listClientesSubidos.filter(
+        (l) => l.createdby === a.id_usuario
+      );
+      const dataClientes = listClientesSubidos.filter(
+        (l) => l.createdby === a.id_usuario
+      );
+      console.log(dataClientes);
+      const conteoOrígenes = dataClientes.reduce((acc, cliente) => {
+        const origen = cliente.origen;
+        acc[origen] = (acc[origen] || 0) + 1;
+        return acc;
+      }, {});
+
+      const dataOrigenes = Object.keys(conteoOrígenes).map((origen) => {
+        return { categoria: origen, cantidad: conteoOrígenes[origen] };
+      });
+      console.log(dataOrigenes);
+      let templateOrigenes = "";
+      templateOrigenes += `
+      <ul role="list" class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+      `;
+
+      dataOrigenes.forEach((o) => {
+        templateOrigenes += `
+          <li class="py-3 sm:py-4">
+              <div class="flex items-center space-x-4">
+                  <div class="flex-1 min-w-0">
+                      <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                          ${o.categoria}
+                      </p>
+                  </div>
+                  <div id="resumen-visitas" class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                  ${o.cantidad}
+                  </div>
+              </div>
+          </li>
+        `;
+      });
+      templateOrigenes += `
+            </ul>
+      `;
+
+      // visitas concretadas separaciones y ventas
+
+      const eventosAsesor = eventosList.filter(
+        (e) => e.user_id === a.id_usuario
+      );
+      const ventasAsesor = ventasList.filter((e) => e.user_id === a.id_usuario);
+      const { categorias, porcentajes, resultados } =
+        pintar_leads_subidos_rendimiento_pdf(eventosAsesor, ventasAsesor);
+
+      let templateDatosSepVen = "";
+      categorias.forEach((categoria, index) => {
+        templateDatosSepVen += `
+          <div class="mb-4">
+            <div class="text-gray-700 mb-2 text-sm font-bold">
+              ${categoria}: ${resultados[index]} leads
+              <div style="width: ${porcentajes[index]}%;" class="bg-[#5e3def] h-8 rounded text-white flex justify-center">
+                <p>${porcentajes[index]}%</p>
+              
+              </div>  
+            </div>
+          </div>
+        `;
+      });
+      // PLANTILLA FINAL
+
+      template += `
+      <div>
+        <div class="h-[2px] bg-gray-100"></div>
+        <div class="flex flex-col items-center justify-center mb-4">
+        <img class="rounded-full" src="../../img/avatar_default.jpg" alt="">
+        <p>${a.nombre + " " + a.apellido}</p>
+        <h1 class="text-lg font-bold my-4 w-full text-center bg-gray-800 text-white">Analisis por leads subidos</h1>
+        <div class="flex bg-white shadow-md justify-between px-4 py-3 items-center w-full">
+            <div class=" rounded">
+                <h1 class="text-sm text-gray-500 font-bold">Leads Subidos</h1>
+                <span class="text-[#5208dd] font-bold text-3xl" id="data-proyectos">${
+                  totalLeads.length
+                }</span>
+            </div>
+            <ion-icon name="pricetag-outline" class="text-3xl font-bold text-[#5208dd]"></ion-icon>
+        </div>
+        <h1 class="text-sm text-gray-500 font-bold my-4">Leads Captados por Origen</h1>
+        ${templateOrigenes}
+        </div>
+        <h1 class="text-sm text-gray-500 font-bold my-4">VISITAS VENTAS Y SEPARACIONES</h1>
+        ${templateDatosSepVen}
+        </div>
+      </div>
+      `;
+    });
+    $("#boletaContent").html(template);
+  });
+  $("#pdf-report").on("click", function () {
+    // Generar PDF con html2pdf
+
+    const element = document.getElementById("boletaContent");
+    html2pdf()
+      .from(element)
+      .set({
+        margin: 10,
+        filename: `REPORTE_RESUMEN.pdf"`,
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      })
+      .toPdf()
+      .get("pdf")
+      .then(function (pdf) {
+        console.log(pdf);
+        // Guardar el PDF con el nombre deseado
+        pdf.save(`REPORTE-RESUMEN-DATE.pdf`);
+        // Mostrar PDF en el visor
+        // const pdfDataUri = pdf.output("datauristring");
+        // $("#boletaContent").addClass("hidden");
+        // $("#pdfoutput").html(
+        //   `<embed src="${pdfDataUri}" type="application/pdf" width="100%" height="100%" />`
+        // );
+      });
+  });
+  // Cerrar modal al hacer clic fuera de él
+  $(document).on("click", function (event) {
+    if ($(event.target).attr("id") === "modalPrintHistorial") {
+      console.log("click");
+      $("#modalPrintHistorial").addClass("hidden");
+    }
+  });
 });
