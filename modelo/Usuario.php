@@ -1479,13 +1479,13 @@ class Usuario
             return $this->mensaje;
         }
     }
-    function register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final)
+    function register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final, $observaciones)
     {
         try {
             # code...
-            $sql = "INSERT INTO ventas(cliente_id, user_id, fecha_venta, tipo, lote_id, precio, status) VALUES(:cliente, :usuario, :fecha, :tipo, :lote_id, :precio, :status)";
+            $sql = "INSERT INTO ventas(cliente_id, user_id, fecha_venta, tipo, lote_id, precio, status, observacion) VALUES(:cliente, :usuario, :fecha, :tipo, :lote_id, :precio, :status, :observacion)";
             $query = $this->conexion->prepare($sql);
-            $query->execute(array(":cliente" => $cliente, ":usuario" => $user, ":fecha" => $fecha, ":tipo" => $status, ":lote_id" => $lote_id, ":precio" => $precio_final, ":status" => "SEND_VALIDAR"));
+            $query->execute(array(":cliente" => $cliente, ":usuario" => $user, ":fecha" => $fecha, ":tipo" => $status, ":lote_id" => $lote_id, ":precio" => $precio_final, ":status" => "SEND_VALIDAR", ":observacion" => $observaciones));
 
             $this->mensaje = "add-register-venta";
             return $this->mensaje;
@@ -2244,6 +2244,24 @@ class Usuario
         } catch (\Throwable $th) {
             //throw $th;
             $this->mensaje = "fatal_error " . $th;
+            return $this->mensaje;
+        }
+    }
+    function update_lote($id, $status)
+    {
+        try {
+            //code...
+            // ACTUALIZAR ESTADO DE LA RESERVA
+            $sql = "UPDATE lotes SET estado=:estado WHERE id=:id";
+            $query = $this->conexion->prepare($sql);
+            $query->execute(array(":estado" => $status, ":id" => $id));
+            $response = ["message" => "update_status"];
+            $this->mensaje = $response;
+            return $this->mensaje;
+        } catch (\Throwable $th) {
+            $response = ["message" => "error", "error" => $th];
+            //throw $th;
+            $this->mensaje = $response;
             return $this->mensaje;
         }
     }

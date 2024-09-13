@@ -89,9 +89,7 @@ $(document).ready(async function () {
                 `;
               break;
             case "NO VALIDADO":
-              template += `
-                <button target="_blank" id_task="${data?.id}" id="validartask" class="p-2 bg-yellow-400 rounded text-gray-800 font-bold text-sm">Cambiar a Validar</button>
-                `;
+              template += `no se pueden hacer mas acciones`;
               break;
 
             default:
@@ -142,29 +140,69 @@ $(document).ready(async function () {
       );
     });
   }
+  async function update_lote(id, status) {
+    return new Promise((resolve, reject) => {
+      let funcion = "update_lote";
+      $.post(
+        "../../controlador/UsuarioController.php",
+        { funcion, id, status },
+        (response) => {
+          console.log(response);
+          const data = JSON.parse(response);
+          resolve(data);
+        }
+      );
+    });
+  }
   $(document).on("click", "#validartask", async function () {
     let id_task = $(this).attr("id_task");
+    const dataSearch = clientesList.find((c) => c.id === id_task);
+    console.log(dataSearch);
+    if (dataSearch) {
+      const validar = await validartask(id_task, "VALIDADO");
+      console.log(validar);
+      if (validar === "VALIDADO") {
+        let status = dataSearch.tipo === "SEPARACION" ? "SEPARADO" : "VENTA";
+        const updateLote = await update_lote(dataSearch.lote_id, status);
 
-    const validar = await validartask(id_task, "VALIDADO");
-    if (validar === "VALIDADO") {
-      alert("Esta actividad se ha validado correctamente");
+        if (updateLote.message === "update_status") {
+          alert("Se valido correctamente");
+        } else {
+          alert(
+            "No se pudo actualizar el estado del lote por un error , vaya al lotizador para arreglarlo"
+          );
+        }
+      } else {
+        alert("Hubo un error contacta al aministrador");
+      }
+      var clientes = await buscar_ventas();
+      filtrarProyectos();
     } else {
-      alert("Hubo un error contacta al aministrador");
+      alert(
+        "No existe un lote producto seleccionado, porfavor edite la venta y establezca el lote"
+      );
     }
-    var clientes = await buscar_ventas();
-    filtrarProyectos();
   });
   $(document).on("click", "#novalidartask", async function () {
     let id_task = $(this).attr("id_task");
-
+    const dataSearch = clientesList.find((c) => c.id === id_task);
     const validar = await validartask(id_task, "NO VALIDADO");
     if (validar === "NO VALIDADO") {
-      alert("Esta actividad no se ha validado correctamente");
+      let status = "DISPONIBLE";
+      const updateLote = await update_lote(dataSearch.lote_id, status);
+
+      if (updateLote.message === "update_status") {
+        alert("Se cambio a no validado");
+      } else {
+        alert(
+          "No se pudo actualizar el estado del lote por un error , vaya al lotizador para arreglarlo"
+        );
+      }
+      var clientes = await buscar_ventas();
+      filtrarProyectos();
     } else {
       alert("Hubo un error contacta al aministrador");
     }
-    var clientes = await buscar_ventas();
-    filtrarProyectos();
   });
   // busca a todos los asesores
   fetchasesores();
@@ -409,6 +447,7 @@ $(document).ready(async function () {
         "../../controlador/UsuarioController.php",
         { funcion },
         (response) => {
+          console.log(response);
           let template = "";
           if (response.trim() == "no-register-clientes") {
             resolve([]);

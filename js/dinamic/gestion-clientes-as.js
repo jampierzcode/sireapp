@@ -2437,12 +2437,27 @@ $(document).ready(async function () {
       );
     });
   }
-  function register_venta(fecha, cliente, status, lote_id, precio_final) {
+  function register_venta(
+    fecha,
+    cliente,
+    status,
+    lote_id,
+    precio_final,
+    observaciones
+  ) {
     return new Promise((resolve, reject) => {
       let funcion = "register_venta";
       $.post(
         "../../controlador/UsuarioController.php",
-        { funcion, fecha, cliente, status, lote_id, precio_final },
+        {
+          funcion,
+          fecha,
+          cliente,
+          status,
+          lote_id,
+          precio_final,
+          observaciones,
+        },
         (response) => {
           if (response.trim() === "add-register-venta") {
             add_toast("success", "Se registro correctamente la venta");
@@ -2507,7 +2522,14 @@ $(document).ready(async function () {
         let precio_final = $("#precio_final_lote_cliente").val();
         if (Number(lote_id) !== 0) {
           let fecha = dayjs().format("YYYY-MM-DD");
-          await register_venta(fecha, idCliente, status, lote_id, precio_final);
+          await register_venta(
+            fecha,
+            idCliente,
+            status,
+            lote_id,
+            precio_final,
+            observaciones
+          );
         } else {
           add_toast("warning", `Debes seleccionar un lote para la ${status}`);
         }

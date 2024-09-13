@@ -1154,8 +1154,9 @@ if ($_POST["funcion"] == "register_venta") {
     $status = $_POST["status"];
     $lote_id = $_POST["lote_id"];
     $precio_final = $_POST["precio_final"];
+    $observaciones = $_POST["observaciones"];
     $user = $id_usuario;
-    $usuario->register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final);
+    $usuario->register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final, $observaciones);
     echo $usuario->mensaje;
 }
 if ($_POST["funcion"] == "add_cliente") {
@@ -1341,6 +1342,12 @@ if ($_POST["funcion"] == "validar_venta") {
     $status = $_POST["status"];
     $usuario->validar_venta($id_task, $status);
     echo $usuario->mensaje;
+}
+if ($_POST["funcion"] == "update_lote") {
+    $id = $_POST["id"];
+    $status = $_POST["status"];
+    $usuario->update_lote($id, $status);
+    echo json_encode($usuario->mensaje);
 }
 if ($_POST["funcion"] == "register_visita_agenda") {
     $id_task = $_POST["task"];
