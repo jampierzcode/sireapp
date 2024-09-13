@@ -41,30 +41,38 @@ $(document).ready(async function () {
       {
         data: null,
         render: function (data) {
-          return `${data.name_reference} <br/> ${data.direccion}-${data.ciudad_sede}`;
+          return `<b>${data.name_reference} <br/> ${data.direccion}-${data.ciudad_sede}</b>`;
         },
       },
-
-      { data: "correo" },
-      { data: "celular" },
       { data: "fecha" },
-      { data: "hora" },
       // { data: "telefono" },
       // { data: "origen" },
       // { data: "ciudad" },
-      { data: "nombre_proyecto" },
       {
         data: null,
         render: function (data) {
-          return data.asignado_usuario === "No asignado"
-            ? `<span>No</span> `
-            : `${data.asignado_usuario}`;
+          return `<b>${data.nombre_proyecto}</b>`;
+        },
+      },
+      {
+        data: null,
+        render: function (data) {
+          return data.lote_id === null
+            ? "no-register"
+            : `<b> N-${data.numero} Mz${data.mz_zona}</b>`;
+        },
+      },
+      {
+        data: null,
+        render: function (data) {
+          return `${data.nombre_user} ${data.apellido_user} <br/> <span class="w-max inline-block rounded-full p-2 bg-blue-500 text-white text-xs">${data.nombrerol}</spam>`;
         },
       },
       {
         data: null,
         render: function (data, type, row) {
           let template_status = imprimirStatus(data?.tipo);
+          template_status += `<span class="p-2 text-xs font-bold bg-black text-white rounded inline-block">${data.status}</span> <br/>`;
           return template_status;
         },
       },
@@ -72,30 +80,30 @@ $(document).ready(async function () {
         data: null,
         render: function (data, type, row) {
           let template = "";
-          template += `<span class="px-3 py-2 text-sm font-bold bg-black text-white rounded inline-block mb-2">${data.status}</span> <br/>`;
+          //   template += `<span class="p-2 text-xs font-bold bg-black text-white rounded inline-block mb-2">${data.status}</span> <br/>`;
 
           switch (data.status) {
             case "VALIDADO":
               template += `
-              <button target="_blank" id_task="${data?.id}" statusRegistro="${data?.tipo}" id="novalidartask" class="px-4 py-3 bg-red-600 rounded text-white fonot-bold">Cambiar a No Validado</button>
-              `;
+                <button target="_blank" id_task="${data?.id}" id="novalidartask" class="p-2 bg-red-600 rounded text-white font-bold text-sm">Cambiar a No Validado</button>
+                `;
               break;
             case "NO VALIDADO":
               template += `
-              <button target="_blank" id_task="${data?.id}" statusRegistro="${data?.tipo}" id="validartask" class="px-4 py-3 bg-yellow-400 rounded text-gray-800 fonot-bold">Cambiar a Validar</button>
-              `;
+                <button target="_blank" id_task="${data?.id}" id="validartask" class="p-2 bg-yellow-400 rounded text-gray-800 font-bold text-sm">Cambiar a Validar</button>
+                `;
               break;
 
             default:
               template += `
-                <div class="flex-actions">
-                <button target="_blank" keyClient="${data?.cliente_id}" id="historialCliente" class="btnJsvm normal">Historial</button>
-                <button target="_blank" id_task="${data?.id}" statusRegistro="${data?.tipo}" id="validartask" class="px-4 py-3 bg-yellow-400 rounded text-gray-800 fonot-bold">Validar</button>
-                <button target="_blank" id_task="${data?.id}" statusRegistro="${data?.tipo}" id="novalidartask" class="px-4 py-3 bg-red-600 rounded text-white fonot-bold">No Validar</button>
-                 
-                </div>
-      
-                `;
+                  <div class="flex-actions">
+                  <button target="_blank" keyClient="${data?.cliente_id}" id="historialCliente" class="btnJsvm normal">Historial</button>
+                  <button target="_blank" id_task="${data?.id}" id="validartask" class="px-4 py-3 bg-yellow-400 rounded text-gray-800 fonot-bold">Validar</button>
+                  <button target="_blank" id_task="${data?.id}" id="novalidartask" class="px-4 py-3 bg-red-600 rounded text-white fonot-bold">No Validar</button>
+                   
+                  </div>
+        
+                  `;
               break;
           }
           return template;
@@ -117,67 +125,45 @@ $(document).ready(async function () {
       style: "multi",
     },
   });
-  async function validartask(id_task, tipo, status) {
+  async function validartask(id_task, status) {
     return new Promise((resolve, reject) => {
-      if (tipo !== "VENTA") {
-        let funcion = "validar_interaccion";
-        $.post(
-          "../../controlador/UsuarioController.php",
-          { funcion, id_task, status },
-          (response) => {
-            console.log(response);
-            if (response.trim() === status) {
-              resolve(status);
-            } else {
-              reject("ERROR");
-            }
+      let funcion = "validar_venta";
+      $.post(
+        "../../controlador/UsuarioController.php",
+        { funcion, id_task, status },
+        (response) => {
+          console.log(response);
+          if (response.trim() === status) {
+            resolve(status);
+          } else {
+            reject("ERROR");
           }
-        );
-      } else {
-        let funcion = "validar_venta";
-        $.post(
-          "../../controlador/UsuarioController.php",
-          { funcion, id_task, status },
-          (response) => {
-            console.log(response);
-            if (response.trim() === status) {
-              resolve(status);
-            } else {
-              reject("ERROR");
-            }
-          }
-        );
-      }
+        }
+      );
     });
   }
   $(document).on("click", "#validartask", async function () {
-    console.log("click");
     let id_task = $(this).attr("id_task");
-    let tipo = $(this).attr("statusRegistro");
-    console.log(tipo);
 
-    const validar = await validartask(id_task, tipo, "VALIDADO");
+    const validar = await validartask(id_task, "VALIDADO");
     if (validar === "VALIDADO") {
       alert("Esta actividad se ha validado correctamente");
     } else {
       alert("Hubo un error contacta al aministrador");
     }
-    var clientes = await buscar_clientes();
+    var clientes = await buscar_ventas();
     filtrarProyectos();
   });
   $(document).on("click", "#novalidartask", async function () {
-    console.log("click");
     let id_task = $(this).attr("id_task");
-    let tipo = $(this).attr("statusRegistro");
-    console.log(tipo);
 
-    const validar = await validartask(id_task, tipo, "NO VALIDADO");
+    const validar = await validartask(id_task, "NO VALIDADO");
     if (validar === "NO VALIDADO") {
       alert("Esta actividad no se ha validado correctamente");
     } else {
       alert("Hubo un error contacta al aministrador");
     }
-    var clientes = await buscar_clientes();
+    var clientes = await buscar_ventas();
     filtrarProyectos();
   });
   // busca a todos los asesores
@@ -247,12 +233,12 @@ $(document).ready(async function () {
 
       case "CONTACTADO":
         template += `<span class="target_tab info flex items-center gap-2">CONTACTANDO <div role="status">
-          <svg aria-hidden="true" class="inline w-6 h-6 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-purple-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-              <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-          </svg>
-          <span class="sr-only">Loading...</span>
-      </div></span>`;
+            <svg aria-hidden="true" class="inline w-6 h-6 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-purple-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+            </svg>
+            <span class="sr-only">Loading...</span>
+        </div></span>`;
 
         break;
       case "NO RESPONDIO":
@@ -285,7 +271,7 @@ $(document).ready(async function () {
         break;
       case "VENTA":
         template += `<span style="display: flex; gap: 10px; align-items: center" class="target_tab success"> 
-          <img style="width: 20px;" src="../../img/corona.png" alt=""> ${status}</span>`;
+            <img style="width: 20px;" src="../../img/corona.png" alt=""> ${status}</span>`;
 
         break;
 
@@ -356,7 +342,7 @@ $(document).ready(async function () {
                 ? result.apellidos
                 : "")
           );
-          buscar_clientes();
+          buscar_ventas();
         } else {
           alert("Hubo un error, contacta al administrador");
         }
@@ -390,21 +376,21 @@ $(document).ready(async function () {
           let template = "";
           sortedData.forEach((history) => {
             template += `
-            <li class="mb-10 ml-4">
-            <div class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
-            <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">${
-              history.fecha + " " + history.hora
-            }</time>
-                            <h3 class="flex items-center gap-4 text-lg font-semibold text-gray-900 dark:text-white">Estado Registrado: ${imprimirStatus(
-                              history.status
-                            )}</h3>
-                            <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">${
-                              history.observacion !== null
-                                ? history.observacion
-                                : "Sin observaciones"
-                            }</p>
-                            </li>
-                            `;
+              <li class="mb-10 ml-4">
+              <div class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
+              <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">${
+                history.fecha + " " + history.hora
+              }</time>
+                              <h3 class="flex items-center gap-4 text-lg font-semibold text-gray-900 dark:text-white">Estado Registrado: ${imprimirStatus(
+                                history.status
+                              )}</h3>
+                              <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">${
+                                history.observacion !== null
+                                  ? history.observacion
+                                  : "Sin observaciones"
+                              }</p>
+                              </li>
+                              `;
           });
           $("#list-historial").html(template);
           $("#historial-event").removeClass("md-hidden");
@@ -416,9 +402,9 @@ $(document).ready(async function () {
     );
   }
 
-  async function buscar_clientes() {
+  async function buscar_ventas() {
     return new Promise((resolve, reject) => {
-      let funcion = "buscar_clientes_validar";
+      let funcion = "buscar_ventas_empresa";
       $.post(
         "../../controlador/UsuarioController.php",
         { funcion },
@@ -428,7 +414,7 @@ $(document).ready(async function () {
             resolve([]);
           } else {
             const clientes = JSON.parse(response);
-            console.log(clientes);
+
             clientesList = clientes;
             clientes.sort(compareDatesDesc);
             resolve(clientes);
@@ -513,14 +499,14 @@ $(document).ready(async function () {
   function pintar_sedes(sedes) {
     let template = "";
     template += `
-    <option value="" disabled>Seleccione una sede</option>
-    
-    `;
-    sedes.forEach((s) => {
-      template += `
-      <option value="${s.id}">${s.name_reference} ${s.direccion}-${s.ciudad}</option>
+      <option value="" disabled>Seleccione una sede</option>
       
       `;
+    sedes.forEach((s) => {
+      template += `
+        <option value="${s.id}">${s.name_reference} ${s.direccion}-${s.ciudad}</option>
+        
+        `;
     });
     $("#filter-sede").html(template);
     llenar_proyectos_sede(sedes[0].id);
@@ -532,7 +518,6 @@ $(document).ready(async function () {
     filtrarProyectos();
   });
   function llenar_proyectos_sede(sede_id) {
-    console.log(proyectosList);
     let proyectos = proyectosList.filter((p) => p.sede_id === sede_id);
     let template = "";
     template += `<option value="" disabled>Seleccione un proyecto</option>`;
@@ -543,30 +528,24 @@ $(document).ready(async function () {
     });
     $("#filter-proyecto").html(template);
   }
-  var clientes = await buscar_clientes();
+  var clientes = await buscar_ventas();
   var sedes = await buscar_sedes_by_usuario();
   var proyectos = await buscar_proyectos();
   pintar_sedes(sedes);
   // Event listeners para los cambios en el select y el input
   $(
     "#cliente-search, #filter-proyecto, #filter-selected, #filter-validacion"
-  ).on("change keyup", filtrarProyectos);
+  ).on("change", filtrarProyectos);
   function filtrarProyectos() {
-    console.log(clientesList);
+    console.log("key");
     const selected = $("#filter-selected").val();
     const validacion = $("#filter-validacion").val();
     const nombreProyecto = $("#filter-proyecto").val();
     const sede = $("#filter-sede").val();
     const nombreCliente = $("#cliente-search").val().toLowerCase();
-
-    console.log(sede);
+    console.log(nombreCliente);
 
     const clientes = clientesList.filter((cliente) => {
-      // si, asignado true
-      //si, no asignado false
-      // no, asignado false
-      // no, no asignado true
-
       if (sede !== "Todas" && cliente.sede_id !== sede) {
         return false;
       }
@@ -594,6 +573,8 @@ $(document).ready(async function () {
       }
       return true;
     });
+
+    console.log(clientes);
 
     var estadoActual = {
       page: dataTable.page(), // Página actual
@@ -630,7 +611,7 @@ $(document).ready(async function () {
   // Función auxiliar para verificar si el nombre y apellido coinciden con el filtro
   function contienenombreCliente(cliente, nombreCliente) {
     const nombreCompleto =
-      `${cliente.nombre_asesor} ${cliente.apellido_asesor}`.toLowerCase();
+      `${cliente.nombres} ${cliente.apellidos}`.toLowerCase();
     return nombreCompleto.includes(nombreCliente);
   }
   // $("#usuariosList").on("click", ".dt-checkboxes", function () {
@@ -778,7 +759,7 @@ $(document).ready(async function () {
 
     $(".modal-create").addClass("md-hidden");
 
-    buscar_clientes();
+    buscar_ventas();
   });
   // fin de asignar varios clientes a un asesor
 

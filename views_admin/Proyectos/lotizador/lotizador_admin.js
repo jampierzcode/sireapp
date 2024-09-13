@@ -14,6 +14,7 @@ $(document).ready(function () {
   var lotePrecio;
   var formaActual = null;
   var formaDibujada = null;
+  var idLayer;
   fetchLotes();
   var map1 = L.map("map1", {
     crs: L.CRS.Simple,
@@ -134,21 +135,20 @@ $(document).ready(function () {
         weight: 1,
       };
       // map1.clearLayers();
+      let layer;
       if (lote.tipo === "rectangulo") {
         let bounds = [
           [lote.cordinates[0][0], lote.cordinates[0][1]],
           [lote.cordinates[1][0], lote.cordinates[1][1]],
         ];
-        let rectangle = L.rectangle(bounds, estiloPoligono).addTo(map1);
-        rectangle
-          .bindTooltip(
-            `
+        layer = L.rectangle(bounds, estiloPoligono).addTo(map1);
+        layer.bindTooltip(
+          `
         Manzana: ${lote.mz_zona} Lote: ${lote.numero} <br> Precio: ${lote.precio}  <br> Area: ${lote.area}
         
         `
-          )
-          .openTooltip();
-        rectangle.on("click", function () {
+        );
+        layer.on("click", function () {
           let template = `
           Estado: <span key_status="${lote.estado}" class="status ${estado}" id="estado">${lote.estado}</span> <button id="editEstate">Editar</button>
           `;
@@ -166,16 +166,14 @@ $(document).ready(function () {
           $(".container-edit-status").addClass("md-hidden");
         });
       } else if (lote.tipo === "poligono") {
-        let poligono = L.polygon(lote.cordinates, estiloPoligono).addTo(map1);
-        poligono
-          .bindTooltip(
-            `
+        layer = L.polygon(lote.cordinates, estiloPoligono).addTo(map1);
+        layer.bindTooltip(
+          `
         Manzana: ${lote.mz_zona} Lote: ${lote.numero}<br> Precio: ${lote.precio}  <br> Area: ${lote.area}
         
         `
-          )
-          .openTooltip();
-        poligono.on("click", function () {
+        );
+        layer.on("click", function () {
           let template = `
           Estado: <span key_status="${lote.estado}" class="status ${estado}" id="estado">${lote.estado}</span> <button id="editEstate">Editar</button>
           `;
@@ -192,8 +190,139 @@ $(document).ready(function () {
           $(".container-edit-status").addClass("md-hidden");
         });
       }
+
+      layer.options.id = lote.id;
+      // Evento click derecho (contextmenu)
+      layer.on("contextmenu", function (e) {
+        console.log(e);
+        let id = e.target.options.id;
+        lote.estado !== "DISPONIBLE" && lote.estado !== "SIN PUBLICAR"
+          ? // e.preventDefault();
+            showContextMenu(e.originalEvent, layer)
+          : null;
+      });
     });
   }
+  function showContextMenu(event, layer) {
+    // Eliminar cualquier menú contextual existente
+    let existingMenu = document.getElementById("context-menu");
+    if (existingMenu) {
+      existingMenu.remove();
+    }
+
+    // Crear el menú contextual
+    let menu = document.createElement("div");
+    menu.id = "context-menu";
+    menu.style.position = "absolute";
+    menu.style.left = event.pageX + "px";
+    menu.style.top = event.pageY + "px";
+    menu.style.backgroundColor = "#fff";
+    menu.style.border = "1px solid #ccc";
+    menu.style.padding = "10px";
+    menu.style.zIndex = 10000;
+
+    // Añadir opciones al menú
+    let options = ["Informacion"];
+    options.forEach((option) => {
+      let item = document.createElement("div");
+      item.innerText = option;
+      item.style.padding = "5px";
+      item.style.cursor = "pointer";
+      item.onclick = function () {
+        menuAction(option, layer);
+      };
+      menu.appendChild(item);
+    });
+
+    // Añadir el menú al cuerpo del documento
+    document.body.appendChild(menu);
+
+    // Cerrar el menú si se hace clic en cualquier otro lugar
+    document.addEventListener("click", function closeMenu(event) {
+      if (!menu.contains(event.target)) {
+        menu.remove();
+        document.removeEventListener("click", closeMenu);
+      }
+    });
+  }
+  async function buscar_venta_lote(id) {
+    return new Promise((resolve, reject) => {
+      let funcion = "buscar_venta_by_lote";
+      $.post(
+        "../../../controlador/UsuarioController.php",
+        { funcion, id },
+        (response) => {
+          console.log(response);
+          let data = response !== false ? JSON.parse(response) : response;
+          resolve(data);
+        }
+      );
+    });
+  }
+  async function menuAction(action, layer) {
+    idLayer = layer.options.id;
+    console.log(idLayer);
+    switch (action) {
+      case "Informacion":
+        // Implementar la lógica para duplicar el lote
+        const searchinfo = await buscar_venta_lote(idLayer);
+
+        if (searchinfo !== false) {
+          let data = searchinfo;
+          console.log(data);
+          let template = "";
+          template += ` <div class="w-full">
+                        <h2 class="text-sm font-bold">Cliente</h2>
+                        <p>${data.nombres} ${data.apellidos}</p>
+                    </div>
+                    <div class="w-full">
+                        <h2 class="text-sm font-bold">Tipo de Venta</h2>
+                        <p>${data.tipo}</p>
+                    </div>
+                    <div class="w-full">
+                        <h2 class="text-sm font-bold">Fecha de registro</h2>
+                        <p>${dayjs(data.fecha_venta).format(
+                          "DD [de] MMMM [del] YYYY"
+                        )}</p>
+                    </div>
+                    <div class="w-full">
+                        <h2 class="text-sm font-bold">Usuario</h2>
+                        <p>${data.nombre_user} ${
+            data.apellido_user
+          } <span class="rounded-full bg-blue-800 text-xs text-white p-2 font-bold">${
+            data.usuariorol === 1 ? "admin" : "asesor"
+          }</span></p>
+                    </div>
+                    <div class="w-full">
+                        <h2 class="text-sm font-bold">Monto</h2>
+                        <p>S/${data?.precio}</p>
+                    </div>
+
+          `;
+
+          $("#data_info").html(template);
+          $("#modal-manager-duplicar").removeClass("md-hidden");
+          setTimeout(() => {
+            $("#modal-manager-duplicar .form-create").addClass("modal-show");
+          }, 300);
+        } else {
+          alert(
+            "No hay informacion de este lote, revise en en el registro de ventas si es que aparece este lote"
+          );
+        }
+
+        break;
+
+      default:
+        console.log("Acción no reconocida");
+    }
+  }
+  $("#modal-manager-duplicar .close-modal").on("click", function () {
+    $("#modal-manager-duplicar .form-create").removeClass("modal-show");
+    setTimeout(() => {
+      $("#modal-manager-duplicar").addClass("md-hidden");
+    }, 300);
+  });
   $("#estadoLote").on("click", "#editEstate", function (e) {
     console.log(e.target);
     const estado = $("#estado").attr("key_status");

@@ -1,6 +1,7 @@
 $(document).ready(async function () {
   var funcion = "";
   var clientesList;
+  var clientesFilter;
   var listSedes;
   var sedeId;
   var idTaskPendiente;
@@ -826,6 +827,39 @@ $(document).ready(async function () {
       );
     }
   });
+
+  // exportar leads
+  function exportar_leads() {
+    let clientes = clientesFilter;
+
+    if (clientes !== "" && clientes.length > 0 && clientes !== undefined) {
+      for (let index = 0; index < clientes.length; index++) {
+        delete clientes[index].id_cliente;
+        delete clientes[index].createdby;
+        delete clientes[index].proyet_id;
+        delete clientes[index].sede_id;
+        delete clientes[index].asignedUser;
+      }
+
+      // Crear un objeto de libro de Excel
+      var workbook = XLSX.utils.book_new();
+
+      // Convertir el array de JSON a una hoja de trabajo
+      var worksheet = XLSX.utils.json_to_sheet(clientesFilter);
+
+      // Agregar la hoja de trabajo al libro
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Hoja1");
+      XLSX.writeFile(workbook, "Leads.xlsx", { compression: true });
+      add_toast("success", "Se exportaron correctamente los clientes");
+    } else {
+      add_toast("error", "No se pudo exportar los leads");
+      add_toast(
+        "warning",
+        "No puedes exportar leads que no existan o esten vacios"
+      );
+    }
+  }
+  $("#export_leads").on("click", exportar_leads);
   // fin de editar lead
   // show modal de historial de cliente
   $(document).on("click", "#historialCliente", function () {
@@ -891,6 +925,7 @@ $(document).ready(async function () {
             const clientes = JSON.parse(response);
             clientes.sort(compareDatesDesc);
             clientesList = clientes;
+            clientesFilter = clientes;
             resolve(clientes);
           }
         }
@@ -1107,6 +1142,7 @@ $(document).ready(async function () {
       }
       return true;
     });
+    clientesFilter = clientes;
     let newClientes = clientes.sort((a, b) => {
       var fechaA = new Date(a.fecha_creacion + " " + a.hora_creacion);
       var fechaB = new Date(b.fecha_creacion + " " + b.hora_creacion);
@@ -1364,8 +1400,8 @@ $(document).ready(async function () {
             add_toast("error", "Ocurrio un error al archivar los clientes");
             console.log(response);
           }
-        }else{
-          add_toast("warning", "Operacion Cancelada")
+        } else {
+          add_toast("warning", "Operacion Cancelada");
         }
       } else {
         add_toast("warning", "aun no ha seleccionado ningun cliente");

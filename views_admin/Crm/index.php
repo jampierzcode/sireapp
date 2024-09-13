@@ -558,13 +558,22 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                         </a>
                     </div>
                 </div>
-                <div class="relative inline-block text-left">
+                <div class="flex gap-3 relative inline-block text-left">
                     <div>
                         <a href="../validar/" type="button" class="inline-flex items-center w-full justify-center gap-x-1.5 rounded-md bg-yellow-400 px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 text-gray-800">
 
                             <ion-icon name="bag-check"></ion-icon>
                             Validaciones
                         </a>
+                    </div>
+                    <div>
+                        <button type="button" class="flex max-w-max items-center justify-center gap-x-1.5 rounded-md text-white px-3 py-2 text-[12px] font-semibold shadow-sm ring-1 ring-inset ring-gray-300 bg-green-600 hover:bg-blue-900 text-[12px]" id="export_leads" aria-expanded="false" aria-haspopup="true">
+
+                            <img style="width: 16px;" src="../../img/archivo-excel.png" alt="">
+
+                            <p class="text-[12px] text-nowrap">Exportar</p>
+
+                        </button>
                     </div>
                 </div>
             </div>
@@ -786,6 +795,9 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.9.4/dayjs.min.js" integrity="sha512-XZSHSEFj4QeE0G4pwy4tToyAhF2VXoEcF9CP0t1PSZMP2XHhEEB9PjM9knsdzcEKbi6GRMazdt8tJadz0JTKIQ==" crossorigin="anonymous"></script>
+    <!-- use version 0.20.1 -->
+    <script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
     <script src="../../js/dinamic/addcalendar.js"></script>
     <script src="../../js/dinamic/gestion-clientes.js"></script>
 

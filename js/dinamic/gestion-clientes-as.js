@@ -1224,6 +1224,7 @@ $(document).ready(async function () {
           "../../controlador/UsuarioController.php",
           { funcion, fecha_inicio, fecha_fin },
           (response) => {
+            console.log(response);
             let visitas_concretadas;
             let visitas_no_concretadas;
             let separaciones;
@@ -1316,6 +1317,7 @@ $(document).ready(async function () {
           "../../controlador/UsuarioController.php",
           { funcion, fecha_inicio, fecha_fin, proyecto },
           (response) => {
+            console.log(response);
             let visitas_concretadas;
             let visitas_no_concretadas;
             let separaciones;

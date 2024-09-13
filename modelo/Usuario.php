@@ -815,8 +815,8 @@ class Usuario
             $sql = "SELECT 
             (SELECT COUNT(*) FROM interaccion_cliente ic inner join visitas_agenda va on ic.id=va.interaccion_id WHERE va.interaccion_id=ic.id AND va.status ='ASISTIO' AND ic.status='VALIDADO'  AND ic.user_id =:id_usuario AND ic.fecha_visita BETWEEN :fecha_inicio AND :fecha_fin) as visitas_concretadas,
             (SELECT COUNT(*) FROM interaccion_cliente ic inner join visitas_agenda va on ic.id=va.interaccion_id WHERE va.interaccion_id=ic.id AND va.status ='NO ASISTIO'  AND ic.user_id =:id_usuario AND ic.fecha_visita BETWEEN :fecha_inicio AND :fecha_fin) as visitas_no_concretadas,
-            (SELECT COUNT(*) FROM interaccion_cliente ic WHERE ic.tipo = 'SEPARACION' AND ic.status='VALIDADO' AND ic.user_id = :id_usuario AND ic.fecha_visita BETWEEN :fecha_inicio AND :fecha_fin) AS separaciones,
-            (SELECT COUNT(*) FROM ventas v WHERE v.user_id = :id_usuario AND v.status='VALIDADO' AND v.fecha_venta BETWEEN :fecha_inicio AND :fecha_fin) AS ventas;";
+            (SELECT COUNT(*) FROM ventas v WHERE v.user_id = :id_usuario AND v.status='VALIDADO' AND v.tipo='SEPARACION' AND v.fecha_venta BETWEEN :fecha_inicio AND :fecha_fin) AS separaciones,
+            (SELECT COUNT(*) FROM ventas v WHERE v.user_id = :id_usuario AND v.status='VALIDADO' AND v.tipo='VENTA' AND v.fecha_venta BETWEEN :fecha_inicio AND :fecha_fin) AS ventas;";
             $query = $this->conexion->prepare($sql);
             $query->execute(array(':fecha_inicio' => $fecha_inicio, ':fecha_fin' => $fecha_fin, ":id_usuario" => $id_usuario));
             $this->datos = $query->fetchAll(); // retorna objetos o no
@@ -837,9 +837,9 @@ class Usuario
             # code...
             $sql = "SELECT 
             (SELECT COUNT(*) FROM interaccion_cliente ic inner join visitas_agenda va on ic.id=va.interaccion_id inner join cliente c on ic.cliente_id=c.id_cliente WHERE c.proyet_id=:proyecto AND va.interaccion_id=ic.id AND va.status ='ASISTIO'  AND ic.user_id =:id_usuario AND ic.fecha_visita BETWEEN :fecha_inicio AND :fecha_fin) as visitas_concretadas,
-            (SELECT COUNT(*) FROM interaccion_cliente ic inner join visitas_agenda va on ic.id=va.interaccion_id inner join cliente c on ic.cliente_id=c.id_cliente WHERE c.proyet_id=:proyecto AND va.interaccion_id=ic.id AND va.status ='NO ASISTIO'  AND ic.user_id =:id_usuario AND ic.fecha_visita BETWEEN :fecha_inicio AND :fecha_fin) as visitas_no_concretadas,
-            (SELECT COUNT(*) FROM interaccion_cliente ic inner join cliente c on ic.cliente_id=c.id_cliente WHERE c.proyet_id=:proyecto AND ic.tipo = 'SEPARACION' AND ic.user_id = :id_usuario AND ic.fecha_visita BETWEEN :fecha_inicio AND :fecha_fin) AS separaciones,
-            (SELECT COUNT(*) FROM ventas v inner join cliente c on v.cliente_id=c.id_cliente WHERE c.proyet_id=:proyecto AND v.user_id = :id_usuario AND v.fecha_venta BETWEEN :fecha_inicio AND :fecha_fin) AS ventas;";
+            (SELECT COUNT(*) FROM interaccion_cliente ic inner join visitas_agenda va on ic.id=va.interaccion_id inner join cliente c on ic.cliente_id=c.id_cliente WHERE c.proyet_id=:proyecto AND va.interaccion_id=ic.id AND va.status ='NO ASISTIO'  AND ic.user_id =:id_usuario AND ic.fecha_visita BETWEEN :fecha_inicio AND :fecha_fin) as visitas_no_concretadas,            
+            (SELECT COUNT(*) FROM ventas v inner join cliente c on v.cliente_id=c.id_cliente WHERE c.proyet_id=:proyecto AND v.user_id = :id_usuario AND v.tipo='SEPARACION' AND v.fecha_venta BETWEEN :fecha_inicio AND :fecha_fin) AS separaciones,
+            (SELECT COUNT(*) FROM ventas v inner join cliente c on v.cliente_id=c.id_cliente WHERE c.proyet_id=:proyecto AND v.user_id = :id_usuario AND v.tipo='VENTA' AND v.fecha_venta BETWEEN :fecha_inicio AND :fecha_fin) AS ventas;";
             $query = $this->conexion->prepare($sql);
             $query->execute(array(':fecha_inicio' => $fecha_inicio, ':fecha_fin' => $fecha_fin, ":id_usuario" => $id_usuario, ":proyecto" => $proyecto));
             $this->datos = $query->fetchAll(); // retorna objetos o no
@@ -858,7 +858,8 @@ class Usuario
     {
         try {
             # code...
-            $sql = "SELECT c.id_cliente, c.proyet_id, p.nombreProyecto as proyecto, c.nombres, c.apellidos, ic.status, ic.fecha_visita as fecha_registro, ic.tipo, va.status as asistencia FROM interaccion_cliente ic inner join cliente c on ic.cliente_id=c.id_cliente left join proyectos p on c.proyet_id=p.id left join visitas_agenda va on ic.id=va.interaccion_id WHERE ic.user_id=:id_usuario AND ic.fecha_visita BETWEEN :fecha_inicio AND :fecha_fin UNION ALL SELECT c.id_cliente, c.proyet_id, p.nombreProyecto, c.nombres, c.apellidos,  v.status, v.fecha_venta as fecha_registro, 'VENTA' as tipo, '' as asistencia FROM ventas v inner join cliente c on v.cliente_id=c.id_cliente left join proyectos p on c.proyet_id=p.id WHERE v.user_id = :id_usuario AND v.fecha_venta BETWEEN :fecha_inicio AND :fecha_fin";
+            $sql = "SELECT c.id_cliente, c.proyet_id, p.nombreProyecto as proyecto, c.nombres, c.apellidos, ic.status, ic.fecha_visita as fecha_registro, ic.tipo, va.status as asistencia FROM interaccion_cliente ic inner join cliente c on ic.cliente_id=c.id_cliente left join proyectos p on c.proyet_id=p.id left join visitas_agenda va on ic.id=va.interaccion_id WHERE ic.user_id=:id_usuario AND ic.fecha_visita BETWEEN :fecha_inicio AND :fecha_fin 
+            UNION ALL SELECT c.id_cliente, c.proyet_id, p.nombreProyecto, c.nombres, c.apellidos,  v.status, v.fecha_venta as fecha_registro, v.tipo, '' as asistencia FROM ventas v inner join cliente c on v.cliente_id=c.id_cliente left join proyectos p on c.proyet_id=p.id WHERE v.user_id = :id_usuario AND v.fecha_venta BETWEEN :fecha_inicio AND :fecha_fin";
             $query = $this->conexion->prepare($sql);
             $query->execute(array(':fecha_inicio' => $fecha_inicio, ':fecha_fin' => $fecha_fin, ":id_usuario" => $id_usuario));
             $this->datos = $query->fetchAll(); // retorna objetos o no
@@ -2063,6 +2064,21 @@ class Usuario
             //throw $th;
         }
     }
+    function buscar_venta_by_lote($lote_id)
+    {
+        try {
+            $sql = "SELECT v.*, c.nombres, c.apellidos, l.numero, l.mz_zona, l.area, u.nombre as nombre_user, u.apellido as apellido_user, u.usuarioRol FROM ventas v inner join lotes l on v.lote_id=l.id inner join cliente as c on v.cliente_id=c.id_cliente inner join usuario u on v.user_id=u.id_usuario WHERE v.lote_id=:lote_id";
+            $query = $this->conexion->prepare($sql);
+            $query->execute(array(":lote_id" => $lote_id));
+            $this->datos = $query->fetch(); // retorna objetos o no
+
+            return $this->datos;
+        } catch (\Throwable $error) {
+            $this->mensaje = "fatal_error";
+            return $this->mensaje;
+            //throw $th;
+        }
+    }
     function buscar_clientes_validar($user)
     {
         try {
@@ -2086,9 +2102,26 @@ class Usuario
     function buscar_clientes_validados($user)
     {
         try {
-            $sql = "SELECT ic.id as id, ic.status, c.sede_id, s.name_reference, s.ciudad as ciudad_sede, s.direccion, CASE WHEN ic.cliente_id IS NULL THEN 'No asignado' ELSE CONCAT(u.nombre, ' ', u.apellido) END AS asignado_usuario, c.proyet_id as proyecto_id, ic.fecha_visita as fecha, ic.hora_visita as hora, ic.user_id, ic.tipo, ic.cliente_id, c.nombres, c.apellidos, c.correo, c.celular, u.nombre as nombre_asesor, u.apellido as apellido_asesor, p.nombreProyecto as nombre_proyecto FROM interaccion_cliente ic inner join cliente c on ic.cliente_id=c.id_cliente inner join usuario u on ic.user_id=u.id_usuario INNER JOIN user_sede AS US ON c.sede_id = US.sede_id INNER JOIN sede s on US.sede_id=s.id INNER JOIN proyectos as p on c.proyet_id=p.id WHERE US.user_id=:id_usuario AND (ic.status='SEND_VALIDAR' OR ic.status='VALIDADO' OR ic.status='NO VALIDADO')
-            
-            UNION ALL SELECT v.id as id, v.status, c.sede_id, s.name_reference, s.ciudad as ciudad_sede, s.direccion, CASE WHEN v.cliente_id IS NULL THEN 'No asignado' ELSE CONCAT(u.nombre, ' ', u.apellido) END AS asignado_usuario, c.proyet_id as proyecto_id, v.fecha_venta as fecha, '00:00:00', v.user_id, v.tipo, v.cliente_id, c.nombres, c.apellidos,  c.correo, c.celular, u.nombre as nombre_asesor, u.apellido as apellido_asesor, p.nombreProyecto as nombre_proyecto FROM ventas v inner join cliente c on v.cliente_id=c.id_cliente inner join usuario u on v.user_id=u.id_usuario INNER JOIN user_sede AS US ON c.sede_id = US.sede_id INNER JOIN sede s on US.sede_id=s.id INNER JOIN proyectos as p on c.proyet_id=p.id WHERE US.user_id=:id_usuario AND (v.status = 'SEND_VALIDAR' OR v.status = 'VALIDADO' OR v.status = 'NO VALIDADO');";
+            $sql = "SELECT ic.id as id, ic.status, c.sede_id, s.name_reference, s.ciudad as ciudad_sede, s.direccion, CASE WHEN ic.cliente_id IS NULL THEN 'No asignado' ELSE CONCAT(u.nombre, ' ', u.apellido) END AS asignado_usuario, c.proyet_id as proyecto_id, ic.fecha_visita as fecha, ic.hora_visita as hora, ic.user_id, ic.tipo, ic.cliente_id, c.nombres, c.apellidos, c.correo, c.celular, u.nombre as nombre_asesor, u.apellido as apellido_asesor, p.nombreProyecto as nombre_proyecto FROM interaccion_cliente ic inner join cliente c on ic.cliente_id=c.id_cliente inner join usuario u on ic.user_id=u.id_usuario INNER JOIN user_sede AS US ON c.sede_id = US.sede_id INNER JOIN sede s on US.sede_id=s.id INNER JOIN proyectos as p on c.proyet_id=p.id WHERE US.user_id=:id_usuario AND (ic.status='SEND_VALIDAR' OR ic.status='VALIDADO' OR ic.status='NO VALIDADO')";
+            $query = $this->conexion->prepare($sql);
+            $query->execute(array(":id_usuario" => $user));
+            $this->datos = $query->fetchAll(); // retorna objetos o no
+            if (!empty($this->datos)) {
+                return $this->datos;
+            } else {
+                $this->mensaje = "no-register-clientes";
+                return $this->mensaje;
+            }
+        } catch (\Throwable $error) {
+            $this->mensaje = "fatal_error" . $error;
+            return $this->mensaje;
+            //throw $th;
+        }
+    }
+    function buscar_ventas_empresa($user)
+    {
+        try {
+            $sql = "SELECT v.id as id, v.lote_id, l.numero, l.mz_zona, l.area, v.observacion, v.status, c.sede_id, s.name_reference, s.ciudad as ciudad_sede, s.direccion, c.proyet_id as proyecto_id, v.fecha_venta as fecha, '00:00:00' as hora, v.user_id, v.tipo, v.cliente_id, c.nombres, c.apellidos,  c.correo, c.celular, u.nombre as nombre_user, u.apellido as apellido_user, ru.nombreRol,  p.nombreProyecto as nombre_proyecto FROM ventas v inner join cliente c on v.cliente_id=c.id_cliente inner join usuario u on v.user_id=u.id_usuario inner join roles ru on u.usuarioRol=ru.id INNER JOIN user_sede AS US ON c.sede_id = US.sede_id INNER JOIN sede s on US.sede_id=s.id INNER JOIN proyectos as p on c.proyet_id=p.id left JOIN lotes l on v.lote_id=l.id WHERE US.user_id=:id_usuario";
             $query = $this->conexion->prepare($sql);
             $query->execute(array(":id_usuario" => $user));
             $this->datos = $query->fetchAll(); // retorna objetos o no

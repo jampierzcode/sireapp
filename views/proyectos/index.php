@@ -124,6 +124,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 1) {
                 </div>
             </div>
 
+
             <div class="grid grid-cols-3">
                 <div class="py-6 px-6 bg-white shadow-md rounded w-full h-[500px] overflow-y-auto">
                     <div class="w-full">

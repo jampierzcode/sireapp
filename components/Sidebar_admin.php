@@ -120,6 +120,16 @@ $links = [
                                 </div>
                             </div>
                         </li>
+                        <li class="links-menu-dashboard">
+                            <div class="link-block">
+                                <div class="left-link">
+                                    <a class="toggle-drop <?php echo $currentUrl === "ventas" ? ' active-link' : ''; ?>"" href=" ../ventas">
+                                        <ion-icon name="cart"></ion-icon>
+                                        <p>Ventas</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
                         <?php
                         break;
                     case 'Finanzas':

@@ -14,6 +14,7 @@ if (empty($_SESSION["us_tipo"])) {
     <title>Lotizador</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
     <link rel="stylesheet" href="../../../css/Lotizador.css" />
+    <link rel="stylesheet" href="../../../css/main.css" />
     <!-- tailwin css -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -27,6 +28,7 @@ if (empty($_SESSION["us_tipo"])) {
         <h1 class="text-sm text-white">Cargando Lotizador...</h1>
     </div>
     <div id="map1"></div>
+
     <!-- <div id="map2"></div> -->
     <?php if ($_SESSION["us_tipo"] == 1) { ?>
         <div class="containerLotizador">
@@ -110,6 +112,17 @@ if (empty($_SESSION["us_tipo"])) {
         </div>
         <div class="containerCopyLotes"></div>
     <?php } else if ($_SESSION["us_tipo"] == 2 || $_SESSION["us_tipo"] == 5) { ?>
+        <div id="modal-manager-duplicar" class="modal-create md-hidden">
+            <div class="form-create" style="width: 1000px;">
+                <div class="close-modal">
+                    <ion-icon name="close-circle-outline"></ion-icon>
+                </div>
+                <h1 class="text-sm font-bold">Informacion</h1>
+                <div id="data_info" class="grid grid-cols-1 md:grid-cols-3 w-full gap-4">
+
+                </div>
+            </div>
+        </div>
         <div class="container-loteActual">
             <h3>Manzana: <span numberKey="" key="" id="manzana"></span> Lote: <span numberKey="" key="" id="lote"></span></h3>
             <div class="listDetail">
@@ -137,10 +150,13 @@ if (empty($_SESSION["us_tipo"])) {
         </div> -->
         </div>
     <?php } ?>
-
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js">
+    </script>
 
     <script src="../../../js/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.9.4/dayjs.min.js" integrity="sha512-XZSHSEFj4QeE0G4pwy4tToyAhF2VXoEcF9CP0t1PSZMP2XHhEEB9PjM9knsdzcEKbi6GRMazdt8tJadz0JTKIQ==" crossorigin="anonymous"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
     <?php if ($_SESSION["us_tipo"] == 1) { ?>

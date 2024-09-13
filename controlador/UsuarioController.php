@@ -1260,10 +1260,27 @@ if ($_POST["funcion"] == "buscar_ventas_by_asesores") {
     $jsonstring = json_encode($usuario->datos);
     echo $jsonstring;
 }
+if ($_POST["funcion"] == "buscar_venta_by_lote") {
+    $lote_id = $_POST["id"]; //ID LOTE
+    $usuario->buscar_venta_by_lote($lote_id);
+    $jsonstring = json_encode($usuario->datos);
+    echo $jsonstring;
+}
 if ($_POST["funcion"] == "buscar_clientes_validar") {
     $json = array();
     $user = $_SESSION["id_usuario"];
     $usuario->buscar_clientes_validados($user);
+    if ($usuario->mensaje) {
+        echo $usuario->mensaje;
+    }
+    if ($usuario->datos) {
+        echo json_encode($usuario->datos);
+    }
+}
+if ($_POST["funcion"] == "buscar_ventas_empresa") {
+    $json = array();
+    $user = $_SESSION["id_usuario"];
+    $usuario->buscar_ventas_empresa($user);
     if ($usuario->mensaje) {
         echo $usuario->mensaje;
     }
