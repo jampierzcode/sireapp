@@ -1343,6 +1343,13 @@ if ($_POST["funcion"] == "validar_venta") {
     $usuario->validar_venta($id_task, $status);
     echo $usuario->mensaje;
 }
+if ($_POST["funcion"] == "update_lote_venta") {
+    $id_task = $_POST["id_task"];
+    $lote_id = $_POST["lote_id"];
+    $precio = $_POST["precio"];
+    $usuario->update_lote_venta($id_task, $lote_id, $precio);
+    echo $usuario->mensaje;
+}
 if ($_POST["funcion"] == "update_lote") {
     $id = $_POST["id"];
     $status = $_POST["status"];

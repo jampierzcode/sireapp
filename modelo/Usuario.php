@@ -2247,6 +2247,22 @@ class Usuario
             return $this->mensaje;
         }
     }
+    function update_lote_venta($id_task, $lote_id, $precio)
+    {
+        try {
+            //code...
+            // ACTUALIZAR ESTADO DE LA RESERVA
+            $sql = "UPDATE ventas SET lote_id=:lote_id, precio=:precio WHERE id=:id_task";
+            $query = $this->conexion->prepare($sql);
+            $query->execute(array(":lote_id" => $lote_id, ":precio" => $precio, ":id_task" => $id_task));
+            $this->mensaje = "update_lote";
+            return $this->mensaje;
+        } catch (\Throwable $th) {
+            //throw $th;
+            $this->mensaje = "fatal_error " . $th;
+            return $this->mensaje;
+        }
+    }
     function update_lote($id, $status)
     {
         try {

@@ -4,7 +4,9 @@ $(document).ready(async function () {
   var asesoresList;
   var idCliente;
   var proyectosList;
+  var lotesListClientes;
   var selectedCount = 0;
+  var idVentaActive;
   // lista de clientes seleccionados
   var selectClientes;
   var dataTable = $("#usuariosList").DataTable({
@@ -58,7 +60,7 @@ $(document).ready(async function () {
         data: null,
         render: function (data) {
           return data.lote_id === null
-            ? "no-register"
+            ? `<span class="p-2 text-xs bg-yellow-400 rounded-full font-bold text-black">Sin registrar</span>`
             : `<b> N-${data.numero} Mz${data.mz_zona}</b>`;
         },
       },
@@ -104,6 +106,7 @@ $(document).ready(async function () {
                   `;
               break;
           }
+
           return template;
         },
       },
@@ -154,34 +157,108 @@ $(document).ready(async function () {
       );
     });
   }
+  async function buscar_lotes_by_proyecto(id) {
+    return new Promise((resolve, reject) => {
+      let funcion = "buscar_lotes_by_proyecto";
+      $.post(
+        "../../controlador/UsuarioController.php",
+        { funcion, id_proyecto: id },
+        (response) => {
+          const data = response === false ? false : JSON.parse(response);
+          resolve(data);
+        }
+      );
+    });
+  }
   $(document).on("click", "#validartask", async function () {
     let id_task = $(this).attr("id_task");
     const dataSearch = clientesList.find((c) => c.id === id_task);
     console.log(dataSearch);
     if (dataSearch) {
-      const validar = await validartask(id_task, "VALIDADO");
-      console.log(validar);
-      if (validar === "VALIDADO") {
-        let status = dataSearch.tipo === "SEPARACION" ? "SEPARADO" : "VENTA";
-        const updateLote = await update_lote(dataSearch.lote_id, status);
+      if (dataSearch.lote_id !== null && dataSearch.lote_id !== "") {
+        const validar = await validartask(id_task, "VALIDADO");
+        console.log(validar);
+        if (validar === "VALIDADO") {
+          let status = dataSearch.tipo === "SEPARACION" ? "SEPARADO" : "VENTA";
+          const updateLote = await update_lote(dataSearch.lote_id, status);
 
-        if (updateLote.message === "update_status") {
-          alert("Se valido correctamente");
+          if (updateLote.message === "update_status") {
+            alert("Se valido correctamente");
+          } else {
+            alert(
+              "No se pudo actualizar el estado del lote por un error , vaya al lotizador para arreglarlo"
+            );
+          }
         } else {
-          alert(
-            "No se pudo actualizar el estado del lote por un error , vaya al lotizador para arreglarlo"
-          );
+          alert("Hubo un error contacta al aministrador");
         }
+        var clientes = await buscar_ventas();
+        filtrarProyectos();
       } else {
-        alert("Hubo un error contacta al aministrador");
+        alert(
+          "No se puede validar la " +
+            dataSearch.tipo +
+            " porque no se encuentra registro un lote"
+        );
+        const lotes = await buscar_lotes_by_proyecto(dataSearch.proyecto_id);
+        if (lotes !== false) {
+          lotesListClientes = lotes;
+          let template_lotes = "";
+          template_lotes += `
+        <option value="0" disabled selected>Seleccione un lote</option>
+        `;
+          lotes.forEach((l) => {
+            if (l.estado !== "DISPONIBLE" && l.estado !== "SIN PUBLICAR") {
+              template_lotes += `
+            <option disabled value="${l.id}">${l.estado} Lote ${l.numero} Mz:${l.mz_zona} Area: ${l.area}m2 Precio: ${l.precio}</option>
+            `;
+            } else {
+              template_lotes += `
+            <option value="${l.id}">${l.estado} Lote ${l.numero} Mz:${l.mz_zona} Area: ${l.area}m2 Precio: ${l.precio}</option>
+            `;
+            }
+          });
+          idVentaActive = dataSearch.id;
+          $("#loteslist").html(template_lotes);
+          $("#register_lote_edit").removeClass("md-hidden");
+          setTimeout(() => {
+            $("#register_lote_edit .form-create").addClass("modal-show");
+          }, 300);
+        } else {
+          lotesListClientes = [];
+        }
       }
-      var clientes = await buscar_ventas();
-      filtrarProyectos();
     } else {
       alert(
         "No existe un lote producto seleccionado, porfavor edite la venta y establezca el lote"
       );
     }
+  });
+  $("#loteslist").on("change", function (e) {
+    let valor = e.target.value;
+    let precio = lotesListClientes.find((l) => l.id === valor).precio;
+    $("#precio_final_lote").val(precio);
+  });
+  $("#register_lote_venta").on("click", async function (e) {
+    $(this).attr("disabled", true);
+    let funcion = "update_lote_venta";
+    let lote_id = $("#loteslist").val();
+    let precio = $("#precio_final_lote").val();
+
+    $.post(
+      "../../controlador/UsuarioController.php",
+      { funcion, lote_id, id_task: idVentaActive, precio },
+      async (response) => {
+        console.log(response);
+        $("#register_lote_edit .form-create").removeClass("modal-show");
+        setTimeout(() => {
+          $("#register_lote_edit").addClass("md-hidden");
+        }, 300);
+        await buscar_ventas();
+        filtrarProyectos();
+        $(this).attr("disabled", false);
+      }
+    );
   });
   $(document).on("click", "#novalidartask", async function () {
     let id_task = $(this).attr("id_task");
@@ -447,7 +524,6 @@ $(document).ready(async function () {
         "../../controlador/UsuarioController.php",
         { funcion },
         (response) => {
-          console.log(response);
           let template = "";
           if (response.trim() == "no-register-clientes") {
             resolve([]);
@@ -576,13 +652,11 @@ $(document).ready(async function () {
     "#cliente-search, #filter-proyecto, #filter-selected, #filter-validacion"
   ).on("change", filtrarProyectos);
   function filtrarProyectos() {
-    console.log("key");
     const selected = $("#filter-selected").val();
     const validacion = $("#filter-validacion").val();
     const nombreProyecto = $("#filter-proyecto").val();
     const sede = $("#filter-sede").val();
     const nombreCliente = $("#cliente-search").val().toLowerCase();
-    console.log(nombreCliente);
 
     const clientes = clientesList.filter((cliente) => {
       if (sede !== "Todas" && cliente.sede_id !== sede) {
@@ -613,8 +687,6 @@ $(document).ready(async function () {
       return true;
     });
 
-    console.log(clientes);
-
     var estadoActual = {
       page: dataTable.page(), // Página actual
       scrollLeft: $("#usuariosList").parent().scrollLeft(), // Posición de scroll horizontal
@@ -630,9 +702,8 @@ $(document).ready(async function () {
     // Restaurar el número de página previo
     var pageInfo = dataTable.page.info();
     var totalPaginas = pageInfo.pages;
-    console.log(totalPaginas);
+
     if (estadoActual.page < totalPaginas) {
-      console.log(estadoActual.page);
       dataTable.page(estadoActual.page);
     } else {
       dataTable.clear().draw();

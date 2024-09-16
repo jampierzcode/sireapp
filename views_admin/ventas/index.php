@@ -409,6 +409,37 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2) {
                 </div>
             </div>
 
+            <div id="register_lote_edit" class="modal-create md-hidden">
+                <div class="form-create">
+                    <!-- <form id="form_producto_add"> -->
+                    <div class="close-modal">
+                        <ion-icon name="close-outline"></ion-icon>
+                    </div>
+                    <h1 class="font-bold">Registrar lote</h1>
+                    <div class="gird grid-cols-1 md:grid-cols-1 gap-4">
+                        <div class="w-full">
+                            <label for="Lote">Lote</label>
+                            <select class="w-full rounded p-3 bg-gray-200 text-sm" id="loteslist">
+                                <option value="0">Seleccione un lote</option>
+                            </select>
+                        </div>
+                        <div class="w-full">
+                            <label for="Precio">Precio</label>
+                            <input type="number" step="0.01" class="w-full rounded p-3 bg-gray-200 text-sm" id="precio_final_lote" />
+
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <button id="register_lote_venta" class="bg-[#310ecd] text-white rounded p-2">Registrar</button>
+                    </div>
+                    <!-- <div class="card-input buttons-modal">
+                        <button id="cancel-form" class="btn-cancel">Cancelar</button>
+                        <button id="add-user-form" class="btn-create">Crear</button>
+                    </div> -->
+                    <!-- </form> -->
+                </div>
+            </div>
+
 
             <!-- <div class="create-productos" style="margin-bottom: 20px">
             <button id="create-clients" class="btn-add">+ Crear</button>
