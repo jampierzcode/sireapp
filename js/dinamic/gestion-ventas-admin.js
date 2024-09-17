@@ -314,6 +314,45 @@ $(document).ready(async function () {
       data: [],
     });
   }
+  async function buscar_clientes_empresa() {
+    return new Promise((resolve, reject) => {
+      let funcion = "buscar_clientes_empresa";
+      $.post(
+        "../../controlador/UsuarioController.php",
+        { funcion },
+        (response) => {
+          const data = JSON.parse(response);
+          resolve(data);
+        }
+      );
+    });
+  }
+  function pintar_clientes_empresa(data) {
+    let template = `<option value="0" disabled selected>Seleccione un cliente</option>`;
+    data.forEach((d) => {
+      template += `<option value="${d.id_cliente}">${d.nombre} ${d.apellido}</option>`;
+    });
+    $("#clientesList").html(template);
+  }
+  function pintar_sedes_empresa(data) {}
+  function pintar_proyectos_sede(data) {}
+  function pintar_lotes_proyecto(data) {}
+  const data = await buscar_clientes_empresa();
+  pintar_clientes_empresa(data);
+
+  // nueva venta o separacion
+  $("#new-venta").on("click", function () {
+    $("#register_venta_form").removeClass("md-hidden");
+    setTimeout(() => {
+      $("#register_venta_form .form-create").addClass("modal-show");
+    }, 300);
+  });
+  $("#register_venta_form .close-modal").on("click", function () {
+    $("#register_venta_form .form-create").removeClass("modal-show");
+    setTimeout(() => {
+      $("#register_venta_form").addClass("md-hidden");
+    }, 300);
+  });
 
   // buscar asesores con id cliente asignado
   function buscar_asesores(id_cliente) {

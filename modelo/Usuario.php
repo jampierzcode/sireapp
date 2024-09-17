@@ -1991,6 +1991,56 @@ class Usuario
             //throw $th;
         }
     }
+    function buscar_clientes_empresa($user)
+    {
+        try {
+            $sql = "SELECT
+                CLIENTE.*,ic.id AS id_task,
+                ic.status AS task_status,
+                ic.fecha_visita,
+                ic.hora_visita,
+                CASE
+                    WHEN UC.cliente_id IS NULL THEN 'No asignado'
+                    ELSE CONCAT(USUARIO.nombre, ' ', USUARIO.apellido)
+                END AS asignado_usuario,
+                PROYECTO.nombreProyecto AS nombre_proyecto, SEDE.id as sede_id, SEDE.direccion, SEDE.ciudad as ciudad_sede, SEDE.name_reference
+            FROM
+                cliente AS CLIENTE
+                INNER JOIN user_sede AS US ON CLIENTE.sede_id = US.sede_id    
+                LEFT JOIN user_cliente AS UC ON CLIENTE.id_cliente = UC.cliente_id
+                LEFT JOIN usuario AS USUARIO ON UC.user_id = USUARIO.id_usuario
+                LEFT JOIN proyectos AS PROYECTO ON CLIENTE.proyet_id = PROYECTO.id LEFT JOIN sede as SEDE ON CLIENTE.sede_id=SEDE.id
+                LEFT JOIN (
+        SELECT ic1.id,
+               ic1.cliente_id,
+               ic1.status,
+               ic1.fecha_visita,
+               ic1.hora_visita
+        FROM interaccion_cliente ic1
+        JOIN (
+            SELECT cliente_id, MAX(CONCAT(fecha_visita, ' ', hora_visita)) AS ultima_interaccion
+            FROM interaccion_cliente
+            GROUP BY cliente_id
+        ) ic2 ON ic1.cliente_id = ic2.cliente_id AND CONCAT(ic1.fecha_visita, ' ', ic1.hora_visita) = ic2.ultima_interaccion
+    ) ic ON ic.cliente_id = CLIENTE.id_cliente
+            WHERE
+                US.user_id = :id_usuario AND CLIENTE.archived=0 ORDER BY CLIENTE.id_cliente;
+            ";
+            $query = $this->conexion->prepare($sql);
+            $query->execute(array(":id_usuario" => $user));
+            $this->datos = $query->fetchAll(); // retorna objetos o no
+            if (!empty($this->datos)) {
+                return $this->datos;
+            } else {
+                $this->mensaje = "no-register-clientes";
+                return $this->mensaje;
+            }
+        } catch (\Throwable $error) {
+            $this->mensaje = "fatal_error";
+            return $this->mensaje;
+            //throw $th;
+        }
+    }
     function buscar_leads_subidos_by_asesores($user)
     {
         try {

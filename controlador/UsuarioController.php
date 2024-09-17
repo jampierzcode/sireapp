@@ -1237,6 +1237,13 @@ if ($_POST["funcion"] == "buscar_clientes") {
         echo $jsonstring;
     }
 }
+if ($_POST["funcion"] == "buscar_clientes_empresa") {
+    $user = $_SESSION["id_usuario"];
+    $usuario->buscar_clientes_empresa($user);
+
+    $jsonstring = json_encode($usuario->datos);
+    echo $jsonstring;
+}
 // buscar_leads_subidos_by_asesores
 
 if ($_POST["funcion"] == "buscar_leads_subidos_by_asesores") {
