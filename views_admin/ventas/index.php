@@ -446,9 +446,9 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2) {
                         <ion-icon name="close-outline"></ion-icon>
                     </div>
                     <h1 class="font-bold">Registrar Venta</h1>
-                    <div class="gird grid-cols-1 md:grid-cols-1 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
                         <div class="w-full">
-                            <label for="Lote">Tipo</label>
+                            <label for="Lote" class="font-bold text-lg">Tipo</label>
                             <select class="w-full rounded p-3 bg-gray-200 text-sm" id="ventaTipo">
                                 <option value="0" disabled selected>Seleccione un tipo de venta</option>
                                 <option value="SEPARACION">SEPARACION</option>
@@ -456,39 +456,36 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2) {
                             </select>
                         </div>
                         <div class="w-full">
-                            <label for="Lote">Seleccione al cliente</label>
+                            <label for="Lote" class="font-bold text-lg w-full block">Seleccione al cliente</label>
                             <select class="w-full rounded p-3 bg-gray-200 text-sm" id="clientesList">
                                 <option value="0" disabled selected>Seleccione un cliente</option>
 
                             </select>
                         </div>
                         <div class="w-full">
-                            <label for="Lote">Sede</label>
-                            <select class="w-full rounded p-3 bg-gray-200 text-sm" id="sedesList">
+                            <label for="Lote" class="font-bold text-lg">Sede</label>
+                            <select class="w-full rounded p-3 bg-gray-200 text-sm" id="sedesListModal">
                                 <option value="0" disabled selected>Seleccione un lote</option>
-                                <option value="SEPARACION">SEPARACION</option>
-                                <option value="VENTA">VENTA</option>
+
                             </select>
                         </div>
                         <div class="w-full">
-                            <label for="Lote">Proyecto</label>
-                            <select class="w-full rounded p-3 bg-gray-200 text-sm" id="proyectosList">
+                            <label for="Lote" class="font-bold text-lg">Proyecto</label>
+                            <select class="w-full rounded p-3 bg-gray-200 text-sm" id="proyectosListModal">
                                 <option value="0" disabled selected>Seleccione un lote</option>
-                                <option value="SEPARACION">SEPARACION</option>
-                                <option value="VENTA">VENTA</option>
+
                             </select>
                         </div>
                         <div class="w-full">
-                            <label for="Lote">Lote</label>
-                            <select class="w-full rounded p-3 bg-gray-200 text-sm" id="loteslist">
+                            <label for="Lote" class="font-bold text-lg">Lote</label>
+                            <select class="w-full rounded p-3 bg-gray-200 text-sm" id="loteslistModal">
                                 <option value="0" disabled selected>Seleccione un lote</option>
-                                <option value="SEPARACION">SEPARACION</option>
-                                <option value="VENTA">VENTA</option>
+
                             </select>
                         </div>
                         <div class="w-full">
-                            <label for="Precio">Precio</label>
-                            <input type="number" step="0.01" class="w-full rounded p-3 bg-gray-200 text-sm" id="precio_final_lote" />
+                            <label for="Precio" class="font-bold text-lg">Precio</label>
+                            <input type="number" step="0.01" class="w-full rounded p-3 bg-gray-200 text-sm" id="precio_final_modal" />
 
                         </div>
                     </div>

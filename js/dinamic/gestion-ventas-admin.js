@@ -5,6 +5,7 @@ $(document).ready(async function () {
   var idCliente;
   var proyectosList;
   var lotesListClientes;
+  var lotesListModal;
   var selectedCount = 0;
   var idVentaActive;
   // lista de clientes seleccionados
@@ -328,11 +329,16 @@ $(document).ready(async function () {
     });
   }
   function pintar_clientes_empresa(data) {
-    let template = `<option value="0" disabled selected>Seleccione un cliente</option>`;
+    let template = `<option value="" disabled selected>Seleccione un cliente</option>`;
     data.forEach((d) => {
-      template += `<option value="${d.id_cliente}">${d.nombre} ${d.apellido}</option>`;
+      template += `<option value="${d.id_cliente}">${d.nombres} ${d.apellidos}</option>`;
     });
     $("#clientesList").html(template);
+    $("#clientesList").select2({
+      allowClear: true,
+      placeholder: "Selecciona un asesor",
+      data: [],
+    });
   }
   function pintar_sedes_empresa(data) {}
   function pintar_proyectos_sede(data) {}
@@ -352,6 +358,7 @@ $(document).ready(async function () {
     setTimeout(() => {
       $("#register_venta_form").addClass("md-hidden");
     }, 300);
+    $("#clientesList").val(null).trigger("change");
   });
 
   // buscar asesores con id cliente asignado
@@ -682,10 +689,79 @@ $(document).ready(async function () {
     });
     $("#filter-proyecto").html(template);
   }
+  // funciones para pintar modal
+  function pintar_sedes_modal(sedes) {
+    let template = "";
+    template += `
+      <option value="" disabled>Seleccione una sede</option>
+      
+      `;
+    sedes.forEach((s) => {
+      template += `
+        <option value="${s.id}">${s.name_reference} ${s.direccion}-${s.ciudad}</option>
+        
+        `;
+    });
+    $("#sedesListModal").html(template);
+    llenar_proyectos_sede_modal(sedes[0].id);
+    filtrarClientesModal();
+  }
+  function filtrarClientesModal() {
+    console.log(clientes);
+  }
+  $("#sedesListModal").on("change", function (e) {
+    let sede_id = e.target.value;
+    llenar_proyectos_sede_modal(sede_id);
+    filtrarClientesModal();
+  });
+  function pintar_lotes_modal(lotes) {
+    lotesListModal = lotes;
+    let template = `<option value="" disabled selected>Seleccione un lote</option>`;
+    lotes.forEach((l) => {
+      template += `
+      <option value="${l.id}" ${
+        l.estado !== "DISPONIBLE" && l.estado !== "SIN PUBLICAR"
+          ? "disabled"
+          : null
+      }> ${l.estado} ${l.numero} Mz: ${l.mz_zona} Area:${l.area} S/${Number(
+        l.precio
+      ).toFixed(2)}</option>
+      `;
+    });
+    $("#loteslistModal").html(template);
+  }
+  $("#loteslistModal").on("change", function (e) {
+    const id_lote = e.target.value;
+    const precio = lotesListModal.find((l) => l.id === id_lote).precio;
+    console.log(id_lote);
+    console.log(precio);
+    console.log(lotesListModal);
+    $("#precio_final_modal").val(Number(precio));
+  });
+  $("#proyectosListModal").on("change", async function (e) {
+    const id = e.target.value;
+    const lotes = await buscar_lotes_by_proyecto(id);
+    pintar_lotes_modal(lotes);
+  });
+  async function llenar_proyectos_sede_modal(sede_id) {
+    let proyectos = proyectosList.filter((p) => p.sede_id === sede_id);
+    let template = "";
+    template += `<option value="" disabled>Seleccione un proyecto</option>`;
+    // console.log(proyectosList);
+    proyectos.forEach((proyecto) => {
+      template += `<option value="${proyecto.id}">${proyecto.nombre_proyecto}</option>`;
+    });
+    $("#proyectosListModal").html(template);
+    const lotes = await buscar_lotes_by_proyecto(proyectos[0].id);
+    pintar_lotes_modal(lotes);
+  }
+
   var clientes = await buscar_ventas();
   var sedes = await buscar_sedes_by_usuario();
+
   var proyectos = await buscar_proyectos();
   pintar_sedes(sedes);
+  pintar_sedes_modal(sedes);
   // Event listeners para los cambios en el select y el input
   $(
     "#cliente-search, #filter-proyecto, #filter-selected, #filter-validacion"
