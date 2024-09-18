@@ -2459,6 +2459,7 @@ $(document).ready(async function () {
           observaciones,
         },
         (response) => {
+          console.log(response);
           if (response.trim() === "add-register-venta") {
             add_toast("success", "Se registro correctamente la venta");
             resolve();

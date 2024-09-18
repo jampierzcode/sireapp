@@ -270,6 +270,24 @@ $(document).ready(function () {
         if (searchinfo !== false) {
           let data = searchinfo;
           console.log(data);
+          let rol;
+          switch (Number(data.usuariorol)) {
+            case 2:
+              rol = "admin";
+              break;
+            case 3:
+              rol = "asesor";
+              break;
+            case 4:
+              rol = "cajero";
+              break;
+            case 5:
+              rol = "colaborador";
+              break;
+
+            default:
+              break;
+          }
           let template = "";
           template += ` <div class="w-full">
                         <h2 class="text-sm font-bold">Cliente</h2>
@@ -289,13 +307,15 @@ $(document).ready(function () {
                         <h2 class="text-sm font-bold">Usuario</h2>
                         <p>${data.nombre_user} ${
             data.apellido_user
-          } <span class="rounded-full bg-blue-800 text-xs text-white p-2 font-bold">${
-            data.usuariorol === 1 ? "admin" : "asesor"
-          }</span></p>
+          } <span class="rounded-full bg-blue-800 text-xs text-white p-2 font-bold">${rol}</span></p>
                     </div>
                     <div class="w-full">
                         <h2 class="text-sm font-bold">Monto</h2>
                         <p>S/${data?.precio}</p>
+                    </div>
+                    <div class="w-full">
+                        <h2 class="text-sm font-bold">Observacion</h2>
+                        <p>${data?.observacion}</p>
                     </div>
 
           `;

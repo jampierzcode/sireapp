@@ -1155,8 +1155,27 @@ if ($_POST["funcion"] == "register_venta") {
     $lote_id = $_POST["lote_id"];
     $precio_final = $_POST["precio_final"];
     $observaciones = $_POST["observaciones"];
+    $created_by = $id_usuario;
     $user = $id_usuario;
-    $usuario->register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final, $observaciones);
+    $usuario->register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final, $observaciones, $created_by);
+    echo $usuario->mensaje;
+}
+if ($_POST["funcion"] == "register_venta_admin") {
+    // Accedemos a los datos de venta
+    $data_venta = $_POST['data_venta'];
+
+    // Acceder a los campos específicos
+    $tipo = $data_venta['tipo'];
+    $lote_id = $data_venta['lote_id'];
+    $user_id = $data_venta['user_id'];
+    $cliente_id = $data_venta['cliente_id'];
+    $precio = $data_venta['precio'];
+    $fecha_venta = $data_venta['fecha_venta'];
+    $status = $data_venta['status'];
+    $observaciones = $data_venta['observaciones'];
+
+    $created_by = $id_usuario;
+    $usuario->register_venta_admin($tipo, $fecha_venta, $cliente_id, $user_id, $status, $lote_id, $precio, $observaciones, $created_by);
     echo $usuario->mensaje;
 }
 if ($_POST["funcion"] == "add_cliente") {

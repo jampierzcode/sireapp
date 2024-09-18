@@ -1479,13 +1479,29 @@ class Usuario
             return $this->mensaje;
         }
     }
-    function register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final, $observaciones)
+    function register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final, $observaciones, $created_by)
     {
         try {
             # code...
-            $sql = "INSERT INTO ventas(cliente_id, user_id, fecha_venta, tipo, lote_id, precio, status, observacion) VALUES(:cliente, :usuario, :fecha, :tipo, :lote_id, :precio, :status, :observacion)";
+            $sql = "INSERT INTO ventas(cliente_id, user_id, fecha_venta, tipo, lote_id, precio, status, observacion, created_by) VALUES(:cliente, :usuario, :fecha, :tipo, :lote_id, :precio, :status, :observacion, :created_by)";
             $query = $this->conexion->prepare($sql);
-            $query->execute(array(":cliente" => $cliente, ":usuario" => $user, ":fecha" => $fecha, ":tipo" => $status, ":lote_id" => $lote_id, ":precio" => $precio_final, ":status" => "SEND_VALIDAR", ":observacion" => $observaciones));
+            $query->execute(array(":cliente" => $cliente, ":usuario" => $user, ":fecha" => $fecha, ":tipo" => $status, ":lote_id" => $lote_id, ":precio" => $precio_final, ":status" => "SEND_VALIDAR", ":observacion" => $observaciones, ":created_by" => $created_by));
+
+            $this->mensaje = "add-register-venta";
+            return $this->mensaje;
+        } catch (\Throwable $error) {
+            // Devolver un mensaje de error en caso de excepción
+            $this->mensaje = "no-gesiter-venta" . $error;
+            return $this->mensaje;
+        }
+    }
+    function register_venta_admin($tipo, $fecha_venta, $cliente_id, $user_id, $status, $lote_id, $precio, $observaciones, $created_by)
+    {
+        try {
+            # code...
+            $sql = "INSERT INTO ventas(cliente_id, user_id, fecha_venta, tipo, lote_id, precio, status, observacion, created_by) VALUES(:cliente, :usuario, :fecha, :tipo, :lote_id, :precio, :status, :observacion, :created_by)";
+            $query = $this->conexion->prepare($sql);
+            $query->execute(array(":cliente" => $cliente_id, ":usuario" => $user_id, ":fecha" => $fecha_venta, ":tipo" => $tipo, ":lote_id" => $lote_id, ":precio" => $precio, ":status" => $status, ":observacion" => $observaciones, ":created_by" => $created_by));
 
             $this->mensaje = "add-register-venta";
             return $this->mensaje;
@@ -2117,7 +2133,7 @@ class Usuario
     function buscar_venta_by_lote($lote_id)
     {
         try {
-            $sql = "SELECT v.*, c.nombres, c.apellidos, l.numero, l.mz_zona, l.area, u.nombre as nombre_user, u.apellido as apellido_user, u.usuarioRol FROM ventas v inner join lotes l on v.lote_id=l.id inner join cliente as c on v.cliente_id=c.id_cliente inner join usuario u on v.user_id=u.id_usuario WHERE v.lote_id=:lote_id";
+            $sql = "SELECT v.*, c.nombres, c.apellidos, l.numero, l.mz_zona, l.area, u.nombre as nombre_user, u.apellido as apellido_user, u.usuarioRol FROM ventas v inner join lotes l on v.lote_id=l.id inner join cliente as c on v.cliente_id=c.id_cliente inner join usuario u on v.created_by=u.id_usuario WHERE v.lote_id=:lote_id";
             $query = $this->conexion->prepare($sql);
             $query->execute(array(":lote_id" => $lote_id));
             $this->datos = $query->fetch(); // retorna objetos o no
@@ -2171,7 +2187,21 @@ class Usuario
     function buscar_ventas_empresa($user)
     {
         try {
-            $sql = "SELECT v.id as id, v.lote_id, l.numero, l.mz_zona, l.area, v.observacion, v.status, c.sede_id, s.name_reference, s.ciudad as ciudad_sede, s.direccion, c.proyet_id as proyecto_id, v.fecha_venta as fecha, '00:00:00' as hora, v.user_id, v.tipo, v.cliente_id, c.nombres, c.apellidos,  c.correo, c.celular, u.nombre as nombre_user, u.apellido as apellido_user, ru.nombreRol,  p.nombreProyecto as nombre_proyecto FROM ventas v inner join cliente c on v.cliente_id=c.id_cliente inner join usuario u on v.user_id=u.id_usuario inner join roles ru on u.usuarioRol=ru.id INNER JOIN user_sede AS US ON c.sede_id = US.sede_id INNER JOIN sede s on US.sede_id=s.id INNER JOIN proyectos as p on c.proyet_id=p.id left JOIN lotes l on v.lote_id=l.id WHERE US.user_id=:id_usuario";
+            $sql = "SELECT v.id as id, v.lote_id, l.numero, l.mz_zona, l.area, v.observacion, v.status, 
+        c.sede_id, s.name_reference, s.ciudad as ciudad_sede, s.direccion, 
+        c.proyet_id as proyecto_id, v.fecha_venta as fecha, '00:00:00' as hora, 
+        v.user_id, v.tipo, v.cliente_id, c.nombres, c.apellidos, c.correo, c.celular, 
+        u.nombre as nombre_user, u.apellido as apellido_user, ru.nombreRol, 
+        p.nombreProyecto as nombre_proyecto 
+        FROM ventas v 
+        LEFT JOIN cliente c ON v.cliente_id = c.id_cliente 
+        LEFT JOIN usuario u ON v.user_id = u.id_usuario 
+        LEFT JOIN roles ru ON u.usuarioRol = ru.id 
+        INNER JOIN user_sede AS US ON c.sede_id = US.sede_id 
+        INNER JOIN sede s ON US.sede_id = s.id 
+        LEFT JOIN proyectos p ON c.proyet_id = p.id 
+        LEFT JOIN lotes l ON v.lote_id = l.id 
+        WHERE US.user_id = :id_usuario";
             $query = $this->conexion->prepare($sql);
             $query->execute(array(":id_usuario" => $user));
             $this->datos = $query->fetchAll(); // retorna objetos o no

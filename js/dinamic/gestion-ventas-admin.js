@@ -6,6 +6,7 @@ $(document).ready(async function () {
   var proyectosList;
   var lotesListClientes;
   var lotesListModal;
+  var dataClientesList;
   var selectedCount = 0;
   var idVentaActive;
   // lista de clientes seleccionados
@@ -261,6 +262,76 @@ $(document).ready(async function () {
       }
     );
   });
+  async function registrar_venta(data_venta) {
+    return new Promise((resolve, reject) => {
+      let funcion = "register_venta_admin";
+      $.post(
+        "../../controlador/UsuarioController.php",
+        { funcion, data_venta },
+        (response) => {
+          console.log(response);
+          resolve(response);
+        }
+      );
+    });
+  }
+  $("#register_venta").on("click", async function (e) {
+    $(this).attr("disabled", true);
+    let funcion = "regiter_venta";
+    let lote_id = $("#loteslistModal").val();
+    let tipo = $("#ventaTipo").val();
+
+    let precio = $("#precio_final_modal").val();
+
+    let cliente_id = $("#clientesList").val();
+    let observaciones = $("#observacionesModal").val();
+    console.log(cliente_id);
+    console.log(lote_id);
+    let select_asesor = $("#select_asesor").val();
+    let user_id;
+    let fecha_venta = dayjs().format("YYYY-MM-DD");
+    let status = "SEND_VALIDAR";
+    if (tipo !== null) {
+      if (lote_id !== null) {
+        if (select_asesor === "SI") {
+          user_id = $("#asesoresList").val();
+          if (user_id === "") {
+            add_toast("warning", "Debe seleccionar un asesor");
+            $(this).attr("disabled", false);
+            return;
+          }
+        } else {
+          user_id = null;
+        }
+        let newData = {
+          tipo,
+          lote_id,
+          user_id,
+          cliente_id,
+          precio,
+          fecha_venta,
+          status,
+          observaciones,
+        };
+        console.log(newData);
+        const send_venta = await registrar_venta(newData);
+
+        if (send_venta.trim() === "add-register-venta") {
+          add_toast("success", "Se registro correctamente la venta");
+        } else {
+          add_toast("error", "Hubo un error Contacta al administrador");
+          console.log(send_venta);
+        }
+        $(this).attr("disabled", false);
+      } else {
+        add_toast("warning", "Debe seleccionar un lote");
+        $(this).attr("disabled", false);
+      }
+    } else {
+      add_toast("warning", "Debe seleccionar el tipo de venta");
+      $(this).attr("disabled", false);
+    }
+  });
   $(document).on("click", "#novalidartask", async function () {
     let id_task = $(this).attr("id_task");
     const dataSearch = clientesList.find((c) => c.id === id_task);
@@ -283,33 +354,35 @@ $(document).ready(async function () {
     }
   });
   // busca a todos los asesores
-  fetchasesores();
-  function fetchasesores() {
-    let funcion = "buscar_asesores";
-    $.post(
-      "../../controlador/UsuarioController.php",
-      { funcion },
-      (response) => {
-        if (response.trim() === "no-register") {
-          return;
-        } else {
-          const asesores = JSON.parse(response);
-          asesoresList = asesores;
-          pintar_results_asesores(asesoresList);
+  async function fetchasesores() {
+    return new Promise((resolve, reject) => {
+      let funcion = "buscar_asesores";
+      $.post(
+        "../../controlador/UsuarioController.php",
+        { funcion },
+        (response) => {
+          if (response.trim() === "no-register") {
+            return;
+          } else {
+            const asesores = JSON.parse(response);
+            asesoresList = asesores;
+            resolve(asesores);
+          }
         }
-      }
-    );
+      );
+    });
   }
-  function pintar_results_asesores(asesores) {
+  function pintar_results_asesores(sede_id) {
+    const asesoresFilter = asesoresList.filter((a) => a.sede_id === sede_id);
     let template = `<option value="" selected></option>`;
-    asesores.forEach((asesor) => {
+    asesoresFilter.forEach((asesor) => {
       let option = `<option value=${asesor.id_usuario}>${asesor.nombre} ${asesor.apellido}</option>`;
 
       template += option;
     });
 
-    $("#asesor-user-multi").html(template);
-    $("#asesor-user-multi").select2({
+    $("#asesoresList").html(template);
+    $("#asesoresList").select2({
       allowClear: true,
       placeholder: "Selecciona un asesor",
       data: [],
@@ -323,28 +396,34 @@ $(document).ready(async function () {
         { funcion },
         (response) => {
           const data = JSON.parse(response);
+          dataClientesList = data;
           resolve(data);
         }
       );
     });
   }
-  function pintar_clientes_empresa(data) {
+  function pintar_clientes_empresa(sede_id) {
+    const dataFilter = dataClientesList.filter((d) => d.sede_id === sede_id);
     let template = `<option value="" disabled selected>Seleccione un cliente</option>`;
-    data.forEach((d) => {
-      template += `<option value="${d.id_cliente}">${d.nombres} ${d.apellidos}</option>`;
+    dataFilter.forEach((d) => {
+      template += `<option value="${d.id_cliente}">Doc:${d?.documento} -- ${d.nombres} ${d.apellidos}</option>`;
     });
     $("#clientesList").html(template);
     $("#clientesList").select2({
       allowClear: true,
-      placeholder: "Selecciona un asesor",
-      data: [],
+      placeholder: "Selecciona un cliente",
+      width: "resolve",
     });
   }
-  function pintar_sedes_empresa(data) {}
-  function pintar_proyectos_sede(data) {}
-  function pintar_lotes_proyecto(data) {}
-  const data = await buscar_clientes_empresa();
-  pintar_clientes_empresa(data);
+  // opcion habilitado asesor register
+  $("#select_asesor").on("change", function (e) {
+    const select = e.target.value;
+    if (select === "SI") {
+      $("#viewListAsesores").removeClass("hidden");
+    } else {
+      $("#viewListAsesores").addClass("hidden");
+    }
+  });
 
   // nueva venta o separacion
   $("#new-venta").on("click", function () {
@@ -575,7 +654,7 @@ $(document).ready(async function () {
             resolve([]);
           } else {
             const clientes = JSON.parse(response);
-
+            console.log(clientes);
             clientesList = clientes;
             clientes.sort(compareDatesDesc);
             resolve(clientes);
@@ -711,7 +790,9 @@ $(document).ready(async function () {
   }
   $("#sedesListModal").on("change", function (e) {
     let sede_id = e.target.value;
+    pintar_clientes_empresa(sede_id);
     llenar_proyectos_sede_modal(sede_id);
+    pintar_results_asesores(sede_id);
     filtrarClientesModal();
   });
   function pintar_lotes_modal(lotes) {
@@ -723,9 +804,9 @@ $(document).ready(async function () {
         l.estado !== "DISPONIBLE" && l.estado !== "SIN PUBLICAR"
           ? "disabled"
           : null
-      }> ${l.estado} ${l.numero} Mz: ${l.mz_zona} Area:${l.area} S/${Number(
-        l.precio
-      ).toFixed(2)}</option>
+      }> ${l.estado} -- N: ${l.numero} Mz: ${l.mz_zona} Area:${
+        l.area
+      } S/${Number(l.precio).toFixed(2)}</option>
       `;
     });
     $("#loteslistModal").html(template);
@@ -758,10 +839,15 @@ $(document).ready(async function () {
 
   var clientes = await buscar_ventas();
   var sedes = await buscar_sedes_by_usuario();
+  const data = await buscar_clientes_empresa();
 
   var proyectos = await buscar_proyectos();
+  const asesores = await fetchasesores();
   pintar_sedes(sedes);
   pintar_sedes_modal(sedes);
+  pintar_clientes_empresa(sedes[0].id);
+
+  pintar_results_asesores(sedes[0].id);
   // Event listeners para los cambios en el select y el input
   $(
     "#cliente-search, #filter-proyecto, #filter-selected, #filter-validacion"

@@ -18,6 +18,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2) {
         <link rel="stylesheet" href="../../css/container-dashboard.css">
         <link rel="stylesheet" href="../../css/habitaciones.css">
         <link rel="stylesheet" href="../../css/productos.css">
+        <link rel="stylesheet" href="../../css/toast.css">
         <link rel="icon" href="../../img/logo.jpg">
         <!-- data table CDN -->
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
@@ -455,13 +456,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2) {
                                 <option value="VENTA">VENTA</option>
                             </select>
                         </div>
-                        <div class="w-full">
-                            <label for="Lote" class="font-bold text-lg w-full block">Seleccione al cliente</label>
-                            <select class="w-full rounded p-3 bg-gray-200 text-sm" id="clientesList">
-                                <option value="0" disabled selected>Seleccione un cliente</option>
 
-                            </select>
-                        </div>
                         <div class="w-full">
                             <label for="Lote" class="font-bold text-lg">Sede</label>
                             <select class="w-full rounded p-3 bg-gray-200 text-sm" id="sedesListModal">
@@ -469,6 +464,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2) {
 
                             </select>
                         </div>
+                        <div class="h-[3px] w-full bg-gray-300"></div>
                         <div class="w-full">
                             <label for="Lote" class="font-bold text-lg">Proyecto</label>
                             <select class="w-full rounded p-3 bg-gray-200 text-sm" id="proyectosListModal">
@@ -488,9 +484,39 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2) {
                             <input type="number" step="0.01" class="w-full rounded p-3 bg-gray-200 text-sm" id="precio_final_modal" />
 
                         </div>
+                        <div class="h-[3px] w-full bg-gray-300"></div>
+                        <div class="w-full">
+                            <label for="Lote" class="font-bold text-lg w-full block">Cliente</label>
+                            <select style="width: 100%" class="w-full rounded p-3 bg-gray-200 text-sm" id="clientesList">
+                                <option value="0" disabled selected>Seleccione un cliente</option>
+
+                            </select>
+                        </div>
+                        <div class="h-[3px] w-full bg-gray-300"></div>
+                        <div class="w-full">
+                            <label for="Lote" class="font-bold text-lg w-full block">Asesor</label>
+                            <select style="width: 100%" class="w-full rounded p-3 bg-gray-200 text-sm" id="select_asesor">
+                                <option value="No" selected>No</option>
+                                <option value="SI">SI</option>
+
+                            </select>
+                        </div>
+                        <div class="w-full hidden" id="viewListAsesores">
+                            <select style="width: 100%" class="w-full rounded p-3 bg-gray-200 text-sm" id="asesoresList">
+                                <option value="0" disabled selected>Seleccione un asesor</option>
+
+                            </select>
+                        </div>
+                        <div class="w-full">
+                            <label for="Lote" class="font-bold text-lg w-full block">Observaciones</label>
+
+                            <textarea class="w-full rounded p-3 bg-gray-200 text-sm" name="observacionesModal" id="observacionesModal"></textarea>
+                        </div>
+
+
                     </div>
                     <div class="w-full">
-                        <button id="register_lote_venta" class="bg-[#310ecd] text-white rounded p-2">Registrar</button>
+                        <button id="register_venta" class="bg-[#310ecd] text-white rounded p-2">Registrar</button>
                     </div>
                     <!-- <div class="card-input buttons-modal">
                         <button id="cancel-form" class="btn-cancel">Cancelar</button>
@@ -657,6 +683,8 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <script src="../../js/jquery.min.js"></script>
+
+    <script src="../../js/dinamic/toastmith.js"></script>
     <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/fixedcolumns/3.2.2/js/dataTables.fixedColumns.min.js"></script>
     <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/js/dataTables.checkboxes.min.js"></script>
