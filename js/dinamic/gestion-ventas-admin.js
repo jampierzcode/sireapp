@@ -40,8 +40,15 @@ $(document).ready(async function () {
     columns: [
       { data: "id" },
       // { data: "id" },
-      { data: "nombres" },
-      { data: "apellidos" },
+      {
+        data: null,
+        render: function name(data) {
+          return data?.id_cliente !== null
+            ? `${data?.nombres}<br/> ${data.apellidos}`
+            : `<span class="w-max inline-block rounded-full p-2 bg-yellow-300 text-black font-bold text-xs">sin registrar</span>`;
+        },
+      },
+
       {
         data: null,
         render: function (data) {
@@ -52,24 +59,28 @@ $(document).ready(async function () {
       // { data: "telefono" },
       // { data: "origen" },
       // { data: "ciudad" },
-      {
-        data: null,
-        render: function (data) {
-          return `<b>${data.nombre_proyecto}</b>`;
-        },
-      },
+
       {
         data: null,
         render: function (data) {
           return data.lote_id === null
             ? `<span class="p-2 text-xs bg-yellow-400 rounded-full font-bold text-black">Sin registrar</span>`
-            : `<b> N-${data.numero} Mz${data.mz_zona}</b>`;
+            : `<b>lote:${data.numero} Mz:${data.mz_zona} Area: ${data.area}m2</b> <br/>
+            <p  class="text-xs">${data.nombre_proyecto}</p>`;
         },
       },
       {
         data: null,
         render: function (data) {
-          return `${data.nombre_user} ${data.apellido_user} <br/> <span class="w-max inline-block rounded-full p-2 bg-blue-500 text-white text-xs">${data.nombrerol}</spam>`;
+          return data?.asesor_id === null
+            ? `<span class="w-max inline-block rounded-full p-2 bg-yellow-300 text-black font-bold text-xs">sin registrar</span>`
+            : `${data?.nombre_user} <br/> ${data?.apellido_user}`;
+        },
+      },
+      {
+        data: null,
+        render: function (data) {
+          return `${data.nombre_creador} ${data.apellido_creador} <br/> <span class="w-max inline-block rounded-full p-2 bg-blue-500 text-white text-xs">${data.nombrerol}</span>`;
         },
       },
       {
@@ -90,16 +101,20 @@ $(document).ready(async function () {
             case "VALIDADO":
               template += `
                 <button target="_blank" id_task="${data?.id}" id="novalidartask" class="p-2 bg-red-600 rounded text-white font-bold text-sm">Cambiar a No Validado</button>
+                <button target="_blank" id_task="${data?.id}" id="anulartask" class="p-2 bg-yellow-300 rounded text-black font-bold text-sm">Anular</button>
                 `;
               break;
             case "NO VALIDADO":
+              template += `no se pueden hacer mas acciones`;
+              break;
+            case "ANULADO":
               template += `no se pueden hacer mas acciones`;
               break;
 
             default:
               template += `
                   <div class="flex-actions">
-                  <button target="_blank" keyClient="${data?.cliente_id}" id="historialCliente" class="btnJsvm normal">Historial</button>
+                  <button target="_blank" keyClient="${data?.id_cliente}" id="historialCliente" class="btnJsvm normal">Historial</button>
                   <button target="_blank" id_task="${data?.id}" id="validartask" class="px-4 py-3 bg-yellow-400 rounded text-gray-800 fonot-bold">Validar</button>
                   <button target="_blank" id_task="${data?.id}" id="novalidartask" class="px-4 py-3 bg-red-600 rounded text-white fonot-bold">No Validar</button>
                    
@@ -178,24 +193,34 @@ $(document).ready(async function () {
     console.log(dataSearch);
     if (dataSearch) {
       if (dataSearch.lote_id !== null && dataSearch.lote_id !== "") {
-        const validar = await validartask(id_task, "VALIDADO");
-        console.log(validar);
-        if (validar === "VALIDADO") {
-          let status = dataSearch.tipo === "SEPARACION" ? "SEPARADO" : "VENTA";
-          const updateLote = await update_lote(dataSearch.lote_id, status);
+        if (dataSearch.cliente_id !== null && dataSearch.cliente_id !== "") {
+          let confirmado = confirm(
+            "estas seguro de validar esta venta, despues no habra marcha atras"
+          );
+          if (confirmado) {
+            const validar = await validartask(id_task, "VALIDADO");
 
-          if (updateLote.message === "update_status") {
-            alert("Se valido correctamente");
-          } else {
-            alert(
-              "No se pudo actualizar el estado del lote por un error , vaya al lotizador para arreglarlo"
-            );
+            if (validar === "VALIDADO") {
+              let status =
+                dataSearch.tipo === "SEPARACION" ? "SEPARADO" : "OCUPADO";
+              const updateLote = await update_lote(dataSearch.lote_id, status);
+
+              if (updateLote.message === "update_status") {
+                add_toast("success", "Se valido correctamente");
+              } else {
+                alert(
+                  "No se pudo actualizar el estado del lote por un error , vaya al lotizador para arreglarlo"
+                );
+              }
+            } else {
+              alert("Hubo un error contacta al aministrador");
+            }
+            var clientes = await buscar_ventas();
+            filtrarProyectos();
           }
         } else {
           alert("Hubo un error contacta al aministrador");
         }
-        var clientes = await buscar_ventas();
-        filtrarProyectos();
       } else {
         alert(
           "No se puede validar la " +
@@ -234,6 +259,32 @@ $(document).ready(async function () {
       alert(
         "No existe un lote producto seleccionado, porfavor edite la venta y establezca el lote"
       );
+    }
+  });
+  $(document).on("click", "#anulartask", async function () {
+    let id_task = $(this).attr("id_task");
+    const dataSearch = clientesList.find((c) => c.id === id_task);
+    let confirmado = confirm(
+      "Estas seguro de anular la venta, no se podran hacer mas acciones si haces esto pero si hay un asesor asignado no afectara a su rendimiento"
+    );
+    if (confirmado) {
+      const validar = await validartask(id_task, "ANULADO");
+      if (validar === "ANULADO") {
+        let status = "DISPONIBLE";
+        const updateLote = await update_lote(dataSearch.lote_id, status);
+
+        if (updateLote.message === "update_status") {
+          add_toast("success", "Se cambio el estado de un lote");
+        } else {
+          alert(
+            "No se pudo actualizar el estado del lote por un error , vaya al lotizador para arreglarlo"
+          );
+        }
+        var clientes = await buscar_ventas();
+        filtrarProyectos();
+      } else {
+        alert("Hubo un error contacta al aministrador");
+      }
     }
   });
   $("#loteslist").on("change", function (e) {
@@ -279,6 +330,7 @@ $(document).ready(async function () {
     $(this).attr("disabled", true);
     let funcion = "regiter_venta";
     let lote_id = $("#loteslistModal").val();
+    let proyecto_id = $("#proyectosListModal").val();
     let tipo = $("#ventaTipo").val();
 
     let precio = $("#precio_final_modal").val();
@@ -303,26 +355,50 @@ $(document).ready(async function () {
         } else {
           user_id = null;
         }
-        let newData = {
-          tipo,
-          lote_id,
-          user_id,
-          cliente_id,
-          precio,
-          fecha_venta,
-          status,
-          observaciones,
-        };
-        console.log(newData);
-        const send_venta = await registrar_venta(newData);
+        if (cliente_id !== null) {
+          let newData = {
+            tipo,
+            lote_id,
+            user_id,
+            cliente_id,
+            precio,
+            fecha_venta,
+            status,
+            observaciones,
+          };
+          console.log(newData);
+          const send_venta = await registrar_venta(newData);
 
-        if (send_venta.trim() === "add-register-venta") {
-          add_toast("success", "Se registro correctamente la venta");
+          if (send_venta.trim() === "add-register-venta") {
+            let staus_lote = tipo === "SEPARACION" ? "SEPARADO" : "OCUPADO";
+            const updateLote = await update_lote(lote_id, staus_lote);
+            await buscar_ventas();
+            filtrarProyectos();
+            const lotes = await buscar_lotes_by_proyecto(proyecto_id);
+            pintar_lotes_modal(lotes);
+            $("#register_venta_form .form-create").removeClass("modal-show");
+            setTimeout(() => {
+              $("#register_venta_form").addClass("md-hidden");
+            }, 300);
+            $("#clientesList").val(null).trigger("change");
+            // register_venta_form
+            add_toast("success", "Se registro correctamente la venta");
+            if (updateLote.message === "update_status") {
+              add_toast("success", "El estado de un lote se actualizo");
+            } else {
+              alert(
+                "No se pudo actualizar el estado del lote por un error , vaya al lotizador para arreglarlo"
+              );
+            }
+          } else {
+            add_toast("error", "Hubo un error Contacta al administrador");
+            console.log(send_venta);
+          }
+          $(this).attr("disabled", false);
         } else {
-          add_toast("error", "Hubo un error Contacta al administrador");
-          console.log(send_venta);
+          add_toast("warning", "Debe seleccionar un cliente");
+          $(this).attr("disabled", false);
         }
-        $(this).attr("disabled", false);
       } else {
         add_toast("warning", "Debe seleccionar un lote");
         $(this).attr("disabled", false);
@@ -335,22 +411,27 @@ $(document).ready(async function () {
   $(document).on("click", "#novalidartask", async function () {
     let id_task = $(this).attr("id_task");
     const dataSearch = clientesList.find((c) => c.id === id_task);
-    const validar = await validartask(id_task, "NO VALIDADO");
-    if (validar === "NO VALIDADO") {
-      let status = "DISPONIBLE";
-      const updateLote = await update_lote(dataSearch.lote_id, status);
+    let confirmado = confirm(
+      "Estas seguro de rechazar la venta, no se podran hacer mas acciones si haces esto y si hay un asesor asignado no sumara a su rendimiento"
+    );
+    if (confirmado) {
+      const validar = await validartask(id_task, "NO VALIDADO");
+      if (validar === "NO VALIDADO") {
+        let status = "DISPONIBLE";
+        const updateLote = await update_lote(dataSearch.lote_id, status);
 
-      if (updateLote.message === "update_status") {
-        alert("Se cambio a no validado");
+        if (updateLote.message === "update_status") {
+          add_toast("success", "Se cambio a no validado");
+        } else {
+          alert(
+            "No se pudo actualizar el estado del lote por un error , vaya al lotizador para arreglarlo"
+          );
+        }
+        var clientes = await buscar_ventas();
+        filtrarProyectos();
       } else {
-        alert(
-          "No se pudo actualizar el estado del lote por un error , vaya al lotizador para arreglarlo"
-        );
+        alert("Hubo un error contacta al aministrador");
       }
-      var clientes = await buscar_ventas();
-      filtrarProyectos();
-    } else {
-      alert("Hubo un error contacta al aministrador");
     }
   });
   // busca a todos los asesores
@@ -652,11 +733,12 @@ $(document).ready(async function () {
           let template = "";
           if (response.trim() == "no-register-clientes") {
             resolve([]);
+            clientesList = [];
           } else {
             const clientes = JSON.parse(response);
-            console.log(clientes);
             clientesList = clientes;
             clientes.sort(compareDatesDesc);
+            console.log(clientes);
             resolve(clientes);
           }
         }
@@ -859,7 +941,7 @@ $(document).ready(async function () {
     const sede = $("#filter-sede").val();
     const nombreCliente = $("#cliente-search").val().toLowerCase();
 
-    const clientes = clientesList.filter((cliente) => {
+    const ventas = clientesList.filter((cliente) => {
       if (sede !== "Todas" && cliente.sede_id !== sede) {
         return false;
       }
@@ -887,6 +969,7 @@ $(document).ready(async function () {
       }
       return true;
     });
+    console.log(ventas);
 
     var estadoActual = {
       page: dataTable.page(), // Página actual
@@ -898,7 +981,7 @@ $(document).ready(async function () {
 
     dataTable.clear().draw(false);
 
-    dataTable.rows.add(clientes).draw(false);
+    dataTable.rows.add(ventas).draw(false);
     // Agregar las nuevas filas
     // Restaurar el número de página previo
     var pageInfo = dataTable.page.info();
@@ -910,7 +993,7 @@ $(document).ready(async function () {
       dataTable.clear().draw();
 
       // Agregar las nuevas filas
-      dataTable.rows.add(clientes).draw();
+      dataTable.rows.add(ventas).draw();
       console.log(totalPaginas - 1);
       dataTable.page(totalPaginas - 1);
     }

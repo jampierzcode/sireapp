@@ -1501,7 +1501,7 @@ class Usuario
             # code...
             $sql = "INSERT INTO ventas(cliente_id, user_id, fecha_venta, tipo, lote_id, precio, status, observacion, created_by) VALUES(:cliente, :usuario, :fecha, :tipo, :lote_id, :precio, :status, :observacion, :created_by)";
             $query = $this->conexion->prepare($sql);
-            $query->execute(array(":cliente" => $cliente_id, ":usuario" => $user_id, ":fecha" => $fecha_venta, ":tipo" => $tipo, ":lote_id" => $lote_id, ":precio" => $precio, ":status" => $status, ":observacion" => $observaciones, ":created_by" => $created_by));
+            $query->execute(array(":cliente" => $cliente_id === "" ? null : $cliente_id, ":usuario" => $user_id, ":fecha" => $fecha_venta, ":tipo" => $tipo, ":lote_id" => $lote_id === "" ? null : $lote_id, ":precio" => $precio, ":status" => $status, ":observacion" => $observaciones, ":created_by" => $created_by));
 
             $this->mensaje = "add-register-venta";
             return $this->mensaje;
@@ -2187,21 +2187,24 @@ class Usuario
     function buscar_ventas_empresa($user)
     {
         try {
-            $sql = "SELECT v.id as id, v.lote_id, l.numero, l.mz_zona, l.area, v.observacion, v.status, 
-        c.sede_id, s.name_reference, s.ciudad as ciudad_sede, s.direccion, 
-        c.proyet_id as proyecto_id, v.fecha_venta as fecha, '00:00:00' as hora, 
-        v.user_id, v.tipo, v.cliente_id, c.nombres, c.apellidos, c.correo, c.celular, 
-        u.nombre as nombre_user, u.apellido as apellido_user, ru.nombreRol, 
+            $sql = "SELECT DISTINCT v.id as id, v.lote_id, l.numero, l.mz_zona, l.area, v.observacion, v.status, 
+        uss.sede_id, s.name_reference, s.ciudad as ciudad_sede, s.direccion, 
+        l.proyectoID as proyecto_id, v.fecha_venta as fecha, '00:00:00' as hora, 
+        v.user_id, v.tipo, v.cliente_id, c.id_cliente, c.nombres, c.apellidos, c.correo, c.celular, u.id_usuario as asesor_id,  
+        u.nombre as nombre_user, u.apellido as apellido_user, us.id_usuario as creador_id, us.nombre as nombre_creador, us.apellido as apellido_creador, ru.nombreRol, 
         p.nombreProyecto as nombre_proyecto 
-        FROM ventas v 
-        LEFT JOIN cliente c ON v.cliente_id = c.id_cliente 
-        LEFT JOIN usuario u ON v.user_id = u.id_usuario 
-        LEFT JOIN roles ru ON u.usuarioRol = ru.id 
-        INNER JOIN user_sede AS US ON c.sede_id = US.sede_id 
-        INNER JOIN sede s ON US.sede_id = s.id 
-        LEFT JOIN proyectos p ON c.proyet_id = p.id 
-        LEFT JOIN lotes l ON v.lote_id = l.id 
-        WHERE US.user_id = :id_usuario";
+        FROM ventas v
+LEFT JOIN cliente c ON v.cliente_id = c.id_cliente
+LEFT JOIN usuario u ON v.user_id = u.id_usuario
+LEFT JOIN usuario us ON v.created_by = us.id_usuario
+INNER JOIN roles ru on us.usuarioRol=ru.id
+LEFT JOIN lotes l ON v.lote_id = l.id
+INNER JOIN user_sede uss ON us.id_usuario = uss.user_id  -- Unimos los usuarios que registraron la venta con su sede
+INNER JOIN sede s ON s.id = uss.sede_id LEFT JOIN proyectos p on l.proyectoID=p.id
+WHERE uss.sede_id IN (
+    SELECT sede_id
+    FROM user_sede
+    WHERE user_id = :id_usuario) GROUP BY v.id ";
             $query = $this->conexion->prepare($sql);
             $query->execute(array(":id_usuario" => $user));
             $this->datos = $query->fetchAll(); // retorna objetos o no

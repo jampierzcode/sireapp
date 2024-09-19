@@ -627,16 +627,16 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2) {
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Nombres</th>
-                            <th>Apellidos</th>
+                            <th>Cliente</th>
                             <th>Sede</th>
                             <th>Fecha Registro</th>
                             <!-- <th>Telefono</th>
                             <th>Origen</th>
                             <th>Ciudad</th> -->
-                            <th>Proyecto</th>
+
                             <th>Lote</th>
-                            <th>Usuario</th>
+                            <th>Asesor</th>
+                            <th>Usuario Register</th>
                             <th>Tipo</th>
                             <th>Acciones</th>
                         </tr>
