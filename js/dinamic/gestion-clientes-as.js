@@ -2311,7 +2311,9 @@ $(document).ready(async function () {
         "../../controlador/UsuarioController.php",
         { funcion, id_proyecto: id },
         (response) => {
-          const data = response === false ? false : JSON.parse(response);
+          console.log(response);
+          const data =
+            response === "no-register" ? false : JSON.parse(response);
           resolve(data);
         }
       );

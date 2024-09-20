@@ -2133,7 +2133,7 @@ class Usuario
     function buscar_venta_by_lote($lote_id)
     {
         try {
-            $sql = "SELECT v.*, c.nombres, c.apellidos, l.numero, l.mz_zona, l.area, u.nombre as nombre_user, u.apellido as apellido_user, u.usuarioRol FROM ventas v inner join lotes l on v.lote_id=l.id inner join cliente as c on v.cliente_id=c.id_cliente inner join usuario u on v.created_by=u.id_usuario WHERE v.lote_id=:lote_id";
+            $sql = "SELECT v.*, c.nombres, c.apellidos, l.numero, l.mz_zona, l.area, u.nombre as nombre_user, u.apellido as apellido_user, u.usuarioRol, uv.nombre as nombre_validador, u.apellido as apellido_validador, uv.usuarioRol as rol_validador, v.fecha_validacion FROM ventas v inner join lotes l on v.lote_id=l.id inner join cliente as c on v.cliente_id=c.id_cliente inner join usuario u on v.created_by=u.id_usuario inner join usuario uv on v.validado_por=uv.id_usuario WHERE v.lote_id=:lote_id";
             $query = $this->conexion->prepare($sql);
             $query->execute(array(":lote_id" => $lote_id));
             $this->datos = $query->fetch(); // retorna objetos o no
@@ -2314,14 +2314,14 @@ WHERE uss.sede_id IN (
             return $this->mensaje;
         }
     }
-    function validar_venta($id_task, $status)
+    function validar_venta($id_task, $status, $validado_por, $fecha_validacion)
     {
         try {
             //code...
             // ACTUALIZAR ESTADO DE LA RESERVA
-            $sql = "UPDATE ventas SET status=:status WHERE id=:id_task";
+            $sql = "UPDATE ventas SET status=:status, validado_por=:validado_por, fecha_validacion=:fecha_validacion  WHERE id=:id_task";
             $query = $this->conexion->prepare($sql);
-            $query->execute(array(":status" => $status, ":id_task" => $id_task));
+            $query->execute(array(":status" => $status, ":id_task" => $id_task, ":validado_por" => $validado_por, ":fecha_validacion" => $fecha_validacion));
             $this->mensaje = $status;
             return $this->mensaje;
         } catch (\Throwable $th) {

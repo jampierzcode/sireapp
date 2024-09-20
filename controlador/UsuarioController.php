@@ -1366,7 +1366,9 @@ if ($_POST["funcion"] == "validar_interaccion") {
 if ($_POST["funcion"] == "validar_venta") {
     $id_task = $_POST["id_task"];
     $status = $_POST["status"];
-    $usuario->validar_venta($id_task, $status);
+    $fecha_validacion = $_POST["fecha_validacion"];
+    $validado_por = $_SESSION["id_usuario"];
+    $usuario->validar_venta($id_task, $status, $validado_por, $fecha_validacion);
     echo $usuario->mensaje;
 }
 if ($_POST["funcion"] == "update_lote_venta") {

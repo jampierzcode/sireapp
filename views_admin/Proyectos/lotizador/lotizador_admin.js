@@ -304,7 +304,7 @@ $(document).ready(function () {
                         )}</p>
                     </div>
                     <div class="w-full">
-                        <h2 class="text-sm font-bold">Usuario</h2>
+                        <h2 class="text-sm font-bold">Registrado por</h2>
                         <p>${data.nombre_user} ${
             data.apellido_user
           } <span class="rounded-full bg-blue-800 text-xs text-white p-2 font-bold">${rol}</span></p>
@@ -314,8 +314,24 @@ $(document).ready(function () {
                         <p>S/${data?.precio}</p>
                     </div>
                     <div class="w-full">
+                        <h2 class="text-sm font-bold">Validado por</h2>
+                        <p>${data?.nombre_validador} ${
+            data?.apellido_validador
+          }</p>
+                    </div>
+                    <div class="w-full">
+                        <h2 class="text-sm font-bold">Fecha Validacion</h2>
+                        <p>${dayjs(data.fecha_validacion).format(
+                          "DD [de] MMMM [del] YYYY"
+                        )}</p>
+                    </div>
+                    <div class="w-full">
                         <h2 class="text-sm font-bold">Observacion</h2>
-                        <p>${data?.observacion}</p>
+                        <p>${
+                          data?.observacion === null
+                            ? "no hay observaciones"
+                            : data?.observacion
+                        }</p>
                     </div>
 
           `;

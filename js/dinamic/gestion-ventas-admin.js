@@ -145,10 +145,11 @@ $(document).ready(async function () {
   });
   async function validartask(id_task, status) {
     return new Promise((resolve, reject) => {
+      let fecha_validacion = dayjs().format("YYYY-MM-DD");
       let funcion = "validar_venta";
       $.post(
         "../../controlador/UsuarioController.php",
-        { funcion, id_task, status },
+        { funcion, id_task, status, fecha_validacion },
         (response) => {
           console.log(response);
           if (response.trim() === status) {
@@ -326,6 +327,97 @@ $(document).ready(async function () {
       );
     });
   }
+  // agregar un nuevo cliente
+  $("#add-cliente").on("click", function () {
+    $("#crear-lead").removeClass("md-hidden");
+    setTimeout(() => {
+      $("#crear-lead .form-create").addClass("modal-show");
+    }, 300);
+  });
+  $("#crear-lead .close-modal").on("click", function () {
+    $("#crear-lead .form-create").removeClass("modal-show");
+    setTimeout(() => {
+      $("#crear-lead").addClass("md-hidden");
+    }, 300);
+  });
+  // registrar lead
+  $("#registerLead").submit((e) => {
+    e.preventDefault();
+    let fecha_now = dayjs().format("YYYY-MM-DD");
+    let hora_now = dayjs().format("HH:mm:ss");
+    // return 0;
+    let nombre = $("#nombre-lead").val();
+    let apellido = $("#apellido-lead").val();
+    let documento = $("#documento-lead").val();
+    let celular = $("#celular-lead").val();
+    let telefono = $("#telefono-lead").val();
+    let origen = $("#origen-lead").val();
+    let ciudad = $("#ciudad-lead").val();
+    let pais = $("#pais-lead").val();
+    let campania = $("#campania-lead").val();
+    let correo = $("#email-lead").val();
+    let proyecto_id = $("#proyecto-lead").val();
+    let sede_id = $("#sede-lead").val();
+    const result = {
+      nombre: nombre,
+      apellido: apellido,
+      documento: documento,
+      correo: correo,
+      celular: celular,
+      telefono: telefono,
+      Pais: pais,
+      origen: origen,
+      campaña: campania,
+      ciudad: ciudad,
+      fecha: fecha_now,
+      hora: hora_now,
+    };
+    if (proyecto_id !== "0" && sede_id !== "" && origen !== "0") {
+      let funcion = "add_cliente";
+      $("#registrar_lead_btn").prop("disabled", true);
+      $.post(
+        "../../controlador/UsuarioController.php",
+        { funcion, result, proyecto_id, sede_id },
+        async (response) => {
+          const data = JSON.parse(response);
+
+          if (data.hasOwnProperty("error")) {
+            // Si la respuesta contiene un mensaje de error, muestra el mensaje
+            add_toast("error", data.error);
+          } else {
+            add_toast("success", "se subio correctamente el cliente");
+            let id = data.id;
+            console.log(id, proyecto_id);
+            $("#crear-lead .form-create").removeClass("modal-show");
+            setTimeout(function () {
+              $("#crear-lead").addClass("md-hidden");
+            }, 300);
+            let clientes = await buscar_clientes_empresa();
+
+            pintar_clientes_empresa(sede_id);
+            $("#clientesList").val(id).trigger("change");
+            // resetear form
+            $("#nombre-lead").val("");
+            $("#apellido-lead").val("");
+            $("#documento-lead").val("");
+            $("#celular-lead").val("");
+            $("#telefono-lead").val("");
+            $("#origen-lead").val("0");
+            $("#ciudad-lead").val("");
+            $("#pais-lead").val("");
+            $("#campania-lead").val("");
+            $("#email-lead").val("");
+            $("#proyecto-lead").val("");
+          }
+
+          $("#registrar_lead_btn").prop("disabled", false);
+        }
+      );
+    } else {
+      add_toast("warning", "Debe seleccionar un proyecto y origen");
+    }
+  });
+  // registrar venta
   $("#register_venta").on("click", async function (e) {
     $(this).attr("disabled", true);
     let funcion = "regiter_venta";
@@ -380,7 +472,13 @@ $(document).ready(async function () {
             setTimeout(() => {
               $("#register_venta_form").addClass("md-hidden");
             }, 300);
+
+            $("#ventaTipo").val("");
+            $("#loteslistModal").val("");
+            $("#precio_final_modal").val("");
+            $("#observacionesModal").val("");
             $("#clientesList").val(null).trigger("change");
+            $("#asesoresList").val(null).trigger("change");
             // register_venta_form
             add_toast("success", "Se registro correctamente la venta");
             if (updateLote.message === "update_status") {
@@ -518,7 +616,13 @@ $(document).ready(async function () {
     setTimeout(() => {
       $("#register_venta_form").addClass("md-hidden");
     }, 300);
+
+    $("#ventaTipo").val("0");
+    $("#loteslistModal").val("");
+    $("#precio_final_modal").val("");
+    $("#observacionesModal").val("");
     $("#clientesList").val(null).trigger("change");
+    $("#asesoresList").val(null).trigger("change");
   });
 
   // buscar asesores con id cliente asignado
@@ -834,10 +938,29 @@ $(document).ready(async function () {
     llenar_proyectos_sede(sedes[0].id);
     filtrarProyectos();
   }
+  function pintar_sedes_lead(sedes) {
+    let template = "";
+    template += `
+      <option value="" disabled>Seleccione una sede</option>
+      
+      `;
+    sedes.forEach((s) => {
+      template += `
+        <option value="${s.id}">${s.name_reference} ${s.direccion}-${s.ciudad}</option>
+        
+        `;
+    });
+    $("#sede-lead").html(template);
+    llenar_proyectos_sede_lead(sedes[0].id);
+  }
   $("#filter-sede").on("change", function (e) {
     let sede_id = e.target.value;
     llenar_proyectos_sede(sede_id);
     filtrarProyectos();
+  });
+  $("#sede-lead").on("change", function (e) {
+    let sede_id = e.target.value;
+    llenar_proyectos_sede_lead(sede_id);
   });
   function llenar_proyectos_sede(sede_id) {
     let proyectos = proyectosList.filter((p) => p.sede_id === sede_id);
@@ -849,6 +972,18 @@ $(document).ready(async function () {
       template += `<option value="${proyecto.id}">${proyecto.nombre_proyecto}</option>`;
     });
     $("#filter-proyecto").html(template);
+  }
+  function llenar_proyectos_sede_lead(sede_id) {
+    let proyectos = proyectosList.filter((p) => p.sede_id === sede_id);
+    let template = "";
+    template += `<option value="" disabled>Seleccione un proyecto</option>`;
+
+    // console.log(proyectosList);
+    proyectos.forEach((proyecto) => {
+      template += `<option value="${proyecto.id}">${proyecto.nombre_proyecto}</option>`;
+    });
+    console.log(template);
+    $("#proyecto-lead").html(template);
   }
   // funciones para pintar modal
   function pintar_sedes_modal(sedes) {
@@ -926,6 +1061,7 @@ $(document).ready(async function () {
   var proyectos = await buscar_proyectos();
   const asesores = await fetchasesores();
   pintar_sedes(sedes);
+  pintar_sedes_lead(sedes);
   pintar_sedes_modal(sedes);
   pintar_clientes_empresa(sedes[0].id);
 
