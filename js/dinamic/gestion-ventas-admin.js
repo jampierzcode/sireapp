@@ -541,6 +541,7 @@ $(document).ready(async function () {
         { funcion },
         (response) => {
           if (response.trim() === "no-register") {
+            resolve([]);
             return;
           } else {
             const asesores = JSON.parse(response);
