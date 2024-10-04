@@ -17,11 +17,12 @@ $(document).ready(function () {
     var formaActual = null;
     var formaDibujada = null;
     fetchLotes();
+    L.Browser.retina = true;
+
     var map1 = L.map("map1", {
       crs: L.CRS.Simple,
       minZoom: -4,
       maxZoom: 4,
-      zoom: 0,
     });
     // buscarProyecto();
     // function buscarProyecto() {
@@ -36,7 +37,7 @@ $(document).ready(function () {
     //     }
     //   );
     // }
-
+    var imageBounds;
     // obtener imagen y escalarla en el centro
     $.post(
       "../../../controlador/MapaController.php",
@@ -46,7 +47,8 @@ $(document).ready(function () {
           $("body").html("No existe ningun proyecto");
         } else {
           const image = JSON.parse(response);
-          imageUrl = "../../../" + image[0].imgURL;
+          imageUrl =
+            "../../../" + image[0].imgURL + "?v=" + new Date().getTime();
 
           var img = new Image();
           img.src = imageUrl;
@@ -56,14 +58,18 @@ $(document).ready(function () {
             var imageHeight = this.height;
             console.log(imageHeight, imageWidth);
 
-            var imageBounds = [
+            imageBounds = [
               [0, 0],
-              [imageHeight, imageWidth],
+              [30, 30],
             ];
-
-            var imageOverlay = L.imageOverlay(imageUrl, imageBounds);
+            var imageOverlay = L.imageOverlay(imageUrl, [
+              [0, 0],
+              [20, 20],
+            ]);
             imageOverlay.addTo(map1);
-            map1.fitBounds(imageBounds); // Ajustar los límites del mapa a la imagen
+            map1.fitBounds(imageBounds);
+
+            buscarLotes(id);
             setInterval(() => {
               $("#loading_lotizador").addClass("hidden");
             }, 2000);
@@ -71,7 +77,7 @@ $(document).ready(function () {
         }
       }
     );
-    buscarLotes(id);
+
     var lotesPintados = [];
     function buscarLotes(id) {
       let funcion = "buscar_lotes";
@@ -93,13 +99,6 @@ $(document).ready(function () {
       );
     }
     function selectLotes(lotes) {
-      map1.eachLayer(function (layer) {
-        // Verificar si la capa es un rectángulo o un polígono
-        if (layer instanceof L.Rectangle || layer instanceof L.Polygon) {
-          // Eliminar la capa del mapa
-          map1.removeLayer(layer);
-        }
-      });
       lotes.map((lote) => {
         let fillColor;
         let fillOpacit;
@@ -143,14 +142,12 @@ $(document).ready(function () {
             [lote.cordinates[1][0], lote.cordinates[1][1]],
           ];
           let rectangle = L.rectangle(bounds, estiloPoligono).addTo(map1);
-          rectangle
-            .bindTooltip(
-              `
+          rectangle.bindTooltip(
+            `
               Lote: ${lote.numero} ${lote.mz_zona} <br> Precio: ${lote.precio}  <br> Area: ${lote.area}
               
               `
-            )
-            .openTooltip();
+          );
           rectangle.on("click", function () {
             // Actualizar los valores en la tarjeta de HTML
             $("#mz_zonas").text(lote.mz_zona);

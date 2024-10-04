@@ -182,7 +182,12 @@ $(document).ready(async function () {
         "../../controlador/UsuarioController.php",
         { funcion, id_proyecto: id },
         (response) => {
-          const data = response === false ? false : JSON.parse(response);
+          let data;
+          if (response.trim() === "no-register") {
+            data = [];
+          } else {
+            data = response === false ? false : JSON.parse(response);
+          }
           resolve(data);
         }
       );
@@ -423,6 +428,7 @@ $(document).ready(async function () {
     let funcion = "regiter_venta";
     let lote_id = $("#loteslistModal").val();
     let proyecto_id = $("#proyectosListModal").val();
+    let sede_id = $("#sedesListModal").val();
     let tipo = $("#ventaTipo").val();
 
     let precio = $("#precio_final_modal").val();
@@ -457,6 +463,7 @@ $(document).ready(async function () {
             fecha_venta,
             status,
             observaciones,
+            sede_id,
           };
           console.log(newData);
           const send_venta = await registrar_venta(newData);
@@ -1041,6 +1048,7 @@ $(document).ready(async function () {
     const id = e.target.value;
     const lotes = await buscar_lotes_by_proyecto(id);
     pintar_lotes_modal(lotes);
+    $("#precio_final_modal").val("");
   });
   async function llenar_proyectos_sede_modal(sede_id) {
     let proyectos = proyectosList.filter((p) => p.sede_id === sede_id);

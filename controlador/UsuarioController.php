@@ -1167,6 +1167,7 @@ if ($_POST["funcion"] == "register_venta_admin") {
     // Acceder a los campos específicos
     $tipo = $data_venta['tipo'];
     $lote_id = $data_venta['lote_id'];
+    $sede_id = $data_venta['sede_id'];
     $user_id = $data_venta['user_id'];
     $cliente_id = $data_venta['cliente_id'];
     $precio = $data_venta['precio'];
@@ -1175,7 +1176,7 @@ if ($_POST["funcion"] == "register_venta_admin") {
     $observaciones = $data_venta['observaciones'];
 
     $created_by = $id_usuario;
-    $usuario->register_venta_admin($tipo, $fecha_venta, $cliente_id, $user_id, $status, $lote_id, $precio, $observaciones, $created_by);
+    $usuario->register_venta_admin($sede_id, $tipo, $fecha_venta, $cliente_id, $user_id, $status, $lote_id, $precio, $observaciones, $created_by);
     echo $usuario->mensaje;
 }
 if ($_POST["funcion"] == "add_cliente") {
