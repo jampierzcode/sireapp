@@ -223,6 +223,20 @@ class Business
             return $this->mensaje;
         }
     }
+    function buscar_sedes_by_proyecto($proyecto_id)
+    {
+        $sql = "SELECT s.* FROM proyecto_sede ps inner join sede s on ps.sede_id=s.id WHERE ps.proyecto_id=:proyecto_id";
+        $query = $this->conexion->prepare($sql);
+        $query->execute(array(":proyecto_id" => $proyecto_id));
+        $this->datos = $query->fetchAll(); // retorna objetos o no
+        if (!empty($this->datos)) {
+
+            return $this->datos;
+        } else {
+            $this->mensaje = "no-register";
+            return $this->mensaje;
+        }
+    }
     function buscar_usuarios_admin()
     {
         $sql = "SELECT u.*, r.nombreRol as nombre_rol FROM usuario u inner join roles r on u.usuarioRol=r.id WHERE u.usuarioRol=:rol";

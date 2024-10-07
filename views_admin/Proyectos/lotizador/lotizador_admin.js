@@ -1,21 +1,13 @@
-$(document).ready(function () {
+$(document).ready(async function () {
   const urlParams = new URLSearchParams(window.location.search);
   var id = urlParams.get("id");
   console.log("entro");
   var imageUrl;
-  var lotesArray = [];
-  var poligonoSeleccionado = null;
-  var creacionHabilitada = false;
-  var loteAncho;
-  var loteLargo;
-  var loteArea;
-  var loteMz;
-  var loteNumero;
-  var lotePrecio;
-  var formaActual = null;
-  var formaDibujada = null;
+  var dataClientesList;
+  var listUsuariosSede;
+  var lotesList;
+  var asesoresList;
   var idLayer;
-  fetchLotes();
   var map1 = L.map("map1", {
     crs: L.CRS.Simple,
     minZoom: -4,
@@ -55,9 +47,9 @@ $(document).ready(function () {
       };
     }
   );
-  buscarLotes(id);
+  await buscarLotes(id);
   var lotesPintados = [];
-  function buscarLotes(id) {
+  async function buscarLotes(id) {
     let funcion = "buscar_lotes";
     $.post(
       "../../../controlador/UsuarioController.php",
@@ -69,26 +61,14 @@ $(document).ready(function () {
             <button class="btnLotizador dragSquare">No hay lotes</button>          
             `;
           $("#listLotes").html(template);
+          lotesList = [];
         } else {
           const lotes = JSON.parse(response);
+          lotesList = lotes;
           selectLotes(lotes);
         }
       }
     );
-  }
-  function pintarLotes(lotes) {
-    let template = "";
-    lotes.map((lote) => {
-      template += `
-        <button id="${
-          lote.mz_zona + "" + lote.numero
-        }" class="btnLotizador dragSquare">Manzana: ${lote.mz_zona} Lote: ${
-        lote.numero
-      } Precio: ${lote.precio} Area: ${lote.area}</button>
-        `;
-    });
-    $("#listLotes").html(template);
-    selectLotes(lotes);
   }
   function selectLotes(lotes) {
     map1.eachLayer(function (layer) {
@@ -196,14 +176,12 @@ $(document).ready(function () {
       layer.on("contextmenu", function (e) {
         console.log(e);
         let id = e.target.options.id;
-        lote.estado !== "DISPONIBLE" && lote.estado !== "SIN PUBLICAR"
-          ? // e.preventDefault();
-            showContextMenu(e.originalEvent, layer)
-          : null;
+
+        showContextMenu(e.originalEvent, layer, lote.estado);
       });
     });
   }
-  function showContextMenu(event, layer) {
+  function showContextMenu(event, layer, status) {
     // Eliminar cualquier menú contextual existente
     let existingMenu = document.getElementById("context-menu");
     if (existingMenu) {
@@ -220,9 +198,13 @@ $(document).ready(function () {
     menu.style.border = "1px solid #ccc";
     menu.style.padding = "10px";
     menu.style.zIndex = 10000;
-
+    let options;
+    if (status !== "DISPONIBLE" && status !== "SIN PUBLICAR") {
+      options = ["Informacion"];
+    } else {
+      options = ["Separar/Vender"];
+    }
     // Añadir opciones al menú
-    let options = ["Informacion"];
     options.forEach((option) => {
       let item = document.createElement("div");
       item.innerText = option;
@@ -245,23 +227,10 @@ $(document).ready(function () {
       }
     });
   }
-  async function buscar_venta_lote(id) {
-    return new Promise((resolve, reject) => {
-      let funcion = "buscar_venta_by_lote";
-      $.post(
-        "../../../controlador/UsuarioController.php",
-        { funcion, id },
-        (response) => {
-          console.log(response);
-          let data = response !== false ? JSON.parse(response) : response;
-          resolve(data);
-        }
-      );
-    });
-  }
+
   async function menuAction(action, layer) {
     idLayer = layer.options.id;
-    console.log(idLayer);
+
     switch (action) {
       case "Informacion":
         // Implementar la lógica para duplicar el lote
@@ -348,11 +317,285 @@ $(document).ready(function () {
         }
 
         break;
+      case "Separar/Vender":
+        const id_lote = idLayer;
+        const data_lote = lotesList.find((l) => l.id === id_lote);
+
+        $("#detalle_selected_lote").html(
+          `Lote N-${data_lote.numero}, Mz: ${data_lote.mz_zona} Area:${data_lote.area}m2 S/${data_lote.precio}`
+        );
+        $("#precio_final_modal").val(data_lote.precio);
+        $("#modal-manager-venta").removeClass("md-hidden");
+        setTimeout(() => {
+          $("#modal-manager-venta .form-create").addClass("modal-show");
+        }, 300);
+        console.log(id_lote);
+
+        break;
 
       default:
         console.log("Acción no reconocida");
     }
   }
+
+  async function buscar_venta_lote(id) {
+    return new Promise((resolve, reject) => {
+      let funcion = "buscar_venta_by_lote";
+      $.post(
+        "../../../controlador/UsuarioController.php",
+        { funcion, id },
+        (response) => {
+          console.log(response);
+          let data = response !== false ? JSON.parse(response) : response;
+          resolve(data);
+        }
+      );
+    });
+  }
+
+  async function buscar_sedes_proyecto(id) {
+    return new Promise((resolve, reject) => {
+      let funcion = "buscar_sedes_by_proyecto";
+      $.post(
+        "../../../controlador/BusinessController.php",
+        { funcion, id },
+        (response) => {
+          if (response.trim() === "no-register") {
+            listUsuariosSede = [];
+            resolve([]);
+          } else {
+            let data = JSON.parse(response);
+            listUsuariosSede = data;
+            resolve(data);
+          }
+        }
+      );
+    });
+  }
+  async function buscar_clientes_empresa() {
+    return new Promise((resolve, reject) => {
+      let funcion = "buscar_clientes_empresa";
+      $.post(
+        "../../../controlador/UsuarioController.php",
+        { funcion },
+        (response) => {
+          const data = JSON.parse(response);
+          console.log(data);
+          dataClientesList = data;
+          resolve(data);
+        }
+      );
+    });
+  }
+  async function registrar_venta(data_venta) {
+    return new Promise((resolve, reject) => {
+      let funcion = "register_venta_admin";
+      $.post(
+        "../../../controlador/UsuarioController.php",
+        { funcion, data_venta },
+        (response) => {
+          console.log(response);
+          resolve(response);
+        }
+      );
+    });
+  }
+  async function update_lote(id, status) {
+    return new Promise((resolve, reject) => {
+      let funcion = "update_lote";
+      $.post(
+        "../../../controlador/UsuarioController.php",
+        { funcion, id, status },
+        (response) => {
+          console.log(response);
+          const data = JSON.parse(response);
+          resolve(data);
+        }
+      );
+    });
+  }
+  // registrar venta
+  $("#register_venta").on("click", async function (e) {
+    $(this).attr("disabled", true);
+
+    let lote_id = idLayer;
+    let sede_id = $("#sedesListModal").val();
+    let tipo = $("#ventaTipo").val();
+
+    let precio = $("#precio_final_modal").val();
+
+    let cliente_id = $("#clientesList").val();
+    let observaciones = $("#observacionesModal").val();
+
+    let select_asesor = $("#select_asesor").val();
+    let user_id;
+    let fecha_venta = dayjs().format("YYYY-MM-DD");
+    let status = "SEND_VALIDAR";
+    if (tipo !== null) {
+      if (lote_id !== null) {
+        if (select_asesor === "SI") {
+          user_id = $("#asesoresList").val();
+          if (user_id === "") {
+            add_toast("warning", "Debe seleccionar un asesor");
+            $(this).attr("disabled", false);
+            return;
+          }
+        } else {
+          user_id = null;
+        }
+        if (cliente_id !== null) {
+          let newData = {
+            tipo,
+            lote_id,
+            user_id,
+            cliente_id,
+            precio,
+            fecha_venta,
+            status,
+            observaciones,
+            sede_id,
+          };
+          console.log(newData);
+          const send_venta = await registrar_venta(newData);
+
+          if (send_venta.trim() === "add-register-venta") {
+            let staus_lote = tipo === "SEPARACION" ? "SEPARADO" : "OCUPADO";
+            const updateLote = await update_lote(lote_id, staus_lote);
+
+            await buscarLotes(id);
+            $("#modal-manager-venta .form-create").removeClass("modal-show");
+            setTimeout(() => {
+              $("#modal-manager-venta").addClass("md-hidden");
+            }, 300);
+
+            $("#ventaTipo").val("");
+            $("#precio_final_modal").val("");
+            $("#observacionesModal").val("");
+            $("#clientesList").val(null).trigger("change");
+            $("#asesoresList").val(null).trigger("change");
+            // modal-manager-venta
+            add_toast("success", "Se registro correctamente la venta");
+            if (updateLote.message === "update_status") {
+              add_toast("success", "El estado de un lote se actualizo");
+            } else {
+              alert(
+                "No se pudo actualizar el estado del lote por un error , vaya al lotizador para arreglarlo"
+              );
+            }
+          } else {
+            add_toast("error", "Hubo un error Contacta al administrador");
+            console.log(send_venta);
+          }
+          $(this).attr("disabled", false);
+        } else {
+          add_toast("warning", "Debe seleccionar un cliente");
+          $(this).attr("disabled", false);
+        }
+      } else {
+        add_toast("warning", "Debe seleccionar un lote");
+        $(this).attr("disabled", false);
+      }
+    } else {
+      add_toast("warning", "Debe seleccionar el tipo de venta");
+      $(this).attr("disabled", false);
+    }
+  });
+
+  // funciones para pintar modal
+  function pintar_sedes(sedes) {
+    let template = "";
+    template += `
+      <option value="" disabled>Seleccione una sede</option>
+      
+      `;
+    sedes.forEach((s) => {
+      template += `
+        <option value="${s.id}">${s.name_reference} ${s.direccion}-${s.ciudad}</option>
+        
+        `;
+    });
+    $("#sedesListModal").html(template);
+  }
+
+  $("#sedesListModal").on("change", function (e) {
+    let sede_id = e.target.value;
+    pintar_clientes_empresa(sede_id);
+    pintar_results_asesores(sede_id);
+  });
+  function pintar_results_asesores(sede_id) {
+    const asesoresFilter = asesoresList.filter((a) => a.sede_id === sede_id);
+    let template = `<option value="" selected></option>`;
+    asesoresFilter.forEach((asesor) => {
+      let option = `<option value=${asesor.id_usuario}>${asesor.nombre} ${asesor.apellido}</option>`;
+
+      template += option;
+    });
+
+    $("#asesoresList").html(template);
+    $("#asesoresList").select2({
+      allowClear: true,
+      placeholder: "Selecciona un asesor",
+      data: [],
+    });
+  }
+  // opcion habilitado asesor register
+  $("#select_asesor").on("change", function (e) {
+    const select = e.target.value;
+    if (select === "SI") {
+      $("#viewListAsesores").removeClass("hidden");
+    } else {
+      $("#viewListAsesores").addClass("hidden");
+    }
+  });
+
+  function pintar_clientes_empresa(sede_id) {
+    const dataFilter = dataClientesList.filter((d) => d.sede_id === sede_id);
+    let template = `<option value="" disabled selected>Seleccione un cliente</option>`;
+    dataFilter.forEach((d) => {
+      template += `<option value="${d.id_cliente}">Doc:${d?.documento} -- ${d.nombres} ${d.apellidos}</option>`;
+    });
+    $("#clientesList").html(template);
+    $("#clientesList").select2({
+      allowClear: true,
+      placeholder: "Selecciona un cliente",
+      width: "100%",
+    });
+  }
+  // busca a todos los asesores
+  async function fetchasesores() {
+    return new Promise((resolve, reject) => {
+      let funcion = "buscar_asesores";
+      $.post(
+        "../../../controlador/UsuarioController.php",
+        { funcion },
+        (response) => {
+          if (response.trim() === "no-register") {
+            resolve([]);
+            return;
+          } else {
+            const asesores = JSON.parse(response);
+            asesoresList = asesores;
+            resolve(asesores);
+          }
+        }
+      );
+    });
+  }
+
+  const sedes = await buscar_sedes_proyecto(id);
+  await buscar_clientes_empresa();
+  await fetchasesores();
+  pintar_sedes(sedes);
+  pintar_clientes_empresa(sedes[0].id);
+
+  pintar_results_asesores(sedes[0].id);
+
+  $("#modal-manager-venta .close-modal").on("click", function () {
+    $("#modal-manager-venta .form-create").removeClass("modal-show");
+    setTimeout(() => {
+      $("#modal-manager-venta").addClass("md-hidden");
+    }, 300);
+  });
   $("#modal-manager-duplicar .close-modal").on("click", function () {
     $("#modal-manager-duplicar .form-create").removeClass("modal-show");
     setTimeout(() => {
@@ -398,257 +641,4 @@ $(document).ready(function () {
       alert("El estado es el mismo, cambie a otro, o cancele la edicion");
     }
   });
-
-  // Capa de dibujo para cada mapa
-  var drawnItems1 = new L.FeatureGroup().addTo(map1);
-  // var drawnItems2 = new L.FeatureGroup().addTo(map2);
-
-  // Configurar el control de dibujo para el mapa
-  var drawControl1 = new L.Control.Draw({
-    draw: {
-      polygon: false,
-      marker: false,
-      circlemarker: false,
-      circle: false,
-      polyline: false,
-      rectangle: false,
-    },
-    edit: {
-      featureGroup: drawnItems1,
-    },
-  });
-  map1.addControl(drawControl1);
-
-  // CRUD DE DIBUJO EN EL MAPA
-
-  // crear FORMA DIBUJADA en el mapa
-  map1.on(L.Draw.Event.CREATED, function (event) {
-    if (!creacionHabilitada) {
-      // La creación de polígonos no está habilitada
-      return;
-    }
-    var layer = event.layer;
-    formaDibujada = layer;
-    drawnItems1.addLayer(layer);
-
-    if (layer instanceof L.Rectangle) {
-      formaActual = {
-        estado: "DISPONIBLE",
-        lotePrecio,
-        loteArea,
-        loteAncho,
-        loteLargo,
-        loteMz,
-        loteNumero,
-        tipo: "rectangulo",
-        coordenadas: [
-          [layer.getBounds().getNorth(), layer.getBounds().getWest()],
-          [layer.getBounds().getSouth(), layer.getBounds().getEast()],
-        ],
-      };
-    } else if (layer instanceof L.Polygon) {
-      formaActual = {
-        estado: "DISPONIBLE",
-        lotePrecio,
-        loteArea,
-        loteAncho,
-        loteLargo,
-        loteMz,
-        loteNumero,
-        tipo: "poligono",
-        coordenadas: layer
-          .getLatLngs()[0]
-          .map((latLng) => [latLng.lat, latLng.lng]), // lng,lat
-      };
-    }
-    console.log(formaActual);
-    $(".showCarrito").addClass("active");
-
-    // agregarPoligonos(layer, coordinates);
-    drawControl1.setDrawingOptions({ polygon: false }); // Habilitar la creación de polígonos
-    drawControl1.setDrawingOptions({ rectangle: false }); // Habilitar la creación de polígonos
-    map1.addControl(drawControl1);
-  });
-  // editar la FORMA DIBUJADA en el mapa
-  map1.on("draw:edited", function (event) {
-    const layers = event.layers;
-    console.log(formaDibujada);
-    console.log(layers);
-    layers.eachLayer(function (layer) {
-      if (layer === formaDibujada) {
-        formaDibujada = layer;
-        console.log("forma editada");
-        var newCoordinates;
-
-        if (layer instanceof L.Rectangle) {
-          newCoordinates = [
-            [layer.getBounds().getNorth(), layer.getBounds().getWest()],
-            [layer.getBounds().getSouth(), layer.getBounds().getEast()],
-          ];
-        } else if (layer instanceof L.Polygon) {
-          newCoordinates = layer.getLatLngs()[0].map(function (latLng) {
-            return [latLng.lat, latLng.lng];
-          });
-        }
-
-        // Actualizar las coordenadas de formaActual
-        formaActual.coordenadas = newCoordinates;
-        console.log(formaActual);
-      }
-    });
-  });
-
-  // eliminar la FORMA DIBUJADA en el mapa
-  map1.on("draw:deleted", function (event) {
-    const layers = event.layers;
-    layers.eachLayer(function (layer) {
-      if (layer === formaDibujada) {
-        console.log("forma eliminada");
-        // La forma dibujada ha sido eliminada
-        // Realiza las acciones necesarias (por ejemplo, reiniciar variables, deshabilitar botón, etc.)
-        // ...
-        // Si deseas realizar alguna acción adicional después de eliminar, puedes hacerlo aquí
-      }
-    });
-  });
-  // FIN DE CRUD DE DIBUJO EN EL MAPA
-
-  // seleccionar el poligono en el map
-  drawnItems1.on("click", function (event) {
-    var layer = event.layer;
-    poligonoSeleccionado = layer;
-  });
-
-  // AGREGAR AL CARRITO DE LOTES
-
-  $("#addCarritoLotes").click(guardarForma);
-  function guardarForma() {
-    if (formaActual !== null) {
-      // Comprobar si la forma es un rectángulo
-      lotesArray.push(formaActual);
-      formaActual = null;
-      fetchLotes();
-    } else {
-      alert("no hay ninguna forma dibujada");
-    }
-  }
-
-  // FUNCION PARA PINTAR LOS LOTES EN EL CARRITO
-  function fetchLotes() {
-    let template = "";
-    if (lotesArray.length > 0) {
-      lotesArray.map((lote) => {
-        template += `
-          <button class="btnLotizador dragSquare">Manzana: ${lote.loteMz} Lote: ${lote.loteNumero} Precio: ${lote.lotePrecio} Area: ${lote.loteArea}</button>
-          `;
-      });
-    } else {
-      template += `
-        <button class="btnLotizador dragSquare">No hay lotes</button>
-        `;
-    }
-    $("#listCarrito").html(template);
-    loteAncho = 0;
-    loteLargo = 0;
-    loteArea = 0;
-    loteMz = 0;
-    loteNumero = 0;
-    lotePrecio = 0;
-  }
-
-  $("#guardarLotizador").click(() => {
-    // let id = id;
-    var funcion = "agregar_lotes";
-    if (lotesArray.length > 0) {
-      let lotes = JSON.stringify(lotesArray);
-      $.post(
-        "../../../controlador/UsuarioController.php",
-        { funcion, lotes, id },
-        (response) => {
-          console.log(response);
-          buscarLotes(id);
-          lotesArray = [];
-          fetchLotes();
-        }
-      );
-    } else {
-      alert("aun no haz creado ningun lote");
-    }
-  });
-
-  // EVENTOS DE CLICK PARA CREAR UN LOTE
-  $("#creaCotizacion").click(() => {
-    $(".createdZone.addLote").addClass("active");
-    $(".createdZone.carrito").removeClass("active");
-  });
-  $("#closeCreated").click(() => {
-    $(".createdZone.addLote").removeClass("active");
-  });
-  $("#addCarritoLotes").click(() => {
-    $(".showCarrito").removeClass("active");
-    $(".createdZone.carrito").addClass("active");
-    $(".createdZone.addLote").removeClass("active");
-  });
-  $("#closeCarrito").click(() => {
-    $(".createdZone.carrito").removeClass("active");
-  });
-  $("#crearLote").click(() => {
-    loteAncho = $("#loteAncho").val();
-    loteLargo = $("#loteLargo").val();
-    loteArea = $("#loteArea").val();
-    loteMz = $("#loteMz").val();
-    loteNumero = $("#loteNumero").val();
-    lotePrecio = $("#lotePrecio").val();
-    if (
-      (loteArea !== "" && loteMz !== "" && loteNumero > 0, lotePrecio !== "")
-    ) {
-      creacionHabilitada = true;
-      drawControl1.setDrawingOptions({ polygon: true }); // Habilitar la creación de polígonos
-      drawControl1.setDrawingOptions({ rectangle: true }); // Habilitar la creación de polígonos
-      map1.addControl(drawControl1);
-      $(".createdZone").removeClass("active");
-    } else {
-      // Nombre o precio no ingresados o inválidos
-      creacionHabilitada = false;
-      alert("Te faltan llenar campos para crear el poligono");
-    }
-  });
-
-  // FUNCION PARA COPIAR EL POLIGONO DE ACUERDO AL TAMAÑO ETC.
-  function copiarPoligono() {
-    // Verificar si hay un polígono seleccionado
-    if (poligonoSeleccionado) {
-      console.log(poligonoSeleccionado);
-      // Obtener las coordenadas del polígono seleccionado
-      var coordenadas = poligonoSeleccionado.getLatLngs();
-      console.log(coordenadas);
-
-      // Calcular el ancho del polígono seleccionado
-      var bounds = poligonoSeleccionado.getBounds();
-      var ancho = bounds.getEast() - bounds.getWest();
-
-      // Determinar la dirección de la copia (derecha o izquierda)
-      var direccion = "derecha"; // Puedes cambiar a 'izquierda' si deseas la dirección opuesta
-
-      // Crear una copia del polígono desplazada
-      var copiaPoligono = L.polygon(coordenadas, { color: "#001529" }).addTo(
-        map1
-      );
-      // copiaPoligono.enableEdit(); // Habilitar la edición del polígono
-
-      // Establecer las coordenadas de la copia del polígono desplazadas según la dirección
-      var desplazamientoX = direccion === "derecha" ? ancho : -ancho;
-      var nuevasCoordenadas = coordenadas[0].map(function (coordenada) {
-        return L.latLng(coordenada.lat, coordenada.lng + desplazamientoX);
-      });
-      copiaPoligono.setLatLngs(nuevasCoordenadas);
-
-      // Agregar la copia del polígono al grupo de capas
-      drawnItems1.addLayer(copiaPoligono);
-    } else {
-      alert("No hay un polígono seleccionado.");
-    }
-  }
-
-  // ...código posterior...ert("No hay un polígono seleccionado.");
 });

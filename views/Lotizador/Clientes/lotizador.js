@@ -60,11 +60,11 @@ $(document).ready(function () {
 
             imageBounds = [
               [0, 0],
-              [30, 30],
+              [imageHeight, imageWidth],
             ];
             var imageOverlay = L.imageOverlay(imageUrl, [
               [0, 0],
-              [20, 20],
+              [imageHeight, imageWidth],
             ]);
             imageOverlay.addTo(map1);
             map1.fitBounds(imageBounds);

@@ -115,6 +115,17 @@ if ($_POST["funcion"] == "buscar_sedes_by_usuario") {
         echo $jsonstring;
     }
 }
+if ($_POST["funcion"] == "buscar_sedes_by_proyecto") {
+    $proyecto_id = $_POST["id"];
+    $empresa->buscar_sedes_by_proyecto($proyecto_id);
+    if ($empresa->mensaje) {
+        echo $empresa->mensaje;
+    }
+    if ($empresa->datos) {
+        $jsonstring = json_encode($empresa->datos);
+        echo $jsonstring;
+    }
+}
 if ($_POST["funcion"] == "buscar_usuarios_admin") {
     $empresa->buscar_usuarios_admin();
     if ($empresa->mensaje) {

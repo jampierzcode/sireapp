@@ -13,10 +13,18 @@ if (empty($_SESSION["us_tipo"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lotizador</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+
     <link rel="stylesheet" href="../../../css/Lotizador.css" />
+    <link rel="stylesheet" href="../../../css/toast.css">
     <link rel="stylesheet" href="../../../css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- tailwin css -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .select2-container {
+            z-index: 50000;
+        }
+    </style>
 </head>
 
 <body>
@@ -123,6 +131,87 @@ if (empty($_SESSION["us_tipo"])) {
                 </div>
             </div>
         </div>
+        <div id="modal-manager-venta" class="modal-create md-hidden">
+            <div class="form-create">
+                <!-- <form id="form_producto_add"> -->
+                <div class="close-modal">
+                    <ion-icon name="close-outline"></ion-icon>
+                </div>
+                <h1 class="font-bold">Registrar Venta</h1>
+                <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
+                    <div class="w-full">
+                        <label for="Lote" class="font-bold text-lg">Tipo</label>
+                        <select class="w-full rounded p-3 bg-gray-200 text-sm" id="ventaTipo">
+                            <option value="0" disabled selected>Seleccione un tipo de venta</option>
+                            <option value="SEPARACION">SEPARACION</option>
+                            <option value="VENTA">VENTA</option>
+                        </select>
+                    </div>
+
+                    <div class="w-full">
+                        <label for="Lote" class="font-bold text-lg">Sede</label>
+                        <select class="w-full rounded p-3 bg-gray-200 text-sm" id="sedesListModal">
+                            <option value="0" disabled selected>Seleccione una sede</option>
+
+                        </select>
+                    </div>
+                    <div class="h-[3px] w-full bg-gray-300"></div>
+
+                    <div class="w-full">
+                        <label for="Lote" class="font-bold text-lg">Lote seleccionado</label>
+                        <span class="block p-2 w-full" id="detalle_selected_lote"></span>
+
+                    </div>
+                    <div class="w-full">
+                        <label for="Precio" class="font-bold text-lg">Precio</label>
+                        <input type="number" step="0.01" class="w-full rounded p-3 bg-gray-200 text-sm" id="precio_final_modal" />
+
+                    </div>
+                    <div class="h-[3px] w-full bg-gray-300"></div>
+                    <div class="w-full">
+                        <label for="Lote" class="font-bold text-lg w-full block">Cliente</label>
+                        <div class="flex gap-2">
+
+                            <select style="width: 100%" class="w-full rounded p-3 bg-gray-200 text-sm" id="clientesList">
+                                <option value="0" disabled selected>Seleccione un cliente</option>
+
+                            </select>
+                            <button id="add-cliente" class="p-2 rounded bg-green-600 text-white font-bold h-max">+</button>
+                        </div>
+                    </div>
+                    <div class="h-[3px] w-full bg-gray-300"></div>
+                    <div class="w-full">
+                        <label for="Lote" class="font-bold text-lg w-full block">Asesor</label>
+                        <select style="width: 100%" class="w-full rounded p-3 bg-gray-200 text-sm" id="select_asesor">
+                            <option value="No" selected>No</option>
+                            <option value="SI">SI</option>
+
+                        </select>
+                    </div>
+                    <div class="w-full hidden" id="viewListAsesores">
+                        <select style="width: 100%" class="w-full rounded p-3 bg-gray-200 text-sm" id="asesoresList">
+                            <option value="0" disabled selected>Seleccione un asesor</option>
+
+                        </select>
+                    </div>
+                    <div class="w-full">
+                        <label for="Lote" class="font-bold text-lg w-full block">Observaciones</label>
+
+                        <textarea class="w-full rounded p-3 bg-gray-200 text-sm" name="observacionesModal" id="observacionesModal"></textarea>
+                    </div>
+
+
+                </div>
+                <div class="w-full">
+                    <button id="register_venta" class="bg-[#310ecd] text-white rounded p-2">Registrar</button>
+                </div>
+                <!-- <div class="card-input buttons-modal">
+                        <button id="cancel-form" class="btn-cancel">Cancelar</button>
+                        <button id="add-user-form" class="btn-create">Crear</button>
+                    </div> -->
+                <!-- </form> -->
+            </div>
+        </div>
         <div class="container-loteActual">
             <h3>Manzana: <span numberKey="" key="" id="manzana"></span> Lote: <span numberKey="" key="" id="lote"></span></h3>
             <div class="listDetail">
@@ -162,6 +251,11 @@ if (empty($_SESSION["us_tipo"])) {
     <?php if ($_SESSION["us_tipo"] == 1) { ?>
         <script src="./lotizador.js"></script>
     <?php } else if ($_SESSION["us_tipo"] == 2 || $_SESSION["us_tipo"] == 5) { ?>
+
+        <script src="../../../js/dinamic/toastmith.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
         <script src="./lotizador_admin.js"></script>
 
     <?php } ?>
