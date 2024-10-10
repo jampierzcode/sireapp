@@ -2101,6 +2101,36 @@ class Usuario
             //throw $th;
         }
     }
+    function buscar_interaccion_by_asesores($fecha_inicio, $fecha_fin, $user)
+    {
+        try {
+            $sql = "SELECT ic.*, va.status as status_visita, c.proyet_id
+                    FROM interaccion_cliente ic
+                    inner join cliente c on ic.cliente_id=c.id_cliente
+                    inner join visitas_agenda va on ic.id=va.interaccion_id
+                    JOIN usuario u ON ic.user_id = u.id_usuario
+                    JOIN user_business ub ON u.id_usuario = ub.user_id
+                    JOIN business b ON ub.business_id = b.id
+                    WHERE ub.business_id IN (
+                        SELECT ub.business_id 
+                        FROM user_business ub 
+                        WHERE ub.user_id = :id_usuario
+                    )
+                    AND u.usuarioRol = 3
+                    AND ic.fecha_visita BETWEEN :fecha_inicio AND :fecha_fin;
+
+                    ";
+            $query = $this->conexion->prepare($sql);
+            $query->execute(array(":id_usuario" => $user, ":fecha_inicio" => $fecha_inicio, ":fecha_fin" => $fecha_fin));
+            $this->datos = $query->fetchAll(); // retorna objetos o no
+
+            return $this->datos;
+        } catch (\Throwable $error) {
+            $this->mensaje = "fatal_error";
+            return $this->mensaje;
+            //throw $th;
+        }
+    }
     function buscar_ventas_by_asesores($fecha_inicio, $fecha_fin, $user)
     {
         try {

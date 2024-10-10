@@ -131,6 +131,7 @@ if (empty($_SESSION["us_tipo"])) {
                 </div>
             </div>
         </div>
+
         <div id="modal-manager-venta" class="modal-create md-hidden">
             <div class="form-create">
                 <!-- <form id="form_producto_add"> -->
@@ -205,6 +206,83 @@ if (empty($_SESSION["us_tipo"])) {
                 <div class="w-full">
                     <button id="register_venta" class="bg-[#310ecd] text-white rounded p-2">Registrar</button>
                 </div>
+                <!-- <div class="card-input buttons-modal">
+                        <button id="cancel-form" class="btn-cancel">Cancelar</button>
+                        <button id="add-user-form" class="btn-create">Crear</button>
+                    </div> -->
+                <!-- </form> -->
+            </div>
+        </div>
+        <div id="crear-lead" class="modal-create md-hidden">
+            <div class="form-create">
+                <!-- <form id="form_producto_add"> -->
+                <div class="close-modal">
+                    <ion-icon name="close-outline"></ion-icon>
+                </div>
+                <h1 class="font-bold">Crear Cliente</h1>
+                <form id="registerLead">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="mb-6">
+                            <label for="nombres" class="block mb-2 text-[12px] font-bold text-gray-900 ">Nombres</label>
+                            <input type="text" id="nombre-lead" placeholder="Ingrese el nombre del cliente" class="bg-white border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                        </div>
+                        <div class="mb-6">
+                            <label for="apellidos" class="block mb-2 text-[12px] font-bold text-gray-900 ">Apellidos</label>
+                            <input type="text" id="apellido-lead" placeholder="Ingrese los apellidos del cliente" class="bg-white border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                        </div>
+                        <div class="mb-6">
+                            <label for="documento" class="block mb-2 text-[12px] font-bold text-gray-900 ">Documento</label>
+                            <input type="text" id="documento-lead" placeholder="Ingrese su nro documento" class="bg-white border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                        </div>
+                        <div class="mb-6">
+                            <label for="email" class="block mb-2 text-[12px] font-bold text-gray-900 ">Email</label>
+                            <input type="email" id="email-lead" placeholder="Ingrese su correo electrónico" class="bg-white border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                        </div>
+                        <div class="mb-6">
+                            <label for="celular" class="block mb-2 text-[12px] font-bold text-gray-900 ">Celular</label>
+                            <input type="text" id="celular-lead" placeholder="Ingrese su celular" class="bg-white border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                        </div>
+                        <div class="mb-6">
+                            <label for="telefono" class="block mb-2 text-[12px] font-bold text-gray-900 ">Telefono</label>
+                            <input type="text" id="telefono-lead" placeholder="Ingrese su telefono" class="bg-white border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                        </div>
+                        <div class="mb-6">
+                            <label for="pais" class="block mb-2 text-[12px] font-bold text-gray-900 ">Pais</label>
+                            <input type="text" id="pais-lead" placeholder="Ingrese el pais del cliente" class="bg-white border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                        </div>
+                        <div class="mb-6">
+                            <label for="origen" class="block mb-2 text-[12px] font-bold text-gray-900 ">Medio Contactado</label>
+                            <select class="bg-white border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" name="" id="origen-lead">
+                                <option value="0">Seleccionar Origen</option>
+                                <option value="Facebook Ads">Facebook Ads</option>
+                                <option value="Marketplace">Marketplace</option>
+                                <option value="WhatsApp">WhatsApp</option>
+                                <option value="Messenger">Messenger</option>
+                                <option value="Tiktok">Tiktok</option>
+                                <option value="Instagram">Instagram</option>
+                                <option value="Llamada">Llamada</option>
+                                <option value="Prospección">Prospección</option>
+                                <option value="Oficina">Oficina</option>
+                                <option value="otro">otro</option>
+                            </select>
+                        </div>
+                        <div class="mb-6">
+                            <label for="campania" class="block mb-2 text-[12px] font-bold text-gray-900 ">Campaña</label>
+                            <input type="text" id="campania-lead" placeholder="Ingrese si pertenece a una campaña" class="bg-white border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                        </div>
+                        <div class="mb-6">
+                            <label for="ciudad" class="block mb-2 text-[12px] font-bold text-gray-900 ">Ciudad</label>
+                            <input type="text" id="ciudad-lead" placeholder="Ingrese ciudad" class="bg-white border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                        </div>
+                        <div class="mb-6">
+                            <label for="proyecto" class="block mb-2 text-[12px] font-bold text-gray-900 ">Sedes</label>
+                            <select type="text" id="sede-lead" class="bg-white border border-gray-300 text-gray-900 text-[12px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></select>
+                        </div>
+
+                    </div>
+                    <button type="submit" id="registrar_lead_btn" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-[12px] w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Registrar</button>
+                </form>
+
                 <!-- <div class="card-input buttons-modal">
                         <button id="cancel-form" class="btn-cancel">Cancelar</button>
                         <button id="add-user-form" class="btn-create">Crear</button>

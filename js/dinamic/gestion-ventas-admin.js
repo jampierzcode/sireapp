@@ -439,7 +439,7 @@ $(document).ready(async function () {
     console.log(lote_id);
     let select_asesor = $("#select_asesor").val();
     let user_id;
-    let fecha_venta = dayjs().format("YYYY-MM-DD");
+    let fecha_venta = dayjs().format("YYYY-MM-DD HH:mm:ss");
     let status = "SEND_VALIDAR";
     if (tipo !== null) {
       if (lote_id !== null) {

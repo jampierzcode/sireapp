@@ -193,6 +193,19 @@ $(document).ready(async function () {
       );
     });
   }
+  function buscar_interaccion_by_asesores(fecha_inicio, fecha_fin) {
+    return new Promise((resolve, reject) => {
+      let funcion = "buscar_interaccion_by_asesores";
+      $.post(
+        "../../controlador/UsuarioController.php",
+        { funcion, fecha_inicio, fecha_fin },
+        (response) => {
+          let data = JSON.parse(response);
+          resolve(data);
+        }
+      );
+    });
+  }
   function buscar_ventas_asesores(fecha_inicio, fecha_fin) {
     return new Promise((resolve, reject) => {
       let funcion = "buscar_ventas_by_asesores";
@@ -206,23 +219,36 @@ $(document).ready(async function () {
       );
     });
   }
-  function pintar_leads_subidos_rendimiento(eventos, ventas) {
+  function pintar_leads_subidos_rendimiento(eventos, ventas, interacciones) {
+    console.log(listClientesSubidos);
+    console.log(ventas);
     const eventosFiltrados = eventos.filter((evento) =>
       listClientesSubidos.some(
         (cliente) => cliente.id_cliente === evento.cliente_id
       )
     );
-    const ventasFiltrados = ventas.filter((evento) =>
+    const interaccionesFiltrados = interacciones.filter((interaccion) =>
       listClientesSubidos.some(
-        (cliente) => cliente.id_cliente === evento.cliente_id
+        (cliente) => cliente.id_cliente === interaccion.cliente_id
       )
     );
-    let visitas_concretadas = eventosFiltrados.filter(
-      (e) => e.status === "ASISTIO"
+    const ventasFiltrados = ventas.filter((venta) =>
+      listClientesSubidos.some(
+        (cliente) => cliente.id_cliente === venta.cliente_id
+      )
+    );
+    let visitas_concretadas = interaccionesFiltrados.filter(
+      (e) =>
+        e.status_visita === "ASISTIO" &&
+        e.status === "VALIDADO" &&
+        e.tipo === "VISITA"
     ).length;
     console.log(visitas_concretadas);
-    let visitas_no_concretadas = eventosFiltrados.filter(
-      (e) => e.status === "NO ASISTIO"
+    let visitas_no_concretadas = interaccionesFiltrados.filter(
+      (e) =>
+        e.status_visita === "NO ASISTIO" &&
+        e.status === "VALIDADO" &&
+        e.tipo === "VISITA"
     ).length;
     let ventas_a = ventasFiltrados.filter((v) => v.tipo === "VENTA").length;
     let separaciones = ventasFiltrados.filter(
@@ -333,6 +359,10 @@ $(document).ready(async function () {
         fecha_inicio,
         fecha_fin
       );
+      const interacciones_asesores = await buscar_interaccion_by_asesores(
+        fecha_inicio,
+        fecha_fin
+      );
       const ventas_asesores = await buscar_ventas_asesores(
         fecha_inicio,
         fecha_fin
@@ -362,6 +392,12 @@ $(document).ready(async function () {
       let filterproyectData = filterData.filter((f) =>
         proyectosIdsPermitidos.includes(f.proyet_id)
       );
+      let filterDataInteracciones = interacciones_asesores.filter((e) =>
+        idsPermitidos.includes(e.user_id)
+      );
+      let filterproyectDataInteracciones = filterDataInteracciones.filter((f) =>
+        proyectosIdsPermitidos.includes(f.proyet_id)
+      );
       // filter data ventas
       let filterDataVentas = ventas_asesores.filter((e) =>
         idsPermitidos.includes(e.user_id)
@@ -382,18 +418,31 @@ $(document).ready(async function () {
       let no_interesado = filterproyectData.filter(
         (f) => f.status === "NO INTERESADO"
       ).length;
-      let visitas_concretadas = filterproyectData.filter(
-        (f) => f.status === "ASISTIO"
+      let visitas_concretadas = filterproyectDataInteracciones.filter(
+        (f) =>
+          f.tipo === "VISITA" &&
+          f.status === "VALIDADO" &&
+          f.status_visita === "ASISTIO"
       ).length;
-      let visitas_no_concretadas = filterproyectData.filter(
-        (f) => f.status === "NO ASISTIO"
+      let visitas_no_concretadas = filterproyectDataInteracciones.filter(
+        (f) =>
+          f.tipo === "VISITA" &&
+          f.status === "VALIDADO" &&
+          f.status_visita === "NO ASISTIO"
       ).length;
       let ventas = filterproyectDataVentas.filter(
-        (f) => f.tipo === "VENTA"
+        (f) =>
+          f.tipo === "VENTA" &&
+          (f.status === "VALIDADO" || f.status === "ANULADO")
       ).length;
       let separaciones = filterproyectDataVentas.filter(
-        (f) => f.tipo === "SEPARACION"
+        (f) =>
+          f.tipo === "SEPARACION" &&
+          (f.status === "VALIDADO" || f.status === "ANULADO")
       ).length;
+      console.log(filterproyectDataInteracciones);
+      console.log(filterproyectDataVentas);
+
       let template = "";
       template += `
     
@@ -488,7 +537,8 @@ $(document).ready(async function () {
       $("#listTotalesEventos").html(template);
       pintar_leads_subidos_rendimiento(
         filterproyectData,
-        filterproyectDataVentas
+        filterproyectDataVentas,
+        filterproyectDataInteracciones
       );
 
       resolve("resuelto");

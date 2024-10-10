@@ -400,6 +400,96 @@ $(document).ready(async function () {
       );
     });
   }
+  // agregar un nuevo cliente
+  $("#add-cliente").on("click", function () {
+    $("#crear-lead").removeClass("md-hidden");
+    setTimeout(() => {
+      $("#crear-lead .form-create").addClass("modal-show");
+    }, 300);
+  });
+  $("#crear-lead .close-modal").on("click", function () {
+    $("#crear-lead .form-create").removeClass("modal-show");
+    setTimeout(() => {
+      $("#crear-lead").addClass("md-hidden");
+    }, 300);
+  });
+  // registrar lead
+  $("#registerLead").submit((e) => {
+    e.preventDefault();
+    let fecha_now = dayjs().format("YYYY-MM-DD");
+    let hora_now = dayjs().format("HH:mm:ss");
+    // return 0;
+    let nombre = $("#nombre-lead").val();
+    let apellido = $("#apellido-lead").val();
+    let documento = $("#documento-lead").val();
+    let celular = $("#celular-lead").val();
+    let telefono = $("#telefono-lead").val();
+    let origen = $("#origen-lead").val();
+    let ciudad = $("#ciudad-lead").val();
+    let pais = $("#pais-lead").val();
+    let campania = $("#campania-lead").val();
+    let correo = $("#email-lead").val();
+    let proyecto_id = id;
+    let sede_id = $("#sede-lead").val();
+    const result = {
+      nombre: nombre,
+      apellido: apellido,
+      documento: documento,
+      correo: correo,
+      celular: celular,
+      telefono: telefono,
+      Pais: pais,
+      origen: origen,
+      campaña: campania,
+      ciudad: ciudad,
+      fecha: fecha_now,
+      hora: hora_now,
+    };
+    if (proyecto_id !== "0" && sede_id !== "" && origen !== "0") {
+      let funcion = "add_cliente";
+      $("#registrar_lead_btn").prop("disabled", true);
+      $.post(
+        "../../../controlador/UsuarioController.php",
+        { funcion, result, proyecto_id, sede_id },
+        async (response) => {
+          const data = JSON.parse(response);
+
+          if (data.hasOwnProperty("error")) {
+            // Si la respuesta contiene un mensaje de error, muestra el mensaje
+            add_toast("error", data.error);
+          } else {
+            add_toast("success", "se subio correctamente el cliente");
+            let id = data.id;
+            console.log(id, proyecto_id);
+            $("#crear-lead .form-create").removeClass("modal-show");
+            setTimeout(function () {
+              $("#crear-lead").addClass("md-hidden");
+            }, 300);
+            let clientes = await buscar_clientes_empresa();
+
+            pintar_clientes_empresa(sede_id);
+            $("#clientesList").val(id).trigger("change");
+            // resetear form
+            $("#nombre-lead").val("");
+            $("#apellido-lead").val("");
+            $("#documento-lead").val("");
+            $("#celular-lead").val("");
+            $("#telefono-lead").val("");
+            $("#origen-lead").val("0");
+            $("#ciudad-lead").val("");
+            $("#pais-lead").val("");
+            $("#campania-lead").val("");
+            $("#email-lead").val("");
+            $("#proyecto-lead").val("");
+          }
+
+          $("#registrar_lead_btn").prop("disabled", false);
+        }
+      );
+    } else {
+      add_toast("warning", "Debe seleccionar un proyecto y origen");
+    }
+  });
   async function update_lote(id, status) {
     return new Promise((resolve, reject) => {
       let funcion = "update_lote";
@@ -429,7 +519,7 @@ $(document).ready(async function () {
 
     let select_asesor = $("#select_asesor").val();
     let user_id;
-    let fecha_venta = dayjs().format("YYYY-MM-DD");
+    let fecha_venta = dayjs().format("YYYY-MM-DD HH:mm:ss");
     let status = "SEND_VALIDAR";
     if (tipo !== null) {
       if (lote_id !== null) {
@@ -516,6 +606,21 @@ $(document).ready(async function () {
     });
     $("#sedesListModal").html(template);
   }
+  function pintar_sedes_lead(sedes) {
+    let template = "";
+    template += `
+      <option value="" disabled>Seleccione una sede</option>
+      
+      `;
+    sedes.forEach((s) => {
+      template += `
+        <option value="${s.id}">${s.name_reference} ${s.direccion}-${s.ciudad}</option>
+        
+        `;
+    });
+    $("#sede-lead").html(template);
+    llenar_proyectos_sede_lead(sedes[0].id);
+  }
 
   $("#sedesListModal").on("change", function (e) {
     let sede_id = e.target.value;
@@ -586,6 +691,7 @@ $(document).ready(async function () {
   await buscar_clientes_empresa();
   await fetchasesores();
   pintar_sedes(sedes);
+  pintar_sedes_lead(sedes);
   pintar_clientes_empresa(sedes[0].id);
 
   pintar_results_asesores(sedes[0].id);
