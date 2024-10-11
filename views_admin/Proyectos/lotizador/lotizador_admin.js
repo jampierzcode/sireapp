@@ -619,7 +619,6 @@ $(document).ready(async function () {
         `;
     });
     $("#sede-lead").html(template);
-    llenar_proyectos_sede_lead(sedes[0].id);
   }
 
   $("#sedesListModal").on("change", function (e) {
@@ -628,6 +627,7 @@ $(document).ready(async function () {
     pintar_results_asesores(sede_id);
   });
   function pintar_results_asesores(sede_id) {
+    console.log(asesoresList);
     const asesoresFilter = asesoresList.filter((a) => a.sede_id === sede_id);
     let template = `<option value="" selected></option>`;
     asesoresFilter.forEach((asesor) => {
@@ -675,8 +675,8 @@ $(document).ready(async function () {
         { funcion },
         (response) => {
           if (response.trim() === "no-register") {
+            asesoresList = [];
             resolve([]);
-            return;
           } else {
             const asesores = JSON.parse(response);
             asesoresList = asesores;
