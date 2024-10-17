@@ -1479,13 +1479,13 @@ class Usuario
             return $this->mensaje;
         }
     }
-    function register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final, $observaciones, $created_by)
+    function register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final, $observaciones, $created_by, $sede_id)
     {
         try {
             # code...
-            $sql = "INSERT INTO ventas(cliente_id, user_id, fecha_venta, tipo, lote_id, precio, status, observacion, created_by) VALUES(:cliente, :usuario, :fecha, :tipo, :lote_id, :precio, :status, :observacion, :created_by)";
+            $sql = "INSERT INTO ventas(cliente_id, user_id, fecha_venta, tipo, lote_id, precio, status, observacion, created_by, sede_id) VALUES(:cliente, :usuario, :fecha, :tipo, :lote_id, :precio, :status, :observacion, :created_by, :sede_id)";
             $query = $this->conexion->prepare($sql);
-            $query->execute(array(":cliente" => $cliente, ":usuario" => $user, ":fecha" => $fecha, ":tipo" => $status, ":lote_id" => $lote_id, ":precio" => $precio_final, ":status" => "SEND_VALIDAR", ":observacion" => $observaciones, ":created_by" => $created_by));
+            $query->execute(array(":cliente" => $cliente, ":usuario" => $user, ":fecha" => $fecha, ":tipo" => $status, ":lote_id" => $lote_id, ":precio" => $precio_final, ":status" => "SEND_VALIDAR", ":observacion" => $observaciones, ":created_by" => $created_by, ":sede_id" => $sede_id));
 
             $this->mensaje = "add-register-venta";
             return $this->mensaje;

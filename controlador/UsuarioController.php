@@ -1155,9 +1155,10 @@ if ($_POST["funcion"] == "register_venta") {
     $lote_id = $_POST["lote_id"];
     $precio_final = $_POST["precio_final"];
     $observaciones = $_POST["observaciones"];
+    $sede_id = $_POST["sede_id"];
     $created_by = $id_usuario;
     $user = $id_usuario;
-    $usuario->register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final, $observaciones, $created_by);
+    $usuario->register_venta($fecha, $cliente, $user, $status, $lote_id, $precio_final, $observaciones, $created_by, $sede_id);
     echo $usuario->mensaje;
 }
 if ($_POST["funcion"] == "register_venta_admin") {
@@ -1635,6 +1636,7 @@ if ($_POST["funcion"] == "buscar_clientes_by_asesor") {
                 'hora_visita' => $dato->hora_visita,
                 'etiquetas' => $dato->etiquetas,
                 'asignedUser' => $asigned,
+                'sede_id' => $dato->sede_id,
             );
         }
         $jsonstring = json_encode($json);

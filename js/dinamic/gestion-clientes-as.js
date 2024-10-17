@@ -2445,7 +2445,8 @@ $(document).ready(async function () {
     status,
     lote_id,
     precio_final,
-    observaciones
+    observaciones,
+    sede_id
   ) {
     return new Promise((resolve, reject) => {
       let funcion = "register_venta";
@@ -2459,6 +2460,7 @@ $(document).ready(async function () {
           lote_id,
           precio_final,
           observaciones,
+          sede_id,
         },
         (response) => {
           console.log(response);
@@ -2476,6 +2478,9 @@ $(document).ready(async function () {
   $("#registerFormEvento").submit(async (e) => {
     e.preventDefault();
     $("#register_event_btn").prop("disabled", true);
+    console.log(clientesList);
+    console.log(idCliente);
+    let sede_id = clientesList.find((c) => c.id === idCliente).sede_id;
 
     let status = $("#status-evento").val();
     let observaciones = $("#observaciones-evento").val();
@@ -2531,7 +2536,8 @@ $(document).ready(async function () {
             status,
             lote_id,
             precio_final,
-            observaciones
+            observaciones,
+            sede_id
           );
         } else {
           add_toast("warning", `Debes seleccionar un lote para la ${status}`);
