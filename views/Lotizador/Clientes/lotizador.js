@@ -98,6 +98,10 @@ $(document).ready(function () {
         }
       );
     }
+    function formatoMiles(num) {
+      return num.toLocaleString("es-MX");
+    }
+
     function selectLotes(lotes) {
       lotes.map((lote) => {
         let fillColor;
@@ -157,7 +161,8 @@ $(document).ready(function () {
             $("#ancho").text(lote.ancho);
             $("#largo").text(lote.largo);
             $("#area").text(lote.area);
-            $("#precio").text(lote.precio);
+            $("#precio").text(`S/${formatoMiles(Number(lote.precio))}`);
+
             $(".container-edit-status").remove("md-hidden");
             $(".container-edit-status").addClass("md-hidden");
           });
@@ -177,7 +182,8 @@ $(document).ready(function () {
             $("#ancho").text(lote.ancho);
             $("#largo").text(lote.largo);
             $("#area").text(lote.area);
-            $("#precio").text(lote.precio);
+            $("#precio").text(`S/${formatoMiles(Number(lote.precio))}`);
+
             $(".container-edit-status").addClass("md-hidden");
           });
         }

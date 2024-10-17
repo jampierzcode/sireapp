@@ -91,6 +91,10 @@ $(document).ready(function () {
         }
       );
     }
+    function formatoMiles(num) {
+      return num.toLocaleString("es-MX");
+    }
+
     function selectLotes(lotes) {
       map1.eachLayer(function (layer) {
         // Verificar si la capa es un rectángulo o un polígono
@@ -167,7 +171,7 @@ $(document).ready(function () {
             $("#ancho").text(lote.ancho);
             $("#largo").text(lote.largo);
             $("#area").text(lote.area);
-            $("#precio").text(lote.precio);
+            $("#precio").text(`S/${formatoMiles(Number(lote.precio))}`);
             $("#estadoLote").html(template);
             $(".containerWhats").html(templateWhats);
             $(".container-edit-status").remove("md-hidden");
@@ -200,7 +204,7 @@ $(document).ready(function () {
             $("#ancho").text(lote.ancho);
             $("#largo").text(lote.largo);
             $("#area").text(lote.area);
-            $("#precio").text(lote.precio);
+            $("#precio").text(`S/${formatoMiles(Number(lote.precio))}`);
 
             $("#estadoLote").html(template);
             $(".containerWhats").html(templateWhats);
