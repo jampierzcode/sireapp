@@ -94,6 +94,18 @@ $(document).ready(function () {
     function formatoMiles(num) {
       return num.toLocaleString("es-MX");
     }
+    function generarTemplate(mz_zona) {
+      // Verificar si el string contiene un guion "-"
+      if (mz_zona.includes("-")) {
+        // Si contiene guion, dividir en dos partes
+        const [bloque, manzana] = mz_zona.split("-");
+        // Retornar el template con Bloque y Manzana
+        return `Bloque: ${bloque}, Manzana: ${manzana}`;
+      } else {
+        // Si no contiene guion, retornar el template con solo la Manzana
+        return `Manzana: ${mz_zona}`;
+      }
+    }
 
     function selectLotes(lotes) {
       map1.eachLayer(function (layer) {
@@ -149,7 +161,9 @@ $(document).ready(function () {
           rectangle
             .bindTooltip(
               `
-            Lote: ${lote.numero} ${lote.mz_zona} <br> Precio: ${lote.precio}  <br> Area: ${lote.area}
+             ${generarTemplate(lote.mz_zona)} Lote: ${
+                lote.numero
+              } <br> Precio: ${lote.precio}  <br> Area: ${lote.area}
             
             `
             )
@@ -164,7 +178,7 @@ $(document).ready(function () {
             }%20del%20proyecto%20${nameProyecto}%20..." class="btnJsvm default" id="editEstate">Me interesa</a>
               `;
             // Actualizar los valores en la tarjeta de HTML
-            $("#mz_zonas").text(lote.mz_zona);
+            $("#mz_zonas").text(generarTemplate(lote.mz_zona));
             $("#lote").text(lote.numero);
             // $("#lote").attr("key", lote.numero + lote.mz_zona);
             // $("#lote").attr("numberKey", lote.id);
@@ -182,7 +196,9 @@ $(document).ready(function () {
           poligono
             .bindTooltip(
               `
-            Lote: ${lote.numero} ${lote.mz_zona} <br> Precio: ${lote.precio}  <br> Area: ${lote.area}
+         ${generarTemplate(lote.mz_zona)} Lote: ${lote.numero}  <br> Precio: ${
+                lote.precio
+              }  <br> Area: ${lote.area}
             
             `
             )
@@ -197,7 +213,7 @@ $(document).ready(function () {
             }%20del%20proyecto%20${nameProyecto}%20..." class="btnJsvm default" id="editEstate">Me interesa</a>
             `;
             // Actualizar los valores en la tarjeta de HTML
-            $("#mz_zonas").text(lote.mz_zona);
+            $("#mz_zonas").text(generarTemplate(lote.mz_zona));
             $("#lote").text(lote.numero);
             $("#lote").attr("key", lote.numero + lote.mz_zona);
             $("#lote").attr("numberKey", lote.id);

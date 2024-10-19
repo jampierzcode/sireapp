@@ -25,7 +25,7 @@
     </div>
     <div id="map1" style="width: 100%; height: 100vh;"></div>
     <div class="container-loteActual">
-        <h3>Mz/Zn: <span numberKey="" key="" id="mz_zonas"></span> Lote: <span numberKey="" key="" id="lote"></span>
+        <h3><span numberKey="" key="" id="mz_zonas"></span> Lote: <span numberKey="" key="" id="lote"></span>
         </h3>
         <div class="listDetail">
             <p>Ancho: <span id="ancho"></span></p>

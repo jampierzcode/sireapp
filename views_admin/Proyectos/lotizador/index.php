@@ -291,7 +291,7 @@ if (empty($_SESSION["us_tipo"])) {
             </div>
         </div>
         <div class="container-loteActual">
-            <h3>Manzana: <span numberKey="" key="" id="manzana"></span> Lote: <span numberKey="" key="" id="lote"></span></h3>
+            <h3><span numberKey="" key="" id="manzana"></span> Lote: <span numberKey="" key="" id="lote"></span></h3>
             <div class="listDetail">
                 <p>Ancho: <span id="ancho"></span></p>
                 <p>Largo: <span id="largo"></span></p>
