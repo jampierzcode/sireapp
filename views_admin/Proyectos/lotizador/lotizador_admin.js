@@ -158,7 +158,9 @@ $(document).ready(async function () {
           $("#ancho").text(lote.ancho);
           $("#largo").text(lote.largo);
           $("#area").text(lote.area);
-          $("#precio").text(`S/${formatoMiles(Number(lote.precio))}`);
+          $("#precio").text(
+            `${lote.moneda}${formatoMiles(Number(lote.precio))}`
+          );
 
           $("#estadoLote").html(template);
           $(".container-edit-status").remove("md-hidden");
@@ -186,7 +188,9 @@ $(document).ready(async function () {
           $("#ancho").text(lote.ancho);
           $("#largo").text(lote.largo);
           $("#area").text(lote.area);
-          $("#precio").text(`S/${formatoMiles(Number(lote.precio))}`);
+          $("#precio").text(
+            `${lote.moneda}${formatoMiles(Number(lote.precio))}`
+          );
 
           $("#estadoLote").html(template);
           $(".container-edit-status").addClass("md-hidden");

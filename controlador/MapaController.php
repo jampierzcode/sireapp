@@ -37,6 +37,7 @@ if ($_POST["funcion"] == "buscar_lotes") {
                 'area' => $dato->area,
                 'numero' => $dato->numero,
                 'mz_zona' => $dato->mz_zona,
+                'moneda' => $dato->moneda,
                 'precio' => $dato->precio,
                 'tipo' => $dato->tipo,
                 'cordinates' => json_decode($dato->cordinates),
