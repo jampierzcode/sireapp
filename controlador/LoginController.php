@@ -37,6 +37,9 @@ if (!empty($usuario->datos)) {
         $usuario->view_permisos($_SESSION["creator"]);
         $_SESSION["permisos"] = $usuario->datos;
         header("Location: ../views_admin/Dashboard/");
+    } elseif ($_SESSION["us_tipo"] == 6) {
+
+        header("Location: ../views_manager_lotes/ventas/");
     } else {
         header("Location: ../views/Dashboard/");
     }

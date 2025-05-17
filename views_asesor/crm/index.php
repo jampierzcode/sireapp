@@ -1040,6 +1040,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 3) {
                             </th> -->
                             <th>Fecha Hora Creacion</th>
                             <th>Nombres</th>
+                            <th>Documento</th>
                             <!-- <th>Apellidos</th> -->
                             <th>Proyecto</th>
                             <th>Etiquetas</th>

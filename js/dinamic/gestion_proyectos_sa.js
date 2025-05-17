@@ -5,6 +5,13 @@ $(document).ready(async function () {
   var id_proyecto = "";
   var dataTableInstance; // Variable para almacenar la instancia de DataTables
 
+  // Crear múltiples instancias
+  var proyecto = new DragAndDropUploader(".container-images", "#img_dsct");
+  var edit_proyecto = new DragAndDropUploader(
+    ".otra-container",
+    "#otra_img_input"
+  );
+
   var dataTableUsers = $("#usersASigneds").DataTable({
     pageLength: 5,
     aoColumnDefs: [
@@ -265,6 +272,20 @@ $(document).ready(async function () {
       // Manejo de errores aquí
     }
   });
+  // editar proyecto
+  $(document).on("click", "#edit_proyecto", async function () {
+    const id = $(this).attr("key_proyect");
+    console.log(id);
+    console.log(listProyectos);
+    var proyecto_activo = listProyectos.find((p) => p.id === String(id));
+    console.log(proyecto_activo);
+    $("#nombreProyectoEdit").val(proyecto_activo.nombreproyecto);
+    $("#lotesProyectoEdit").val(proyecto_activo.cantlotes);
+    $("#modal_proyecto_edit").removeClass("md-hidden");
+    setTimeout(function () {
+      $("#modal_proyecto_edit .form-create").addClass("modal-show");
+    }, 300);
+  });
   async function buscar_user_proyect(id_proyecto) {
     return new Promise((resolve, reject) => {
       let funcion = "buscar_user_proyect";
@@ -386,7 +407,7 @@ $(document).ready(async function () {
         </div>
         
         <div class="flex gap-4">
-            <button data-id="${proyecto.id}" id="edit_empresa" class="whitespace-nowrap bg-white inline-block font-bold rounded inline-flex px-3 py-2 text-sm">Editar</button>
+            <button data-id="${proyecto.id}" key_proyect="${proyecto.id}" id="edit_proyecto" class="whitespace-nowrap bg-white inline-block font-bold rounded inline-flex px-3 py-2 text-sm">Editar</button>
             <button name="${proyecto.nombreproyecto}" key_proyect="${proyecto.id}" data-id="${proyecto.id}" id="manager_lotes" class="whitespace-nowrap bg-white inline-block font-bold rounded inline-flex px-3 py-2 text-sm">Ver lotes</button>
             <a target="_blank" href="./lotizador?id=${proyecto.id}" class="whitespace-nowrap bg-white inline-block font-bold rounded inline-flex px-3 py-2 text-sm">Config Plano</a>
         </div>
@@ -452,30 +473,20 @@ $(document).ready(async function () {
     $("#logoProyecto").val("");
     $("#nombreProyecto").val("");
     $("#lotesProyecto").val("");
-    let template = "";
-    const count = imagenesCargadas.length;
-    console.log(count);
-    if (count == 1) {
-      template += `
-      <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
-      <header class="title-drag">Drag & Drop to Upload File</header>
-      <span>OR</span>
-      `;
-      $(".drag-area").html(template);
-      $(".drag-area").removeClass("list-imagens");
-    }
-    const index = $(".eliminar-imagen").data("index");
-    imagenesCargadas.splice(index, 1);
-    $(".eliminar-imagen").closest(".image-card").remove();
+    proyecto.reset();
   }
   $("#newProyecto").on("click", function () {
-    // resetear valores
-    resetear_values_proyecto();
     $("#modal_proyecto").removeClass("md-hidden");
     setTimeout(() => {
       $("#modal_proyecto .form-create").addClass("modal-show");
     }, 300);
   });
+  function resetear_values_proyecto_edit() {
+    $("#logoProyectoEdit").val("");
+    $("#nombreProyectoEdit").val("");
+    $("#lotesProyectoEdit").val("");
+    edit_proyecto.reset();
+  }
   $("#modal_proyecto .close-modal").on("click", function () {
     // resetear valores
     resetear_values_proyecto();
@@ -498,56 +509,57 @@ $(document).ready(async function () {
       );
     });
   }
-  // drag imagen
-  var imagenesCargadas = [];
-  $("#img_dsct").on("change", (e) => {
-    if ($(".drag-area").hasClass("list-imagens") == false) {
-      $(".drag-area").addClass("list-imagens");
-    }
-    let files = e.target.files;
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      // Aquí puedes llamar a la función para procesar la imagen, por ejemplo:
-      mostrarImagen(file);
-    }
-    console.log(imagenesCargadas);
-  });
-  $(".drag-area").on("drop", (e) => {
-    e.preventDefault();
-    if ($(".drag-area").hasClass("list-imagens") == false) {
-      $(".drag-area").addClass("list-imagens");
-    }
-    const files = e.originalEvent.dataTransfer.files;
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      // Aquí puedes llamar a la función para procesar la imagen, por ejemplo:
-      mostrarImagen(file);
-    }
-    console.log(imagenesCargadas);
-  });
+  // drag imagen --------------
 
-  function mostrarImagen(file) {
-    var reader = new FileReader();
-    const index = imagenesCargadas.length;
-    reader.onload = function (e) {
-      let template = "";
-      if (imagenesCargadas.length === 0) {
-        $(".drag-area").html("");
-      }
-      template += `      
-      <div class="image-card">
-          <img src=${e.target.result} alt="">
-          <span class="eliminar-imagen" data-index="${index}">&times;</span>
-      </div>
-      `;
-      $(".drag-area").append(template);
-      imagenesCargadas.push(file);
-    };
-    reader.readAsDataURL(file);
-  }
+  // var proyecto.imagenesCargadas = [];
+  // $("#img_dsct").on("change", (e) => {
+  //   if ($(".drag-area").hasClass("list-imagens") == false) {
+  //     $(".drag-area").addClass("list-imagens");
+  //   }
+  //   let files = e.target.files;
+  //   for (let i = 0; i < files.length; i++) {
+  //     const file = files[i];
+  //     // Aquí puedes llamar a la función para procesar la imagen, por ejemplo:
+  //     mostrarImagen(file);
+  //   }
+  //   console.log(proyecto.imagenesCargadas);
+  // });
+  // $(".drag-area").on("drop", (e) => {
+  //   e.preventDefault();
+  //   if ($(".drag-area").hasClass("list-imagens") == false) {
+  //     $(".drag-area").addClass("list-imagens");
+  //   }
+  //   const files = e.originalEvent.dataTransfer.files;
+  //   for (let i = 0; i < files.length; i++) {
+  //     const file = files[i];
+  //     // Aquí puedes llamar a la función para procesar la imagen, por ejemplo:
+  //     mostrarImagen(file);
+  //   }
+  //   console.log(proyecto.imagenesCargadas);
+  // });
+
+  // function mostrarImagen(file) {
+  //   var reader = new FileReader();
+  //   const index = proyecto.imagenesCargadas.length;
+  //   reader.onload = function (e) {
+  //     let template = "";
+  //     if (proyecto.imagenesCargadas.length === 0) {
+  //       $(".drag-area").html("");
+  //     }
+  //     template += `
+  //     <div class="image-card">
+  //         <img src=${e.target.result} alt="">
+  //         <span class="eliminar-imagen" data-index="${index}">&times;</span>
+  //     </div>
+  //     `;
+  //     $(".drag-area").append(template);
+  //     proyecto.imagenesCargadas.push(file);
+  //   };
+  //   reader.readAsDataURL(file);
+  // }
   $(document).on("click", ".eliminar-imagen", function () {
     let template = "";
-    const count = imagenesCargadas.length;
+    const count = proyecto.imagenesCargadas.length;
     console.log(count);
     if (count == 1) {
       template += `
@@ -559,7 +571,7 @@ $(document).ready(async function () {
       $(".drag-area").removeClass("list-imagens");
     }
     const index = $(this).data("index");
-    imagenesCargadas.splice(index, 1);
+    proyecto.imagenesCargadas.splice(index, 1);
     $(this).closest(".image-card").remove();
   });
   $("#registrar_proyecto").on("click", async function () {
@@ -761,6 +773,14 @@ $(document).ready(async function () {
     $("#modal-manager-lotes .form-create").removeClass("modal-show");
     setTimeout(function () {
       $("#modal-manager-lotes").addClass("md-hidden");
+    }, 300);
+  });
+  // EDIT proyecto MODAL
+  $("#modal_proyecto_edit .close-modal").click(() => {
+    resetear_values_proyecto_edit();
+    $("#modal_proyecto_edit .form-create").removeClass("modal-show");
+    setTimeout(function () {
+      $("#modal_proyecto_edit").addClass("md-hidden");
     }, 300);
   });
   // -------

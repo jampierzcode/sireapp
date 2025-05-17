@@ -672,6 +672,7 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 2 && $_SESSION["us
                             <th></th>
                             <th>Nombres</th>
                             <th>Apellidos</th>
+                            <th>Documento</th>
                             <th>Fecha Hora Creacion</th>
                             <th>Sede</th>
                             <th>Correo</th>

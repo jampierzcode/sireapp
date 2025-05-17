@@ -85,6 +85,9 @@ $(document).ready(async function () {
         },
       },
       {
+        data: "documento",
+      },
+      {
         data: null,
         render: function (data) {
           let template = `<h1 class="font-bold">`;

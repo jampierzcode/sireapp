@@ -43,6 +43,7 @@ $(document).ready(async function () {
       // { data: "id" },
       { data: "nombres" },
       { data: "apellidos" },
+      { data: "documento" },
       {
         data: null,
         render: (data) => {
@@ -165,7 +166,7 @@ $(document).ready(async function () {
               if (data.asignado_usuario === "No asignado") {
                 template_status += `
                     <div class="flex-actions">
-                    <button target="_blank" keyTask="${data.id_task}" statusClient="${data.status}" keyClient="${data?.id}" id="completarTask" class="btnJsvm default mt-2">Completar Actividad</button>
+                    <button target="_blank" keyTask="${data.id_task}" statusClient="${data.status}" keyClient="${data?.id_cliente}" id="completarTask" class="btnJsvm default mt-2">Completar Actividad</button>
                     </div>
                     `;
               } else {

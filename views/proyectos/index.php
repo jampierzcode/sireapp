@@ -123,6 +123,56 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 1) {
                     </div>
                 </div>
             </div>
+            <div id="modal_proyecto_edit" class="modal-create md-hidden">
+                <div class="form-create">
+                    <!-- <form id="form_producto_add"> -->
+                    <div class="close-modal">
+                        <ion-icon name="close-outline"></ion-icon>
+                    </div>
+                    <h1 class="text-sm font-bold">Editar Proyecto</h1>
+                    <div class="w-full relative">
+                        <div id="change_register_proyecto_edit" class="hidden z-[5000] bg-[#310ecdcf] absolute top-0 bottom-0 left-0 w-full">
+                            <div class="flex items-center justify-center h-full">
+
+                                <p class="text-white font-bold text-center text-sm">
+                                    ...Registrando proyecto
+                                </p>
+                            </div>
+                        </div>
+                        <div class="grid grid-1-column gap-4">
+                            <div class="group-date">
+                                <label class="text-sm font-bold text-gray-900">Logo</label>
+                                <input class="px-3 py-2 rounded text-sm bg-gray-200 w-full" id="logoProyectoEdit" type="file" placeholder="Ingrese el nombre del proyecto">
+                            </div>
+                            <div class="group-date">
+                                <label class="text-sm font-bold text-gray-900">Nombre Proyecto</label>
+                                <input class="px-3 py-2 rounded text-sm bg-gray-200 w-full" id="nombreProyectoEdit" type="text" placeholder="Ingrese el nombre del proyecto">
+                            </div>
+                            <div class="group-date">
+                                <label class="text-sm font-bold text-gray-900">Cantidad de Lotes</label>
+                                <input class="px-3 py-2 rounded text-sm bg-gray-200 w-full" id="lotesProyectoEdit" type="number" placeholder="Ingrese el nombre del proyecto">
+                            </div>
+                            <div class="otra-container">
+                                <h1 class="text-sm font-bold text-gray-900">Subir plano</h1>
+                                <!-- <p>Sube una imagen de portada de la habitacion</p> -->
+                                <div class="container-drag">
+                                    <div class="drag-area">
+                                        <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                                        <header class="title-drag">Drag & Drop to Upload File</header>
+                                        <span>OR</span>
+
+                                    </div>
+                                    <button class="drag-btn">Browse File</button>
+                                </div>
+                                <input id="otra_img_input" type="file" hidden>
+                                <!-- <button id="save_img" class="drag-btn">Subir imagen</button> -->
+                            </div>
+                        </div>
+                        <button id="registrar_proyecto_edit" class="text-sm text-white px-3 py-2 bg-[#310ecdcf] rounded font-bold">Agregar</button>
+
+                    </div>
+                </div>
+            </div>
 
 
             <div class="grid grid-cols-3">
@@ -210,7 +260,8 @@ if (empty($_SESSION["id_usuario"]) || $_SESSION["us_tipo"] != 1) {
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.9.4/dayjs.min.js" integrity="sha512-XZSHSEFj4QeE0G4pwy4tToyAhF2VXoEcF9CP0t1PSZMP2XHhEEB9PjM9knsdzcEKbi6GRMazdt8tJadz0JTKIQ==" crossorigin="anonymous"></script>
     <script src="../../js/dinamic/toastmith.js"></script>
-    <script src="../../js/static/drag-drop.js"></script>
+    <script src="../../js/dinamic/draganddrop.js"></script>
+    <!-- <script src="../../js/static/drag-drop.js"></script> -->
     <script src="../../js/dinamic/gestion_proyectos_sa.js"></script>
 
 <?php

@@ -17,6 +17,9 @@ if (!empty($_SESSION["id_usuario"])) {
         case 5:
             header("Location: views_admin/Dashboard");
             break;
+        case 6:
+            header("Location: views_manager_lotes/ventas");
+            break;
 
         default:
             # code...
