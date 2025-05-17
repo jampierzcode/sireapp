@@ -5,6 +5,7 @@ $(document).ready(async function () {
       readCol: "nombre",
     },
     { readCol: "apellido" },
+    { readCol: "documento" },
     { readCol: "celular" },
     { readCol: "telefono" },
     { readCol: "campaña" },
